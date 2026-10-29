@@ -1,1 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>locallist - classifieds</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    .cl-link { color: #0000EE; }
+    .cl-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body class="bg-stone-50 text-stone-900 min-h-screen flex flex-col">
 
+  <!-- TOP NAVIGATION BAR -->
+  <header class="bg-stone-200 border-b border-stone-300 px-4 py-2 sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <button onclick="showHome()" class="text-xl font-bold tracking-tight text-purple-900 hover:underline">
+          locallist
+        </button>
+        <span class="text-stone-400">|</span>
+        <select id="regionSelect" onchange="handleRegionChange()" class="bg-white border border-stone-300 rounded px-2 py-1 text-sm font-medium">
+          <option value="orange-county">orange county</option>
+          <option value="los-angeles">los angeles</option>
+          <option value="san-diego">san diego</option>
+          <option value="san-francisco">san francisco</option>
+          <option value="all">all regions</option>
+        </select>
+      </div>
+
+      <div class="flex items-center gap-3 text-sm">
+        <button onclick="openPostModal()" class="bg-purple-800 hover:bg-purple-900 text-white font-medium px-3 py-1 rounded">
+          + post to classifieds
+        </button>
+        <div id="authArea">
+          <button onclick="openAuthModal()" class="bg-white border border-stone-300 hover:bg-stone-100 px-3 py-1 rounded">
+            account / log in
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONNECTION BANNER (Shows if Supabase keys aren't pasted yet) -->
+  <div id="setupBanner" class="hidden bg-amber-100 border-b border-amber-300 px-4 py-2 text-amber-900 text-xs text-center">
+    ⚠️ <strong>Supabase Keys Not Configured Yet:</strong> Paste your <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> inside <code>index.html</code> to connect your live database.
+  </div>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="max-w-6xl w-full mx-auto px-4 py-6 flex-1">
+
+    <!-- SEARCH BAR -->
+    <div class="bg-white border border-stone-300 rounded p-3 mb-6 flex flex-wrap gap-2 items-center shadow-sm">
+      <input
+        id="searchInput"
+        type="text"
+        placeholder="search classifieds (e.g. road bike, studio, desk)..."
+        onkeydown="if(event.key === 'Enter') loadListings()"
+        class="flex-1 min-w-[220px] border border-stone-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-purple-700"
+      />
+      <select id="categoryFilter" onchange="loadListings()" class="border border-stone-300 rounded px-2.5 py-1.5 text-sm bg-white">
+        <option value="all">all categories</option>
+        <option value="community">community</option>
+        <option value="housing">housing</option>
+        <option value="jobs">jobs</option>
+        <option value="services">services</option>
+        <option value="for-sale">for sale</option>
+        <option value="gigs">gigs</option>
+      </select>
+      <input id="maxPriceInput" type="number" placeholder="max $" class="w-24 border border-stone-300 rounded px-2.5 py-1.5 text-sm" />
+      <button onclick="loadListings()" class="bg-stone-800 hover:bg-stone-900 text-white px-4 py-1.5 rounded text-sm font-medium">
+        search
+      </button>
+    </div>
+
+    <!-- DIRECTORY CATEGORY PILLS -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mb-6 text-center text-sm">
+      <button onclick="filterByCategory('community')" class="bg-white border border-stone-300 hover:border-purple-700 rounded py-2 font-semibold text-purple-900">community</button>
+      <button onclick="filterByCategory('housing')" class="bg-white border border-stone-300 hover:border-purple-700 rounded py-2 font-semibold text-purple-900">housing</button>
+      <button onclick="filterByCategory('jobs')" class="bg-white border border-stone-300 hover:border-purple-700 rounded py-2 font-semibold text-purple-900">jobs</button>
+      <button onclick="filterByCategory('services')" class="bg-white border border-stone-300 hover:border-purple-700 rounded py-2 font-semibold text-purple-900">services</button>
+      <button onclick="filterByCategory('for-sale')" class="bg-white border border-stone-300 hover:border-purple-700 rounded py-2 font-semibold text-purple-900">for sale</button>
+      <button onclick="filterByCategory('gigs')" class="bg-white border border-stone-300 hover:border-purple-700 rounded py-2 font-semibold text-purple-900">gigs</button>
+    </div>
+
+    <!-- LISTINGS FEED -->
+    <div class="bg-white border border-stone-300 rounded shadow-sm">
+      <div class="border-b border-stone-200 px-4 py-2.5 flex items-center justify-between bg-stone-100">
+        <h2 id="feedTitle" class="font-bold text-sm uppercase tracking-wider text-stone-700">Latest Listings</h2>
+        <span id="listingCount" class="text-xs text-stone-500">Loading...</span>
+      </div>
+      <div id="listingsContainer" class="divide-y divide-stone-200">
+        <div class="p-8 text-center text-stone-500 text-sm">Connecting to database...</div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- LISTING DETAIL MODAL -->
+  <div id="detailModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded border border-stone-300 max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-xl">
+      <div class="flex justify-between items-start gap-4 border-b border-stone-200 pb-3 mb-4">
+        <div>
+          <span id="detailMeta" class="text-xs uppercase text-stone-500"></span>
+          <h3 id="detailTitle" class="text-xl font-bold text-stone-900 mt-0.5"></h3>
+        </div>
+        <button onclick="closeDetailModal()" class="text-stone-400 hover:text-stone-700 text-xl font-bold">&times;</button>
+      </div>
+      <div id="detailImageWrapper" class="mb-4 hidden">
+        <img id="detailImage" src="" alt="Listing photo" class="w-full max-h-80 object-cover rounded border border-stone-200" />
+      </div>
+      <p id="detailDesc" class="text-sm text-stone-800 whitespace-pre-line leading-relaxed mb-6"></p>
+      <div class="bg-stone-100 border border-stone-200 rounded p-3 text-xs flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <span class="font-semibold text-stone-700">Anonymized Relay Email:</span>
+          <code id="detailRelay" class="ml-1 bg-white px-2 py-0.5 rounded border border-stone-300 select-all"></code>
+        </div>
+        <span id="detailDate" class="text-stone-500"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- POST LISTING MODAL -->
+  <div id="postModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded border border-stone-300 max-w-lg w-full p-6 shadow-xl">
+      <div class="flex justify-between items-center border-b border-stone-200 pb-3 mb-4">
+        <h3 class="font-bold text-lg">Create a New Listing</h3>
+        <button onclick="closePostModal()" class="text-stone-400 hover:text-stone-700 text-xl font-bold">&times;</button>
+      </div>
+      <form onsubmit="submitListing(event)" class="space-y-3 text-sm">
+        <div>
+          <label class="block font-medium mb-1">Posting Title *</label>
+          <input id="postTitle" required minlength="3" maxlength="140" class="w-full border border-stone-300 rounded px-3 py-1.5" placeholder="e.g. Vintage Trek Road Bike - Ready to Ride" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-medium mb-1">Category *</label>
+            <select id="postCategory" required class="w-full border border-stone-300 rounded px-2.5 py-1.5 bg-white">
+              <option value="for-sale">For Sale</option>
+              <option value="housing">Housing</option>
+              <option value="jobs">Jobs</option>
+              <option value="services">Services</option>
+              <option value="community">Community</option>
+              <option value="gigs">Gigs</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-medium mb-1">Price ($)</label>
+            <input id="postPrice" type="number" min="0" step="0.01" class="w-full border border-stone-300 rounded px-3 py-1.5" placeholder="Leave blank if free/NA" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-medium mb-1">Region *</label>
+            <select id="postRegion" required class="w-full border border-stone-300 rounded px-2.5 py-1.5 bg-white">
+              <option value="orange-county">Orange County</option>
+              <option value="los-angeles">Los Angeles</option>
+              <option value="san-diego">San Diego</option>
+              <option value="san-francisco">San Francisco</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-medium mb-1">Neighborhood / City</label>
+            <input id="postNeighborhood" class="w-full border border-stone-300 rounded px-3 py-1.5" placeholder="e.g. Irvine / Costa Mesa" />
+          </div>
+        </div>
+        <div>
+          <label class="block font-medium mb-1">Photo URL (optional)</label>
+          <input id="postImageUrl" type="url" class="w-full border border-stone-300 rounded px-3 py-1.5" placeholder="https://images.unsplash.com/..." />
+        </div>
+        <div>
+          <label class="block font-medium mb-1">Description *</label>
+          <textarea id="postDesc" required rows="4" class="w-full border border-stone-300 rounded px-3 py-1.5" placeholder="Include condition, dimensions, and pickup details..."></textarea>
+        </div>
+        <div id="postStatusMsg" class="text-xs text-red-600 hidden"></div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closePostModal()" class="px-4 py-1.5 border border-stone-300 rounded">Cancel</button>
+          <button type="submit" class="px-4 py-1.5 bg-purple-800 hover:bg-purple-900 text-white font-medium rounded">Publish Listing</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- AUTH MODAL (SIGN UP / LOG IN) -->
+  <div id="authModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded border border-stone-300 max-w-sm w-full p-6 shadow-xl">
+      <div class="flex justify-between items-center border-b border-stone-200 pb-3 mb-4">
+        <h3 class="font-bold text-lg">Account Log In / Sign Up</h3>
+        <button onclick="closeAuthModal()" class="text-stone-400 hover:text-stone-700 text-xl font-bold">&times;</button>
+      </div>
+      <div class="space-y-3 text-sm">
+        <div>
+          <label class="block font-medium mb-1">Email Address</label>
+          <input id="authEmail" type="email" required class="w-full border border-stone-300 rounded px-3 py-1.5" placeholder="you@example.com" />
+        </div>
+        <div>
+          <label class="block font-medium mb-1">Password (min 6 characters)</label>
+          <input id="authPassword" type="password" required minlength="6" class="w-full border border-stone-300 rounded px-3 py-1.5" placeholder="••••••••" />
+        </div>
+        <div id="authMsg" class="text-xs text-purple-900 bg-purple-50 p-2 rounded hidden"></div>
+        <div class="flex gap-2 pt-2">
+          <button onclick="handleSignIn()" class="flex-1 bg-stone-800 hover:bg-stone-900 text-white font-medium py-1.5 rounded">Log In</button>
+          <button onclick="handleSignUp()" class="flex-1 bg-purple-800 hover:bg-purple-900 text-white font-medium py-1.5 rounded">Sign Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============================================================================
+    // PASTE YOUR SUPABASE CREDENTIALS RIGHT HERE:
+    // ============================================================================
+    const SUPABASE_URL = 'https://xqpinjcstaqdbtczgykp.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhxcGluamNzdGFxZGJ0Y3pneWtwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyODE5NDksImV4cCI6MjEwODg1Nzk0OX0.kOU0cC7qByStwCvCKNthGnpBi9FyiZUN_EPoV7fNHmM';
+
+    let supabaseClient = null;
+    let currentUser = null;
+    let cachedListings = [];
+
+    const isConfigured = SUPABASE_URL.startsWith('http') && !SUPABASE_URL.includes('PASTE_YOUR');
+
+    if (isConfigured) {
+      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      initAuth();
+      loadListings();
+    } else {
+      document.getElementById('setupBanner').classList.remove('hidden');
+      document.getElementById('listingsContainer').innerHTML = `
+        <div class="p-8 text-center text-stone-600 text-sm">
+          Almost there! Replace <code>PASTE_YOUR_SUPABASE_URL_HERE</code> and <code>PASTE_YOUR_SUPABASE_ANON_KEY_HERE</code> at the bottom of <code>index.html</code> to load live listings.
+        </div>`;
+    }
+
+    async function initAuth() {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      currentUser = session?.user || null;
+      renderAuthUI();
+
+      supabaseClient.auth.onAuthStateChange((_event, session) => {
+        currentUser = session?.user || null;
+        renderAuthUI();
+      });
+    }
+
+    function renderAuthUI() {
+      const authArea = document.getElementById('authArea');
+      if (currentUser) {
+        authArea.innerHTML = `
+          <span class="text-xs text-stone-600 mr-2">${currentUser.email}</span>
+          <button onclick="handleSignOut()" class="bg-white border border-stone-300 hover:bg-stone-100 px-2.5 py-1 rounded text-xs">log out</button>
+        `;
+      } else {
+        authArea.innerHTML = `
+          <button onclick="openAuthModal()" class="bg-white border border-stone-300 hover:bg-stone-100 px-3 py-1 rounded">account / log in</button>
+        `;
+      }
+    }
+
+    async function loadListings() {
+      if (!supabaseClient) return;
+      const container = document.getElementById('listingsContainer');
+      const region = document.getElementById('regionSelect').value;
+      const category = document.getElementById('categoryFilter').value;
+      const search = document.getElementById('searchInput').value.trim();
+      const maxPrice = document.getElementById('maxPriceInput').value;
+
+      let query = supabaseClient
+        .from('listings')
+        .select('*')
+        .eq('status', 'active')
+        .order('created_at', { ascending: false });
+
+      if (region !== 'all') query = query.eq('region', region);
+      if (category !== 'all') query = query.eq('category_id', category);
+      if (maxPrice !== '') query = query.lte('price', parseFloat(maxPrice));
+      if (search !== '') query = query.ilike('title', `%${search}%`);
+
+      const { data, error } = await query;
+      if (error) {
+        container.innerHTML = `<div class="p-6 text-red-600 text-sm">Error loading listings: ${error.message}</div>`;
+        return;
+      }
+
+      cachedListings = data || [];
+      document.getElementById('listingCount').textContent = `${cachedListings.length} posting(s)`;
+
+      if (cachedListings.length === 0) {
+        container.innerHTML = `<div class="p-8 text-center text-stone-500 text-sm">No listings found in this filter yet. Click "+ post to classifieds" to create the first one!</div>`;
+        return;
+      }
+
+      container.innerHTML = cachedListings.map(item => {
+        const dateStr = new Date(item.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const priceBadge = item.price !== null ? `<span class="font-bold text-emerald-800 ml-2">$${Number(item.price).toLocaleString()}</span>` : '';
+        const hood = item.neighborhood ? `<span class="text-stone-500 text-xs ml-2">(${item.neighborhood})</span>` : '';
+        const picBadge = item.has_image ? `<span class="text-orange-600 text-xs ml-2 font-medium">[pic]</span>` : '';
+        return `
+          <div onclick="openDetailModal('${item.id}')" class="px-4 py-2.5 hover:bg-stone-50 cursor-pointer flex items-baseline justify-between gap-4 text-sm">
+            <div>
+              <span class="text-stone-400 text-xs mr-2">${dateStr}</span>
+              <span class="cl-link font-medium">${escapeHtml(item.title)}</span>
+              ${priceBadge}
+              ${hood}
+              ${picBadge}
+            </div>
+            <span class="text-xs text-stone-400 shrink-0">${item.category_id}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openDetailModal(id) {
+      const item = cachedListings.find(x => x.id === id);
+      if (!item) return;
+      document.getElementById('detailMeta').textContent = `${item.region} > ${item.category_id}`;
+      document.getElementById('detailTitle').textContent = item.price !== null ? `${item.title} - $${Number(item.price).toLocaleString()}` : item.title;
+      document.getElementById('detailDesc').textContent = item.description;
+      document.getElementById('detailRelay').textContent = item.relay_email || 'reply@locallist.org';
+      document.getElementById('detailDate').textContent = `Posted: ${new Date(item.created_at).toLocaleString()}`;
+
+      const imgWrap = document.getElementById('detailImageWrapper');
+      if (item.image_urls && item.image_urls.length > 0) {
+        document.getElementById('detailImage').src = item.image_urls[0];
+        imgWrap.classList.remove('hidden');
+      } else {
+        imgWrap.classList.add('hidden');
+      }
+      document.getElementById('detailModal').classList.remove('hidden');
+    }
+
+    function closeDetailModal() { document.getElementById('detailModal').classList.add('hidden'); }
+
+    function openPostModal() {
+      if (!currentUser) {
+        openAuthModal('Please log in or sign up first to post a listing.');
+        return;
+      }
+      document.getElementById('postModal').classList.remove('hidden');
+    }
+
+    function closePostModal() { document.getElementById('postModal').classList.add('hidden'); }
+
+    async function submitListing(e) {
+      e.preventDefault();
+      const statusMsg = document.getElementById('postStatusMsg');
+      statusMsg.classList.add('hidden');
+
+      const priceVal = document.getElementById('postPrice').value;
+      const imageUrlVal = document.getElementById('postImageUrl').value.trim();
+
+      const payload = {
+        seller_id: currentUser.id,
+        title: document.getElementById('postTitle').value.trim(),
+        category_id: document.getElementById('postCategory').value,
+        price: priceVal === '' ? null : parseFloat(priceVal),
+        region: document.getElementById('postRegion').value,
+        neighborhood: document.getElementById('postNeighborhood').value.trim() || null,
+        image_urls: imageUrlVal ? [imageUrlVal] : [],
+        description: document.getElementById('postDesc').value.trim()
+      };
+
+      const { error } = await supabaseClient.from('listings').insert([payload]);
+      if (error) {
+        statusMsg.textContent = error.message;
+        statusMsg.classList.remove('hidden');
+        return;
+      }
+
+      e.target.reset();
+      closePostModal();
+      loadListings();
+    }
+
+    function openAuthModal(msg) {
+      const msgEl = document.getElementById('authMsg');
+      if (msg) {
+        msgEl.textContent = msg;
+        msgEl.classList.remove('hidden');
+      } else {
+        msgEl.classList.add('hidden');
+      }
+      document.getElementById('authModal').classList.remove('hidden');
+    }
+
+    function closeAuthModal() { document.getElementById('authModal').classList.add('hidden'); }
+
+    async function handleSignUp() {
+      const email = document.getElementById('authEmail').value.trim();
+      const password = document.getElementById('authPassword').value;
+      const msgEl = document.getElementById('authMsg');
+
+      const { error } = await supabaseClient.auth.signUp({ email, password });
+      msgEl.classList.remove('hidden');
+      if (error) {
+        msgEl.textContent = error.message;
+      } else {
+        msgEl.textContent = 'Account created! If email confirmation is off in Supabase, you are now logged in.';
+        setTimeout(closeAuthModal, 1500);
+      }
+    }
+
+    async function handleSignIn() {
+      const email = document.getElementById('authEmail').value.trim();
+      const password = document.getElementById('authPassword').value;
+      const msgEl = document.getElementById('authMsg');
+
+      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      if (error) {
+        msgEl.textContent = error.message;
+        msgEl.classList.remove('hidden');
+      } else {
+        closeAuthModal();
+      }
+    }
+
+    async function handleSignOut() {
+      await supabaseClient.auth.signOut();
+    }
+
+    function filterByCategory(cat) {
+      document.getElementById('categoryFilter').value = cat;
+      loadListings();
+    }
+
+    function handleRegionChange() { loadListings(); }
+
+    function showHome() {
+      document.getElementById('categoryFilter').value = 'all';
+      document.getElementById('searchInput').value = '';
+      document.getElementById('maxPriceInput').value = '';
+      loadListings();
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+    }
+  </script>
+</body>
+</html>
