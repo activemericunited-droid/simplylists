@@ -8,12 +8,25 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <!-- Load Inter across all weights: 100 (Thin) through 700 (Bold) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
-    .brand-font { font-family: 'Space Grotesk', sans-serif; }
-    .cat-card { transition: all 0.18s ease; }
-    .cat-card:hover { transform: translateY(-2px); }
+    body, .brand-font {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .cat-card {
+      transition: all 0.18s ease;
+    }
+    .cat-card:hover {
+      transform: translateY(-2px);
+      border-color: #1348FB;
+    }
+    /* Ensure crisp rendering for Inter Thin (100) subcategories */
+    .subcat-thin {
+      font-family: 'Inter', sans-serif;
+      font-weight: 100;
+      letter-spacing: 0.02em;
+    }
   </style>
 </head>
 <body class="bg-[#F8F7F4] text-zinc-900 min-h-screen flex flex-col">
@@ -22,10 +35,42 @@
   <header class="bg-white/95 backdrop-blur border-b border-zinc-200 px-4 py-3 sticky top-0 z-30">
     <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center gap-4">
-        <button onclick="showHome()" class="brand-font text-2xl font-bold tracking-tight text-zinc-900 flex items-center gap-2">
-          <span class="inline-block w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
-          simplylists
+        <!-- LOGO (#F0A06A) WITH STRAWBERRY + 4-LEAF CLOVER LEAF SYMBOL -->
+        <button onclick="showHome()" class="text-2xl font-bold tracking-tight text-[#F0A06A] flex items-center gap-2 hover:opacity-90 transition-opacity">
+          <svg class="w-8 h-8 shrink-0 text-[#F0A06A]" viewBox="0 0 36 38" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <!-- 4-Leaf Clover Crown (Strawberry Leaf Calyx) -->
+            <g fill="currentColor">
+              <!-- Top-Left Clover Leaf -->
+              <path d="M18 11.5 C15 6, 9.5 5.5, 9.5 9 C9.5 11.5, 13.5 12.5, 18 11.5 Z" />
+              <!-- Top-Right Clover Leaf -->
+              <path d="M18 11.5 C21 6, 26.5 5.5, 26.5 9 C26.5 11.5, 22.5 12.5, 18 11.5 Z" />
+              <!-- Far-Left Clover Leaf -->
+              <path d="M18 11.5 C12.5 10, 7.5 12, 9 15 C10.2 17, 14.5 14.5, 18 11.5 Z" />
+              <!-- Far-Right Clover Leaf -->
+              <path d="M18 11.5 C23.5 10, 28.5 12, 27 15 C25.8 17, 21.5 14.5, 18 11.5 Z" />
+              <!-- Tiny Clover Stem -->
+              <path d="M18 11.5 C18 8.5, 19.2 6, 20.8 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+            </g>
+            <!-- Strawberry Berry Body -->
+            <path d="M18 12.5 C10.5 12.5, 6.5 17.5, 8 24.5 C9.4 30.8, 14.5 35.8, 18 36.5 C21.5 35.8, 26.6 30.8, 28 24.5 C29.5 17.5, 25.5 12.5, 18 12.5 Z" fill="currentColor" />
+            <!-- Strawberry Seeds (Cutout Details) -->
+            <g fill="#FFFFFF">
+              <ellipse cx="14" cy="18.5" rx="0.9" ry="1.3" />
+              <ellipse cx="18" cy="17.5" rx="0.9" ry="1.3" />
+              <ellipse cx="22" cy="18.5" rx="0.9" ry="1.3" />
+              <ellipse cx="12" cy="23.5" rx="0.9" ry="1.3" />
+              <ellipse cx="16" cy="23" rx="0.9" ry="1.3" />
+              <ellipse cx="20" cy="23" rx="0.9" ry="1.3" />
+              <ellipse cx="24" cy="23.5" rx="0.9" ry="1.3" />
+              <ellipse cx="14.5" cy="28" rx="0.9" ry="1.3" />
+              <ellipse cx="18" cy="28.5" rx="0.9" ry="1.3" />
+              <ellipse cx="21.5" cy="28" rx="0.9" ry="1.3" />
+              <ellipse cx="18" cy="32.8" rx="0.9" ry="1.3" />
+            </g>
+          </svg>
+          <span>simplylists</span>
         </button>
+
         <div class="h-4 w-px bg-zinc-300"></div>
         <select id="regionSelect" onchange="handleRegionChange()" class="bg-zinc-100 hover:bg-zinc-200/70 border border-zinc-200 rounded-lg px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-zinc-700 cursor-pointer focus:outline-none">
           <option value="orange-county">Orange County</option>
@@ -37,7 +82,7 @@
       </div>
 
       <div class="flex items-center gap-2.5 text-sm">
-        <button onclick="openPostModal()" class="bg-zinc-900 hover:bg-indigo-600 transition-colors text-white font-medium px-4 py-2 rounded-lg text-xs tracking-wide shadow-sm">
+        <button onclick="openPostModal()" class="bg-[#1348FB] hover:opacity-90 transition-opacity text-white font-semibold px-4 py-2 rounded-lg text-xs tracking-wide shadow-sm">
           + Post Listing
         </button>
         <div id="authArea">
@@ -57,43 +102,71 @@
   <!-- MAIN CONTAINER -->
   <main class="max-w-6xl w-full mx-auto px-4 py-8 flex-1">
 
-    <!-- 3-PILLAR HERO DIRECTORY -->
+    <!-- 3-PILLAR HERO DIRECTORY (Categories in Inter Bold #1348FB, Subcategories in Inter Thin) -->
     <section class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
       <!-- FOR SALE -->
-      <button onclick="filterByCategory('for-sale')" class="cat-card text-left bg-white border border-zinc-200 hover:border-emerald-500 rounded-xl p-5 shadow-sm group">
+      <div onclick="filterByCategory('for-sale')" class="cat-card cursor-pointer text-left bg-white border border-zinc-200 rounded-xl p-5 shadow-sm group">
         <div class="flex items-center justify-between mb-2">
-          <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md">
+          <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#1348FB] bg-[#1348FB]/10 px-2.5 py-1 rounded-md">
             01 / Marketplace
           </span>
-          <span class="text-zinc-400 group-hover:text-emerald-600 transition-colors text-sm">→</span>
+          <span class="text-[#1348FB] transition-transform group-hover:translate-x-0.5 text-sm font-bold">→</span>
         </div>
-        <h2 class="brand-font text-xl font-bold text-zinc-900">For Sale</h2>
-        <p class="text-xs text-zinc-500 mt-1">Cars, electronics, furniture, wardrobe, bikes & free stuff</p>
-      </button>
+        <h2 class="text-xl font-bold text-[#1348FB]">For Sale</h2>
+        <div class="mt-2.5 flex flex-wrap gap-1.5">
+          <span onclick="event.stopPropagation(); jumpToSubcategory('for-sale', 'cars+trucks')" class="subcat-thin text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">cars & trucks</span>
+          <span class="text-zinc-300 text-xs">•</span>
+          <span onclick="event.stopPropagation(); jumpToSubcategory('for-sale', 'electronics')" class="subcat-thin text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">electronics & tech</span>
+          <span class="text-zinc-300 text-xs">•</span>
+          <span onclick="event.stopPropagation(); jumpToSubcategory('for-sale', 'furniture')" class="subcat-thin text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">furniture & decor</span>
+          <span class="text-zinc-300 text-xs">•</span>
+          <span onclick="event.stopPropagation(); jumpToSubcategory('for-sale', 'fashion')" class="subcat-thin text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">clothing & wardrobe</span>
+          <span class="text-zinc-300 text-xs">•</span>
+          <span onclick="event.stopPropagation(); jumpToSubcategory('for-sale', 'free')" class="subcat-thin text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">free stuff</span>
+        </div>
+      </div>
 
       <!-- SERVICES -->
-      <button onclick="filterByCategory('services')" class="cat-card text-left bg-white border border-zinc-200 hover:border-indigo-500 rounded-xl p-5 shadow-sm group">
+      <div onclick="filterByCategory('services')" class="cat-card cursor-pointer text-left bg-white border border-zinc-200 rounded-xl p-5 shadow-sm group">
         <div class="flex items-center justify-between mb-2">
-          <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-md">
+          <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#1348FB] bg-[#1348FB]/10 px-2.5 py-1 rounded-md">
             02 / Directory
           </span>
-          <span class="text-zinc-400 group-hover:text-indigo-600 transition-colors text-sm">→</span>
+          <span class="text-[#1348FB] transition-transform group-hover:translate-x-0.5 text-sm font-bold">→</span>
         </div>
-        <h2 class="brand-font text-xl font-bold text-zinc-900">Services</h2>
-        <p class="text-xs text-zinc-500 mt-1">Tech & computer support, styling, lessons, auto & local pros</p>
-      </button>
+        <h2 class="text-xl font-bold text-[#1348FB]">Services</h2>
+        <div class="mt-2.5 flex flex-wrap gap-1.5">
+          <span onclick="event.stopPropagation(); jumpToSubcategory('services', 'computer')" class="subcat-thin text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">computer & tech support</span>
+          <span class="text-zinc-300 text-xs">•</span>
+          <span onclick="event.stopPropagation(); jumpToSubcategory('services', 'creative')" class="subcat-thin text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">creative & styling</span>
+          <span class="text-zinc-300 text-xs">•</span>
+          <span onclick="event.stopPropagation(); jumpToSubcategory('services', 'lessons')" class="subcat-thin text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">lessons & coaching</span>
+          <span class="text-zinc-300 text-xs">•</span>
+          <span onclick="event.stopPropagation(); jumpToSubcategory('services', 'automotive')" class="subcat-thin text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">automotive</span>
+          <span class="text-zinc-300 text-xs">•</span>
+          <span onclick="event.stopPropagation(); jumpToSubcategory('services', 'household')" class="subcat-thin text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">household pros</span>
+        </div>
+      </div>
 
       <!-- PERSONAL -->
-      <button onclick="filterByCategory('personal')" class="cat-card text-left bg-white border border-zinc-200 hover:border-rose-500 rounded-xl p-5 shadow-sm group">
+      <div onclick="filterByCategory('personal')" class="cat-card cursor-pointer text-left bg-white border border-zinc-200 rounded-xl p-5 shadow-sm group">
         <div class="flex items-center justify-between mb-2">
-          <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-rose-700 bg-rose-50 px-2.5 py-1 rounded-md">
+          <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#1348FB] bg-[#1348FB]/10 px-2.5 py-1 rounded-md">
             03 / Connections
           </span>
-          <span class="text-zinc-400 group-hover:text-rose-600 transition-colors text-sm">→</span>
+          <span class="text-[#1348FB] transition-transform group-hover:translate-x-0.5 text-sm font-bold">→</span>
         </div>
-        <h2 class="brand-font text-xl font-bold text-zinc-900">Personal</h2>
-        <p class="text-xs text-zinc-500 mt-1">Missed connections, dating, activity partners & creative collabs</p>
-      </button>
+        <h2 class="text-xl font-bold text-[#1348FB]">Personal</h2>
+        <div class="mt-2.5 flex flex-wrap gap-1.5">
+          <span onclick="event.stopPropagation(); jumpToSubcategory('personal', 'missed-connections')" class="subcat-thin text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">missed connections</span>
+          <span class="text-zinc-300 text-xs">•</span>
+          <span onclick="event.stopPropagation(); jumpToSubcategory('personal', 'dating-romance')" class="subcat-thin text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">dating & romance</span>
+          <span class="text-zinc-300 text-xs">•</span>
+          <span onclick="event.stopPropagation(); jumpToSubcategory('personal', 'platonic-friends')" class="subcat-thin text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">friends & activity partners</span>
+          <span class="text-zinc-300 text-xs">•</span>
+          <span onclick="event.stopPropagation(); jumpToSubcategory('personal', 'musicians-collab')" class="subcat-thin text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">musicians & collabs</span>
+        </div>
+      </div>
     </section>
 
     <!-- SEARCH & FILTER TOOLBAR -->
@@ -103,9 +176,9 @@
         type="text"
         placeholder="Search simplylists..."
         onkeydown="if(event.key === 'Enter') loadListings()"
-        class="flex-1 min-w-[200px] bg-zinc-50 border border-zinc-200 rounded-lg px-3.5 py-2 text-sm focus:outline-none focus:bg-white focus:border-zinc-900"
+        class="flex-1 min-w-[200px] bg-zinc-50 border border-zinc-200 rounded-lg px-3.5 py-2 text-sm focus:outline-none focus:bg-white focus:border-[#1348FB]"
       />
-      <select id="categoryFilter" onchange="handleCategoryDropdownChange()" class="bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-2 text-sm font-medium">
+      <select id="categoryFilter" onchange="handleCategoryDropdownChange()" class="bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-2 text-sm font-bold text-[#1348FB]">
         <option value="all">All Categories</option>
         <option value="for-sale">For Sale</option>
         <option value="services">Services</option>
@@ -116,20 +189,20 @@
         <input id="hasPicFilter" type="checkbox" onchange="loadListings()" class="rounded border-zinc-300" />
         Has Photo
       </label>
-      <button onclick="loadListings()" class="bg-zinc-900 hover:bg-zinc-800 text-white px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider">
+      <button onclick="loadListings()" class="bg-[#1348FB] hover:opacity-90 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider">
         Search
       </button>
     </section>
 
-    <!-- DYNAMIC SUBCATEGORY PILLS -->
+    <!-- DYNAMIC SUBCATEGORY PILLS (Inter Thin) -->
     <div id="subcategoryBar" class="hidden flex-wrap gap-1.5 mb-5"></div>
 
     <!-- FEED HEADER + VIEW SWITCHER -->
     <div class="bg-white border border-zinc-200 rounded-xl shadow-sm overflow-hidden">
       <div class="border-b border-zinc-200 px-5 py-3 flex flex-wrap items-center justify-between gap-2 bg-zinc-50/70">
         <div class="flex items-center gap-2.5">
-          <h3 id="feedTitle" class="font-bold text-xs uppercase tracking-wider text-zinc-700">All Listings</h3>
-          <span id="listingCount" class="text-xs bg-zinc-200/80 text-zinc-700 px-2 py-0.5 rounded-full font-medium">Loading...</span>
+          <h3 id="feedTitle" class="font-bold text-xs uppercase tracking-wider text-[#1348FB]">All Listings</h3>
+          <span id="listingCount" class="text-xs bg-[#1348FB]/10 text-[#1348FB] px-2 py-0.5 rounded-full font-bold">Loading...</span>
         </div>
         <div class="flex items-center gap-1 bg-zinc-200/70 p-0.5 rounded-lg text-xs">
           <button id="btnViewList" onclick="setViewMode('list')" class="px-2.5 py-1 rounded-md bg-white font-semibold shadow-sm">List</button>
@@ -147,7 +220,7 @@
 
   <!-- FOOTER -->
   <footer class="border-t border-zinc-200 bg-white py-4 px-4 text-center text-xs text-zinc-400">
-    simplylists — simple local classifieds for sale, services & personal connections
+    <span class="font-bold text-[#F0A06A]">simplylists</span> — simple local classifieds for sale, services & personal connections
   </footer>
 
   <!-- LISTING DETAIL MODAL -->
@@ -155,8 +228,11 @@
     <div class="bg-white rounded-2xl border border-zinc-200 max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
       <div class="flex justify-between items-start gap-4 border-b border-zinc-100 pb-4 mb-4">
         <div>
-          <span id="detailBadge" class="inline-block text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md mb-1.5"></span>
-          <h3 id="detailTitle" class="brand-font text-2xl font-bold text-zinc-900"></h3>
+          <div class="flex items-center gap-2 mb-1.5">
+            <span id="detailCategoryBadge" class="inline-block text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-[#1348FB]/10 text-[#1348FB] border border-[#1348FB]/25"></span>
+            <span id="detailSubcategoryBadge" class="subcat-thin text-xs text-zinc-600"></span>
+          </div>
+          <h3 id="detailTitle" class="text-2xl font-bold text-zinc-900"></h3>
         </div>
         <button onclick="closeDetailModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
       </div>
@@ -179,7 +255,7 @@
   <div id="postModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl border border-zinc-200 max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
       <div class="flex justify-between items-center border-b border-zinc-100 pb-3 mb-4">
-        <h3 class="brand-font font-bold text-xl">Post to simplylists</h3>
+        <h3 class="font-bold text-xl text-zinc-900">Post to <span class="text-[#F0A06A]">simplylists</span></h3>
         <button onclick="closePostModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
       </div>
       <form onsubmit="submitListing(event)" class="space-y-3.5 text-sm">
@@ -189,8 +265,8 @@
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Category *</label>
-            <select id="postCategory" required onchange="handlePostCategoryChange()" class="w-full border border-zinc-300 rounded-lg px-3 py-2 bg-white">
+            <label class="block text-xs font-bold uppercase tracking-wider text-[#1348FB] mb-1">Category *</label>
+            <select id="postCategory" required onchange="handlePostCategoryChange()" class="w-full border border-zinc-300 rounded-lg px-3 py-2 bg-white font-bold text-[#1348FB]">
               <option value="for-sale">For Sale</option>
               <option value="services">Services</option>
               <option value="personal">Personal</option>
@@ -198,7 +274,7 @@
           </div>
           <div>
             <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Subcategory</label>
-            <select id="postSubcategory" class="w-full border border-zinc-300 rounded-lg px-3 py-2 bg-white"></select>
+            <select id="postSubcategory" class="subcat-thin w-full border border-zinc-300 rounded-lg px-3 py-2 bg-white text-zinc-900"></select>
           </div>
         </div>
         <div class="grid grid-cols-3 gap-3">
@@ -228,7 +304,7 @@
             accept="image/*"
             multiple
             onchange="previewSelectedImages(event)"
-            class="w-full border border-zinc-300 rounded-lg px-2.5 py-1.5 text-xs bg-zinc-50 file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-zinc-900 file:text-white cursor-pointer"
+            class="w-full border border-zinc-300 rounded-lg px-2.5 py-1.5 text-xs bg-zinc-50 file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-[#1348FB] file:text-white cursor-pointer"
           />
           <div id="imagePreviewContainer" class="grid grid-cols-4 gap-2 mt-2 hidden"></div>
         </div>
@@ -239,7 +315,7 @@
         <div id="postStatusMsg" class="text-xs text-red-600 hidden"></div>
         <div class="flex justify-end gap-2 pt-2">
           <button type="button" onclick="closePostModal()" class="px-4 py-2 border border-zinc-300 rounded-lg text-xs font-medium">Cancel</button>
-          <button id="submitPostBtn" type="submit" class="px-5 py-2 bg-zinc-900 hover:bg-indigo-600 text-white font-semibold rounded-lg text-xs disabled:opacity-50">
+          <button id="submitPostBtn" type="submit" class="px-5 py-2 bg-[#1348FB] hover:opacity-90 text-white font-bold rounded-lg text-xs disabled:opacity-50">
             Publish Listing
           </button>
         </div>
@@ -251,7 +327,7 @@
   <div id="authModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl border border-zinc-200 max-w-sm w-full p-6 shadow-2xl">
       <div class="flex justify-between items-center border-b border-zinc-100 pb-3 mb-4">
-        <h3 class="brand-font font-bold text-lg">Sign In to simplylists</h3>
+        <h3 class="font-bold text-lg">Sign In to <span class="text-[#F0A06A]">simplylists</span></h3>
         <button onclick="closeAuthModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
       </div>
       <div class="space-y-3 text-sm">
@@ -263,10 +339,10 @@
           <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Password</label>
           <input id="authPassword" type="password" required minlength="6" class="w-full border border-zinc-300 rounded-lg px-3.5 py-2" placeholder="••••••••" />
         </div>
-        <div id="authMsg" class="text-xs text-indigo-900 bg-indigo-50 p-2.5 rounded-lg hidden"></div>
+        <div id="authMsg" class="text-xs text-[#1348FB] bg-[#1348FB]/10 p-2.5 rounded-lg hidden"></div>
         <div class="flex gap-2 pt-2">
           <button onclick="handleSignIn()" class="flex-1 bg-zinc-900 hover:bg-zinc-800 text-white font-semibold py-2 rounded-lg text-xs">Sign In</button>
-          <button onclick="handleSignUp()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg text-xs">Create Account</button>
+          <button onclick="handleSignUp()" class="flex-1 bg-[#1348FB] hover:opacity-90 text-white font-semibold py-2 rounded-lg text-xs">Create Account</button>
         </div>
       </div>
     </div>
@@ -288,7 +364,7 @@
     const CATEGORY_META = {
       'for-sale': {
         label: 'For Sale',
-        badgeClass: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+        badgeClass: 'bg-[#1348FB]/10 text-[#1348FB] border border-[#1348FB]/25 font-bold',
         subcategories: [
           { id: 'cars+trucks', label: 'cars & trucks' },
           { id: 'electronics', label: 'electronics & tech' },
@@ -301,7 +377,7 @@
       },
       'services': {
         label: 'Services',
-        badgeClass: 'bg-indigo-50 text-indigo-700 border border-indigo-200',
+        badgeClass: 'bg-[#1348FB]/10 text-[#1348FB] border border-[#1348FB]/25 font-bold',
         subcategories: [
           { id: 'computer',   label: 'computer & tech support' },
           { id: 'creative',   label: 'creative & styling' },
@@ -312,7 +388,7 @@
       },
       'personal': {
         label: 'Personal',
-        badgeClass: 'bg-rose-50 text-rose-700 border border-rose-200',
+        badgeClass: 'bg-[#1348FB]/10 text-[#1348FB] border border-[#1348FB]/25 font-bold',
         subcategories: [
           { id: 'missed-connections', label: 'missed connections' },
           { id: 'dating-romance',     label: 'dating & romance' },
@@ -386,11 +462,18 @@
       bar.classList.remove('hidden');
       bar.className = 'flex flex-wrap gap-1.5 mb-5';
       bar.innerHTML = [
-        `<button onclick="selectSubcategory('all')" class="px-3 py-1 rounded-full text-xs font-medium border ${activeSubcategory === 'all' ? 'bg-zinc-900 text-white border-zinc-900' : 'bg-white text-zinc-600 border-zinc-200 hover:border-zinc-400'}">All ${CATEGORY_META[cat].label}</button>`,
+        `<button onclick="selectSubcategory('all')" class="px-3 py-1 rounded-full text-xs font-bold border ${activeSubcategory === 'all' ? 'bg-[#1348FB] text-white border-[#1348FB]' : 'bg-white text-[#1348FB] border-[#1348FB]/30 hover:border-[#1348FB]'}">All ${CATEGORY_META[cat].label}</button>`,
         ...subs.map(s => `
-          <button onclick="selectSubcategory('${s.id}')" class="px-3 py-1 rounded-full text-xs font-medium border ${activeSubcategory === s.id ? 'bg-zinc-900 text-white border-zinc-900' : 'bg-white text-zinc-600 border-zinc-200 hover:border-zinc-400'}">${s.label}</button>
+          <button onclick="selectSubcategory('${s.id}')" class="subcat-thin px-3 py-1 rounded-full text-xs border ${activeSubcategory === s.id ? 'bg-[#1348FB] text-white border-[#1348FB]' : 'bg-white text-zinc-800 border-zinc-200 hover:border-[#1348FB]'}">${s.label}</button>
         `)
       ].join('');
+    }
+
+    function jumpToSubcategory(catId, subId) {
+      document.getElementById('categoryFilter').value = catId;
+      activeSubcategory = subId;
+      renderSubcategoryBar();
+      loadListings();
     }
 
     function selectSubcategory(subId) {
@@ -443,6 +526,12 @@
       renderListings();
     }
 
+    function getSubcategoryLabel(catId, subId) {
+      if (!subId || !CATEGORY_META[catId]) return '';
+      const found = CATEGORY_META[catId].subcategories.find(s => s.id === subId);
+      return found ? found.label : subId;
+    }
+
     function renderListings() {
       const container = document.getElementById('listingsContainer');
       if (cachedListings.length === 0) {
@@ -454,18 +543,22 @@
       if (viewMode === 'grid') {
         container.className = 'p-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4';
         container.innerHTML = cachedListings.map(item => {
-          const meta = CATEGORY_META[item.category_id] || { label: item.category_id, badgeClass: 'bg-zinc-100 text-zinc-700' };
+          const meta = CATEGORY_META[item.category_id] || { label: item.category_id, badgeClass: 'bg-[#1348FB]/10 text-[#1348FB] font-bold' };
+          const subLabel = getSubcategoryLabel(item.category_id, item.subcategory_id);
           const thumb = (item.image_urls && item.image_urls.length > 0)
             ? `<img src="${item.image_urls[0]}" class="h-44 w-full object-cover border-b border-zinc-100" />`
             : `<div class="h-44 w-full bg-zinc-100 flex items-center justify-center text-xs text-zinc-400 border-b border-zinc-100">No Photo</div>`;
           const priceStr = item.price !== null ? `$${Number(item.price).toLocaleString()}` : '';
           return `
-            <div onclick="openDetailModal('${item.id}')" class="border border-zinc-200 rounded-xl overflow-hidden hover:border-zinc-400 transition cursor-pointer bg-white flex flex-col">
+            <div onclick="openDetailModal('${item.id}')" class="border border-zinc-200 rounded-xl overflow-hidden hover:border-[#1348FB] transition cursor-pointer bg-white flex flex-col">
               ${thumb}
               <div class="p-3.5 flex-1 flex flex-col justify-between">
                 <div>
                   <div class="flex items-center justify-between gap-2 mb-1.5">
-                    <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${meta.badgeClass}">${meta.label}</span>
+                    <div class="flex items-center gap-1.5">
+                      <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${meta.badgeClass}">${meta.label}</span>
+                      ${subLabel ? `<span class="subcat-thin text-[11px] text-zinc-600">${escapeHtml(subLabel)}</span>` : ''}
+                    </div>
                     <span class="font-bold text-sm text-zinc-900">${priceStr}</span>
                   </div>
                   <h4 class="font-semibold text-sm text-zinc-900 line-clamp-1">${escapeHtml(item.title)}</h4>
@@ -483,21 +576,25 @@
 
       container.className = 'divide-y divide-zinc-100';
       container.innerHTML = cachedListings.map(item => {
-        const meta = CATEGORY_META[item.category_id] || { label: item.category_id, badgeClass: 'bg-zinc-100 text-zinc-700' };
+        const meta = CATEGORY_META[item.category_id] || { label: item.category_id, badgeClass: 'bg-[#1348FB]/10 text-[#1348FB] font-bold' };
+        const subLabel = getSubcategoryLabel(item.category_id, item.subcategory_id);
         const dateStr = new Date(item.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         const priceBadge = item.price !== null ? `<span class="font-bold text-zinc-900 ml-2">$${Number(item.price).toLocaleString()}</span>` : '';
         const hood = item.neighborhood ? `<span class="text-zinc-400 text-xs ml-2">(${escapeHtml(item.neighborhood)})</span>` : '';
-        const picBadge = item.has_image ? `<span class="text-indigo-600 text-[11px] ml-2 font-semibold">📷 photo</span>` : '';
+        const picBadge = item.has_image ? `<span class="text-[#1348FB] text-[11px] ml-2 font-semibold">📷 photo</span>` : '';
         return `
           <div onclick="openDetailModal('${item.id}')" class="px-5 py-3.5 hover:bg-zinc-50 cursor-pointer flex items-center justify-between gap-4 text-sm">
             <div class="flex items-center flex-wrap gap-y-1">
               <span class="text-zinc-400 text-xs w-14 shrink-0">${dateStr}</span>
-              <span class="font-medium text-zinc-900 hover:text-indigo-600">${escapeHtml(item.title)}</span>
+              <span class="font-medium text-zinc-900 hover:text-[#1348FB]">${escapeHtml(item.title)}</span>
               ${priceBadge}
               ${hood}
               ${picBadge}
             </div>
-            <span class="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded shrink-0 ${meta.badgeClass}">${meta.label}</span>
+            <div class="flex items-center gap-2 shrink-0">
+              ${subLabel ? `<span class="subcat-thin text-xs text-zinc-600 hidden sm:inline">${escapeHtml(subLabel)}</span>` : ''}
+              <span class="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded ${meta.badgeClass}">${meta.label}</span>
+            </div>
           </div>
         `;
       }).join('');
@@ -506,10 +603,13 @@
     function openDetailModal(id) {
       const item = cachedListings.find(x => x.id === id);
       if (!item) return;
-      const meta = CATEGORY_META[item.category_id] || { label: item.category_id, badgeClass: 'bg-zinc-100 text-zinc-700' };
-      const badgeEl = document.getElementById('detailBadge');
-      badgeEl.className = `inline-block text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md mb-1.5 ${meta.badgeClass}`;
-      badgeEl.textContent = `${meta.label}${item.subcategory_id ? ' / ' + item.subcategory_id : ''} • ${item.neighborhood || item.region}`;
+      const meta = CATEGORY_META[item.category_id] || { label: item.category_id };
+      const subLabel = getSubcategoryLabel(item.category_id, item.subcategory_id);
+
+      document.getElementById('detailCategoryBadge').textContent = meta.label;
+      document.getElementById('detailSubcategoryBadge').textContent = subLabel
+        ? `${subLabel} • ${item.neighborhood || item.region}`
+        : (item.neighborhood || item.region);
 
       document.getElementById('detailTitle').textContent = item.price !== null ? `${item.title} — $${Number(item.price).toLocaleString()}` : item.title;
       document.getElementById('detailDesc').textContent = item.description;
@@ -541,7 +641,7 @@
       const priceInput = document.getElementById('postPrice');
 
       const subs = CATEGORY_META[cat]?.subcategories || [];
-      subSelect.innerHTML = subs.map(s => `<option value="${s.id}">${s.label}</option>`).join('');
+      subSelect.innerHTML = subs.map(s => `<option value="${s.id}" class="subcat-thin">${s.label}</option>`).join('');
 
       if (cat === 'personal') {
         priceLabel.textContent = 'Age / Optional #';
