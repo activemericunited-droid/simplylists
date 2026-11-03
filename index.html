@@ -3,159 +3,200 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>locallist - classifieds</title>
+  <title>locallist — for sale, services & personal</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    .cl-link { color: #0000EE; }
-    .cl-link:hover { text-decoration: underline; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+    .brand-font { font-family: 'Space Grotesk', sans-serif; }
+    .cat-card { transition: all 0.18s ease; }
+    .cat-card:hover { transform: translateY(-2px); }
   </style>
 </head>
-<body class="bg-stone-50 text-stone-900 min-h-screen flex flex-col">
+<body class="bg-[#F8F7F4] text-zinc-900 min-h-screen flex flex-col">
 
   <!-- TOP NAVIGATION BAR -->
-  <header class="bg-stone-200 border-b border-stone-300 px-4 py-2 sticky top-0 z-30">
+  <header class="bg-white/90 backdrop-blur border-b border-zinc-200 px-4 py-3 sticky top-0 z-30">
     <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center gap-3">
-        <button onclick="showHome()" class="text-xl font-bold tracking-tight text-purple-900 hover:underline">
+      <div class="flex items-center gap-4">
+        <button onclick="showHome()" class="brand-font text-2xl font-bold tracking-tight text-zinc-900 flex items-center gap-1.5">
+          <span class="inline-block w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
           locallist
         </button>
-        <span class="text-stone-400">|</span>
-        <select id="regionSelect" onchange="handleRegionChange()" class="bg-white border border-stone-300 rounded px-2 py-1 text-sm font-medium">
-          <option value="orange-county">orange county</option>
-          <option value="los-angeles">los angeles</option>
-          <option value="san-diego">san diego</option>
-          <option value="san-francisco">san francisco</option>
-          <option value="all">all regions</option>
+        <div class="h-4 w-px bg-zinc-300"></div>
+        <select id="regionSelect" onchange="handleRegionChange()" class="bg-zinc-100 hover:bg-zinc-200/70 border border-zinc-200 rounded-lg px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-zinc-700 cursor-pointer focus:outline-none">
+          <option value="orange-county">Orange County</option>
+          <option value="los-angeles">Los Angeles</option>
+          <option value="san-diego">San Diego</option>
+          <option value="san-francisco">San Francisco</option>
+          <option value="all">All California</option>
         </select>
       </div>
 
-      <div class="flex items-center gap-3 text-sm">
-        <button onclick="openPostModal()" class="bg-purple-800 hover:bg-purple-900 text-white font-medium px-3 py-1 rounded">
-          + post to classifieds
+      <div class="flex items-center gap-2.5 text-sm">
+        <button onclick="openPostModal()" class="bg-zinc-900 hover:bg-indigo-600 transition-colors text-white font-medium px-4 py-2 rounded-lg text-xs tracking-wide shadow-sm">
+          + New Listing
         </button>
         <div id="authArea">
-          <button onclick="openAuthModal()" class="bg-white border border-stone-300 hover:bg-stone-100 px-3 py-1 rounded">
-            account / log in
+          <button onclick="openAuthModal()" class="bg-white border border-zinc-300 hover:bg-zinc-50 px-3.5 py-2 rounded-lg text-xs font-medium text-zinc-700">
+            Sign In
           </button>
         </div>
       </div>
     </div>
   </header>
 
-  <!-- CONNECTION BANNER (Shows if Supabase keys aren't pasted yet) -->
-  <div id="setupBanner" class="hidden bg-amber-100 border-b border-amber-300 px-4 py-2 text-amber-900 text-xs text-center">
-    ⚠️ <strong>Supabase Keys Not Configured Yet:</strong> Paste your <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> inside <code>index.html</code> to connect your live database.
+  <!-- CONNECTION BANNER -->
+  <div id="setupBanner" class="hidden bg-amber-50 border-b border-amber-200 px-4 py-2.5 text-amber-900 text-xs text-center">
+    ⚠️ <strong>Supabase Keys Not Configured Yet:</strong> Paste your <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> inside <code>index.html</code> to load your live database.
   </div>
 
-  <!-- MAIN CONTENT CONTAINER -->
-  <main class="max-w-6xl w-full mx-auto px-4 py-6 flex-1">
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-6xl w-full mx-auto px-4 py-8 flex-1">
 
-    <!-- SEARCH BAR -->
-    <div class="bg-white border border-stone-300 rounded p-3 mb-6 flex flex-wrap gap-2 items-center shadow-sm">
+    <!-- 3-PILLAR HERO DIRECTORY -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+      <!-- FOR SALE -->
+      <button onclick="filterByCategory('for-sale')" id="card-for-sale" class="cat-card text-left bg-white border border-zinc-200 hover:border-emerald-500 rounded-xl p-5 shadow-sm group">
+        <div class="flex items-center justify-between mb-2">
+          <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md">
+            01 / Marketplace
+          </span>
+          <span class="text-zinc-400 group-hover:text-emerald-600 transition-colors text-sm">→</span>
+        </div>
+        <h2 class="brand-font text-xl font-bold text-zinc-900">For Sale</h2>
+        <p class="text-xs text-zinc-500 mt-1">Cars, electronics, furniture, bikes, fashion & local goods</p>
+      </button>
+
+      <!-- SERVICES -->
+      <button onclick="filterByCategory('services')" id="card-services" class="cat-card text-left bg-white border border-zinc-200 hover:border-indigo-500 rounded-xl p-5 shadow-sm group">
+        <div class="flex items-center justify-between mb-2">
+          <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-md">
+            02 / Directory
+          </span>
+          <span class="text-zinc-400 group-hover:text-indigo-600 transition-colors text-sm">→</span>
+        </div>
+        <h2 class="brand-font text-xl font-bold text-zinc-900">Services</h2>
+        <p class="text-xs text-zinc-500 mt-1">Tech support, creative styling, lessons, auto & home pros</p>
+      </button>
+
+      <!-- PERSONAL -->
+      <button onclick="filterByCategory('personal')" id="card-personal" class="cat-card text-left bg-white border border-zinc-200 hover:border-rose-500 rounded-xl p-5 shadow-sm group">
+        <div class="flex items-center justify-between mb-2">
+          <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-rose-700 bg-rose-50 px-2.5 py-1 rounded-md">
+            03 / Connections
+          </span>
+          <span class="text-zinc-400 group-hover:text-rose-600 transition-colors text-sm">→</span>
+        </div>
+        <h2 class="brand-font text-xl font-bold text-zinc-900">Personal</h2>
+        <p class="text-xs text-zinc-500 mt-1">Missed connections, dating, activity partners & creative collabs</p>
+      </button>
+    </section>
+
+    <!-- SEARCH & FILTER TOOLBAR -->
+    <section class="bg-white border border-zinc-200 rounded-xl p-3 mb-6 flex flex-wrap gap-2.5 items-center shadow-sm">
       <input
         id="searchInput"
         type="text"
-        placeholder="search classifieds (e.g. road bike, studio, desk)..."
+        placeholder="Search listings..."
         onkeydown="if(event.key === 'Enter') loadListings()"
-        class="flex-1 min-w-[220px] border border-stone-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-purple-700"
+        class="flex-1 min-w-[200px] bg-zinc-50 border border-zinc-200 rounded-lg px-3.5 py-2 text-sm focus:outline-none focus:bg-white focus:border-zinc-900"
       />
-      <select id="categoryFilter" onchange="loadListings()" class="border border-stone-300 rounded px-2.5 py-1.5 text-sm bg-white">
-        <option value="all">all categories</option>
-        <option value="community">community</option>
-        <option value="housing">housing</option>
-        <option value="jobs">jobs</option>
-        <option value="services">services</option>
-        <option value="for-sale">for sale</option>
-        <option value="gigs">gigs</option>
+      <select id="categoryFilter" onchange="loadListings()" class="bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-2 text-sm font-medium">
+        <option value="all">All Categories</option>
+        <option value="for-sale">For Sale</option>
+        <option value="services">Services</option>
+        <option value="personal">Personal</option>
       </select>
-      <input id="maxPriceInput" type="number" placeholder="max $" class="w-24 border border-stone-300 rounded px-2.5 py-1.5 text-sm" />
-      <button onclick="loadListings()" class="bg-stone-800 hover:bg-stone-900 text-white px-4 py-1.5 rounded text-sm font-medium">
-        search
+      <input id="maxPriceInput" type="number" placeholder="Max $" class="w-24 bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-2 text-sm" />
+      <label class="flex items-center gap-1.5 text-xs font-medium text-zinc-700 px-2 select-none cursor-pointer">
+        <input id="hasPicFilter" type="checkbox" onchange="loadListings()" class="rounded border-zinc-300" />
+        Has Photo
+      </label>
+      <button onclick="loadListings()" class="bg-zinc-900 hover:bg-zinc-800 text-white px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider">
+        Filter
       </button>
-    </div>
+    </section>
 
-    <!-- DIRECTORY CATEGORY PILLS -->
-    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mb-6 text-center text-sm">
-      <button onclick="filterByCategory('community')" class="bg-white border border-stone-300 hover:border-purple-700 rounded py-2 font-semibold text-purple-900">community</button>
-      <button onclick="filterByCategory('housing')" class="bg-white border border-stone-300 hover:border-purple-700 rounded py-2 font-semibold text-purple-900">housing</button>
-      <button onclick="filterByCategory('jobs')" class="bg-white border border-stone-300 hover:border-purple-700 rounded py-2 font-semibold text-purple-900">jobs</button>
-      <button onclick="filterByCategory('services')" class="bg-white border border-stone-300 hover:border-purple-700 rounded py-2 font-semibold text-purple-900">services</button>
-      <button onclick="filterByCategory('for-sale')" class="bg-white border border-stone-300 hover:border-purple-700 rounded py-2 font-semibold text-purple-900">for sale</button>
-      <button onclick="filterByCategory('gigs')" class="bg-white border border-stone-300 hover:border-purple-700 rounded py-2 font-semibold text-purple-900">gigs</button>
-    </div>
-
-    <!-- LISTINGS FEED -->
-    <div class="bg-white border border-stone-300 rounded shadow-sm">
-      <div class="border-b border-stone-200 px-4 py-2.5 flex items-center justify-between bg-stone-100">
-        <h2 id="feedTitle" class="font-bold text-sm uppercase tracking-wider text-stone-700">Latest Listings</h2>
-        <span id="listingCount" class="text-xs text-stone-500">Loading...</span>
+    <!-- FEED HEADER + VIEW SWITCHER -->
+    <div class="bg-white border border-zinc-200 rounded-xl shadow-sm overflow-hidden">
+      <div class="border-b border-zinc-200 px-5 py-3 flex flex-wrap items-center justify-between gap-2 bg-zinc-50/70">
+        <div class="flex items-center gap-2.5">
+          <h3 id="feedTitle" class="font-bold text-xs uppercase tracking-wider text-zinc-700">All Listings</h3>
+          <span id="listingCount" class="text-xs bg-zinc-200/80 text-zinc-700 px-2 py-0.5 rounded-full font-medium">Loading...</span>
+        </div>
+        <div class="flex items-center gap-1 bg-zinc-200/70 p-0.5 rounded-lg text-xs">
+          <button id="btnViewList" onclick="setViewMode('list')" class="px-2.5 py-1 rounded-md bg-white font-semibold shadow-sm">List</button>
+          <button id="btnViewGrid" onclick="setViewMode('grid')" class="px-2.5 py-1 rounded-md text-zinc-600 font-medium">Gallery</button>
+        </div>
       </div>
-      <div id="listingsContainer" class="divide-y divide-stone-200">
-        <div class="p-8 text-center text-stone-500 text-sm">Connecting to database...</div>
+
+      <!-- LISTINGS CONTAINER -->
+      <div id="listingsContainer" class="divide-y divide-zinc-100">
+        <div class="p-10 text-center text-zinc-400 text-sm">Connecting to database...</div>
       </div>
     </div>
 
   </main>
 
   <!-- LISTING DETAIL MODAL -->
-  <div id="detailModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded border border-stone-300 max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-xl">
-      <div class="flex justify-between items-start gap-4 border-b border-stone-200 pb-3 mb-4">
+  <div id="detailModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-zinc-200 max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
+      <div class="flex justify-between items-start gap-4 border-b border-zinc-100 pb-4 mb-4">
         <div>
-          <span id="detailMeta" class="text-xs uppercase text-stone-500"></span>
-          <h3 id="detailTitle" class="text-xl font-bold text-stone-900 mt-0.5"></h3>
+          <span id="detailBadge" class="inline-block text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md mb-1.5"></span>
+          <h3 id="detailTitle" class="brand-font text-2xl font-bold text-zinc-900"></h3>
         </div>
-        <button onclick="closeDetailModal()" class="text-stone-400 hover:text-stone-700 text-xl font-bold">&times;</button>
+        <button onclick="closeDetailModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
       </div>
-      <div id="detailImageWrapper" class="mb-4 hidden">
-        <img id="detailImage" src="" alt="Listing photo" class="w-full max-h-80 object-cover rounded border border-stone-200" />
+      <div id="detailImageWrapper" class="mb-5 hidden space-y-2">
+        <img id="detailMainImage" src="" alt="Listing photo" class="w-full max-h-96 object-cover rounded-xl border border-zinc-200" />
+        <div id="detailThumbnails" class="flex gap-2 overflow-x-auto"></div>
       </div>
-      <p id="detailDesc" class="text-sm text-stone-800 whitespace-pre-line leading-relaxed mb-6"></p>
-      <div class="bg-stone-100 border border-stone-200 rounded p-3 text-xs flex flex-wrap items-center justify-between gap-2">
+      <p id="detailDesc" class="text-sm text-zinc-700 whitespace-pre-line leading-relaxed mb-6"></p>
+      <div class="bg-zinc-50 border border-zinc-200 rounded-xl p-3.5 text-xs flex flex-wrap items-center justify-between gap-2">
         <div>
-          <span class="font-semibold text-stone-700">Anonymized Relay Email:</span>
-          <code id="detailRelay" class="ml-1 bg-white px-2 py-0.5 rounded border border-stone-300 select-all"></code>
+          <span class="font-semibold text-zinc-700">Reply Relay:</span>
+          <code id="detailRelay" class="ml-1.5 bg-white px-2.5 py-1 rounded border border-zinc-200 select-all font-mono"></code>
         </div>
-        <span id="detailDate" class="text-stone-500"></span>
+        <span id="detailDate" class="text-zinc-400"></span>
       </div>
     </div>
   </div>
 
-  <!-- POST LISTING MODAL -->
-  <div id="postModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded border border-stone-300 max-w-lg w-full p-6 shadow-xl">
-      <div class="flex justify-between items-center border-b border-stone-200 pb-3 mb-4">
-        <h3 class="font-bold text-lg">Create a New Listing</h3>
-        <button onclick="closePostModal()" class="text-stone-400 hover:text-stone-700 text-xl font-bold">&times;</button>
+  <!-- CREATE LISTING MODAL -->
+  <div id="postModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-zinc-200 max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
+      <div class="flex justify-between items-center border-b border-zinc-100 pb-3 mb-4">
+        <h3 class="brand-font font-bold text-xl">Publish a Listing</h3>
+        <button onclick="closePostModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
       </div>
-      <form onsubmit="submitListing(event)" class="space-y-3 text-sm">
+      <form onsubmit="submitListing(event)" class="space-y-3.5 text-sm">
         <div>
-          <label class="block font-medium mb-1">Posting Title *</label>
-          <input id="postTitle" required minlength="3" maxlength="140" class="w-full border border-stone-300 rounded px-3 py-1.5" placeholder="e.g. Vintage Trek Road Bike - Ready to Ride" />
+          <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Title *</label>
+          <input id="postTitle" required minlength="3" maxlength="140" class="w-full border border-zinc-300 rounded-lg px-3.5 py-2" placeholder="e.g. Custom PC Build & Tech Setup / Coffee Partner in OC" />
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block font-medium mb-1">Category *</label>
-            <select id="postCategory" required class="w-full border border-stone-300 rounded px-2.5 py-1.5 bg-white">
+            <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Category *</label>
+            <select id="postCategory" required onchange="handlePostCategoryChange()" class="w-full border border-zinc-300 rounded-lg px-3 py-2 bg-white">
               <option value="for-sale">For Sale</option>
-              <option value="housing">Housing</option>
-              <option value="jobs">Jobs</option>
               <option value="services">Services</option>
-              <option value="community">Community</option>
-              <option value="gigs">Gigs</option>
+              <option value="personal">Personal</option>
             </select>
           </div>
           <div>
-            <label class="block font-medium mb-1">Price ($)</label>
-            <input id="postPrice" type="number" min="0" step="0.01" class="w-full border border-stone-300 rounded px-3 py-1.5" placeholder="Leave blank if free/NA" />
+            <label id="priceLabel" class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Price ($)</label>
+            <input id="postPrice" type="number" min="0" step="0.01" class="w-full border border-zinc-300 rounded-lg px-3.5 py-2" placeholder="Optional / Free" />
           </div>
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block font-medium mb-1">Region *</label>
-            <select id="postRegion" required class="w-full border border-stone-300 rounded px-2.5 py-1.5 bg-white">
+            <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Region *</label>
+            <select id="postRegion" required class="w-full border border-zinc-300 rounded-lg px-3 py-2 bg-white">
               <option value="orange-county">Orange County</option>
               <option value="los-angeles">Los Angeles</option>
               <option value="san-diego">San Diego</option>
@@ -163,47 +204,57 @@
             </select>
           </div>
           <div>
-            <label class="block font-medium mb-1">Neighborhood / City</label>
-            <input id="postNeighborhood" class="w-full border border-stone-300 rounded px-3 py-1.5" placeholder="e.g. Irvine / Costa Mesa" />
+            <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">City / Area</label>
+            <input id="postNeighborhood" class="w-full border border-zinc-300 rounded-lg px-3.5 py-2" placeholder="e.g. Westminster / Irvine" />
           </div>
         </div>
         <div>
-          <label class="block font-medium mb-1">Photo URL (optional)</label>
-          <input id="postImageUrl" type="url" class="w-full border border-stone-300 rounded px-3 py-1.5" placeholder="https://images.unsplash.com/..." />
+          <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Photos (up to 4 images)</label>
+          <input
+            id="postImageFiles"
+            type="file"
+            accept="image/*"
+            multiple
+            onchange="previewSelectedImages(event)"
+            class="w-full border border-zinc-300 rounded-lg px-2.5 py-1.5 text-xs bg-zinc-50 file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-zinc-900 file:text-white cursor-pointer"
+          />
+          <div id="imagePreviewContainer" class="grid grid-cols-4 gap-2 mt-2 hidden"></div>
         </div>
         <div>
-          <label class="block font-medium mb-1">Description *</label>
-          <textarea id="postDesc" required rows="4" class="w-full border border-stone-300 rounded px-3 py-1.5" placeholder="Include condition, dimensions, and pickup details..."></textarea>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Description *</label>
+          <textarea id="postDesc" required rows="4" class="w-full border border-zinc-300 rounded-lg px-3.5 py-2" placeholder="Share full details..."></textarea>
         </div>
         <div id="postStatusMsg" class="text-xs text-red-600 hidden"></div>
         <div class="flex justify-end gap-2 pt-2">
-          <button type="button" onclick="closePostModal()" class="px-4 py-1.5 border border-stone-300 rounded">Cancel</button>
-          <button type="submit" class="px-4 py-1.5 bg-purple-800 hover:bg-purple-900 text-white font-medium rounded">Publish Listing</button>
+          <button type="button" onclick="closePostModal()" class="px-4 py-2 border border-zinc-300 rounded-lg text-xs font-medium">Cancel</button>
+          <button id="submitPostBtn" type="submit" class="px-5 py-2 bg-zinc-900 hover:bg-indigo-600 text-white font-semibold rounded-lg text-xs disabled:opacity-50">
+            Publish Now
+          </button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- AUTH MODAL (SIGN UP / LOG IN) -->
-  <div id="authModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded border border-stone-300 max-w-sm w-full p-6 shadow-xl">
-      <div class="flex justify-between items-center border-b border-stone-200 pb-3 mb-4">
-        <h3 class="font-bold text-lg">Account Log In / Sign Up</h3>
-        <button onclick="closeAuthModal()" class="text-stone-400 hover:text-stone-700 text-xl font-bold">&times;</button>
+  <!-- AUTH MODAL -->
+  <div id="authModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-zinc-200 max-w-sm w-full p-6 shadow-2xl">
+      <div class="flex justify-between items-center border-b border-zinc-100 pb-3 mb-4">
+        <h3 class="brand-font font-bold text-lg">Sign In or Create Account</h3>
+        <button onclick="closeAuthModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
       </div>
       <div class="space-y-3 text-sm">
         <div>
-          <label class="block font-medium mb-1">Email Address</label>
-          <input id="authEmail" type="email" required class="w-full border border-stone-300 rounded px-3 py-1.5" placeholder="you@example.com" />
+          <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Email</label>
+          <input id="authEmail" type="email" required class="w-full border border-zinc-300 rounded-lg px-3.5 py-2" placeholder="you@example.com" />
         </div>
         <div>
-          <label class="block font-medium mb-1">Password (min 6 characters)</label>
-          <input id="authPassword" type="password" required minlength="6" class="w-full border border-stone-300 rounded px-3 py-1.5" placeholder="••••••••" />
+          <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Password</label>
+          <input id="authPassword" type="password" required minlength="6" class="w-full border border-zinc-300 rounded-lg px-3.5 py-2" placeholder="••••••••" />
         </div>
-        <div id="authMsg" class="text-xs text-purple-900 bg-purple-50 p-2 rounded hidden"></div>
+        <div id="authMsg" class="text-xs text-indigo-900 bg-indigo-50 p-2.5 rounded-lg hidden"></div>
         <div class="flex gap-2 pt-2">
-          <button onclick="handleSignIn()" class="flex-1 bg-stone-800 hover:bg-stone-900 text-white font-medium py-1.5 rounded">Log In</button>
-          <button onclick="handleSignUp()" class="flex-1 bg-purple-800 hover:bg-purple-900 text-white font-medium py-1.5 rounded">Sign Up</button>
+          <button onclick="handleSignIn()" class="flex-1 bg-zinc-900 hover:bg-zinc-800 text-white font-semibold py-2 rounded-lg text-xs">Sign In</button>
+          <button onclick="handleSignUp()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg text-xs">Create Account</button>
         </div>
       </div>
     </div>
@@ -213,12 +264,19 @@
     // ============================================================================
     // PASTE YOUR SUPABASE CREDENTIALS RIGHT HERE:
     // ============================================================================
-    const SUPABASE_URL = 'https://xqpinjcstaqdbtczgykp.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhxcGluamNzdGFxZGJ0Y3pneWtwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyODE5NDksImV4cCI6MjEwODg1Nzk0OX0.kOU0cC7qByStwCvCKNthGnpBi9FyiZUN_EPoV7fNHmM';
+    const SUPABASE_URL = 'PASTE_YOUR_SUPABASE_URL_HERE';
+    const SUPABASE_ANON_KEY = 'PASTE_YOUR_SUPABASE_ANON_KEY_HERE';
 
     let supabaseClient = null;
     let currentUser = null;
     let cachedListings = [];
+    let viewMode = 'list';
+
+    const CATEGORY_META = {
+      'for-sale': { label: 'For Sale', badgeClass: 'bg-emerald-50 text-emerald-700 border border-emerald-200' },
+      'services': { label: 'Services', badgeClass: 'bg-indigo-50 text-indigo-700 border border-indigo-200' },
+      'personal': { label: 'Personal', badgeClass: 'bg-rose-50 text-rose-700 border border-rose-200' }
+    };
 
     const isConfigured = SUPABASE_URL.startsWith('http') && !SUPABASE_URL.includes('PASTE_YOUR');
 
@@ -229,8 +287,8 @@
     } else {
       document.getElementById('setupBanner').classList.remove('hidden');
       document.getElementById('listingsContainer').innerHTML = `
-        <div class="p-8 text-center text-stone-600 text-sm">
-          Almost there! Replace <code>PASTE_YOUR_SUPABASE_URL_HERE</code> and <code>PASTE_YOUR_SUPABASE_ANON_KEY_HERE</code> at the bottom of <code>index.html</code> to load live listings.
+        <div class="p-10 text-center text-zinc-500 text-sm">
+          Paste your <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> at the bottom of <code>index.html</code> to load live listings.
         </div>`;
     }
 
@@ -238,7 +296,6 @@
       const { data: { session } } = await supabaseClient.auth.getSession();
       currentUser = session?.user || null;
       renderAuthUI();
-
       supabaseClient.auth.onAuthStateChange((_event, session) => {
         currentUser = session?.user || null;
         renderAuthUI();
@@ -249,14 +306,25 @@
       const authArea = document.getElementById('authArea');
       if (currentUser) {
         authArea.innerHTML = `
-          <span class="text-xs text-stone-600 mr-2">${currentUser.email}</span>
-          <button onclick="handleSignOut()" class="bg-white border border-stone-300 hover:bg-stone-100 px-2.5 py-1 rounded text-xs">log out</button>
+          <span class="text-xs text-zinc-500 mr-2">${currentUser.email}</span>
+          <button onclick="handleSignOut()" class="bg-white border border-zinc-300 hover:bg-zinc-100 px-3 py-1.5 rounded-lg text-xs font-medium">Sign Out</button>
         `;
       } else {
         authArea.innerHTML = `
-          <button onclick="openAuthModal()" class="bg-white border border-stone-300 hover:bg-stone-100 px-3 py-1 rounded">account / log in</button>
+          <button onclick="openAuthModal()" class="bg-white border border-zinc-300 hover:bg-zinc-50 px-3.5 py-2 rounded-lg text-xs font-medium text-zinc-700">Sign In</button>
         `;
       }
+    }
+
+    function setViewMode(mode) {
+      viewMode = mode;
+      document.getElementById('btnViewList').className = mode === 'list'
+        ? 'px-2.5 py-1 rounded-md bg-white font-semibold shadow-sm'
+        : 'px-2.5 py-1 rounded-md text-zinc-600 font-medium';
+      document.getElementById('btnViewGrid').className = mode === 'grid'
+        ? 'px-2.5 py-1 rounded-md bg-white font-semibold shadow-sm'
+        : 'px-2.5 py-1 rounded-md text-zinc-600 font-medium';
+      renderListings();
     }
 
     async function loadListings() {
@@ -266,16 +334,23 @@
       const category = document.getElementById('categoryFilter').value;
       const search = document.getElementById('searchInput').value.trim();
       const maxPrice = document.getElementById('maxPriceInput').value;
+      const hasPic = document.getElementById('hasPicFilter').checked;
+
+      document.getElementById('feedTitle').textContent = category === 'all'
+        ? 'All Listings'
+        : CATEGORY_META[category]?.label || category;
 
       let query = supabaseClient
         .from('listings')
         .select('*')
         .eq('status', 'active')
+        .in('category_id', ['for-sale', 'services', 'personal'])
         .order('created_at', { ascending: false });
 
       if (region !== 'all') query = query.eq('region', region);
       if (category !== 'all') query = query.eq('category_id', category);
       if (maxPrice !== '') query = query.lte('price', parseFloat(maxPrice));
+      if (hasPic) query = query.eq('has_image', true);
       if (search !== '') query = query.ilike('title', `%${search}%`);
 
       const { data, error } = await query;
@@ -285,28 +360,65 @@
       }
 
       cachedListings = data || [];
-      document.getElementById('listingCount').textContent = `${cachedListings.length} posting(s)`;
+      document.getElementById('listingCount').textContent = `${cachedListings.length}`;
+      renderListings();
+    }
 
+    function renderListings() {
+      const container = document.getElementById('listingsContainer');
       if (cachedListings.length === 0) {
-        container.innerHTML = `<div class="p-8 text-center text-stone-500 text-sm">No listings found in this filter yet. Click "+ post to classifieds" to create the first one!</div>`;
+        container.className = '';
+        container.innerHTML = `<div class="p-12 text-center text-zinc-400 text-sm">No listings in this section yet. Click <strong>+ New Listing</strong> to post the first one.</div>`;
         return;
       }
 
+      if (viewMode === 'grid') {
+        container.className = 'p-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4';
+        container.innerHTML = cachedListings.map(item => {
+          const meta = CATEGORY_META[item.category_id] || { label: item.category_id, badgeClass: 'bg-zinc-100 text-zinc-700' };
+          const thumb = (item.image_urls && item.image_urls.length > 0)
+            ? `<img src="${item.image_urls[0]}" class="h-44 w-full object-cover border-b border-zinc-100" />`
+            : `<div class="h-44 w-full bg-zinc-100 flex items-center justify-center text-xs text-zinc-400 border-b border-zinc-100">No Photo</div>`;
+          const priceStr = item.price !== null ? `$${Number(item.price).toLocaleString()}` : '';
+          return `
+            <div onclick="openDetailModal('${item.id}')" class="border border-zinc-200 rounded-xl overflow-hidden hover:border-zinc-400 transition cursor-pointer bg-white flex flex-col">
+              ${thumb}
+              <div class="p-3.5 flex-1 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between gap-2 mb-1.5">
+                    <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${meta.badgeClass}">${meta.label}</span>
+                    <span class="font-bold text-sm text-zinc-900">${priceStr}</span>
+                  </div>
+                  <h4 class="font-semibold text-sm text-zinc-900 line-clamp-1">${escapeHtml(item.title)}</h4>
+                </div>
+                <div class="text-xs text-zinc-400 mt-2 flex justify-between">
+                  <span>${escapeHtml(item.neighborhood || item.region)}</span>
+                  <span>${new Date(item.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+        return;
+      }
+
+      container.className = 'divide-y divide-zinc-100';
       container.innerHTML = cachedListings.map(item => {
+        const meta = CATEGORY_META[item.category_id] || { label: item.category_id, badgeClass: 'bg-zinc-100 text-zinc-700' };
         const dateStr = new Date(item.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        const priceBadge = item.price !== null ? `<span class="font-bold text-emerald-800 ml-2">$${Number(item.price).toLocaleString()}</span>` : '';
-        const hood = item.neighborhood ? `<span class="text-stone-500 text-xs ml-2">(${item.neighborhood})</span>` : '';
-        const picBadge = item.has_image ? `<span class="text-orange-600 text-xs ml-2 font-medium">[pic]</span>` : '';
+        const priceBadge = item.price !== null ? `<span class="font-bold text-zinc-900 ml-2">$${Number(item.price).toLocaleString()}</span>` : '';
+        const hood = item.neighborhood ? `<span class="text-zinc-400 text-xs ml-2">(${escapeHtml(item.neighborhood)})</span>` : '';
+        const picBadge = item.has_image ? `<span class="text-indigo-600 text-[11px] ml-2 font-semibold">📷 photo</span>` : '';
         return `
-          <div onclick="openDetailModal('${item.id}')" class="px-4 py-2.5 hover:bg-stone-50 cursor-pointer flex items-baseline justify-between gap-4 text-sm">
-            <div>
-              <span class="text-stone-400 text-xs mr-2">${dateStr}</span>
-              <span class="cl-link font-medium">${escapeHtml(item.title)}</span>
+          <div onclick="openDetailModal('${item.id}')" class="px-5 py-3.5 hover:bg-zinc-50 cursor-pointer flex items-center justify-between gap-4 text-sm">
+            <div class="flex items-center flex-wrap gap-y-1">
+              <span class="text-zinc-400 text-xs w-14 shrink-0">${dateStr}</span>
+              <span class="font-medium text-zinc-900 hover:text-indigo-600">${escapeHtml(item.title)}</span>
               ${priceBadge}
               ${hood}
               ${picBadge}
             </div>
-            <span class="text-xs text-stone-400 shrink-0">${item.category_id}</span>
+            <span class="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded shrink-0 ${meta.badgeClass}">${meta.label}</span>
           </div>
         `;
       }).join('');
@@ -315,16 +427,26 @@
     function openDetailModal(id) {
       const item = cachedListings.find(x => x.id === id);
       if (!item) return;
-      document.getElementById('detailMeta').textContent = `${item.region} > ${item.category_id}`;
-      document.getElementById('detailTitle').textContent = item.price !== null ? `${item.title} - $${Number(item.price).toLocaleString()}` : item.title;
+      const meta = CATEGORY_META[item.category_id] || { label: item.category_id, badgeClass: 'bg-zinc-100 text-zinc-700' };
+      const badgeEl = document.getElementById('detailBadge');
+      badgeEl.className = `inline-block text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md mb-1.5 ${meta.badgeClass}`;
+      badgeEl.textContent = `${meta.label} • ${item.neighborhood || item.region}`;
+
+      document.getElementById('detailTitle').textContent = item.price !== null ? `${item.title} — $${Number(item.price).toLocaleString()}` : item.title;
       document.getElementById('detailDesc').textContent = item.description;
       document.getElementById('detailRelay').textContent = item.relay_email || 'reply@locallist.org';
-      document.getElementById('detailDate').textContent = `Posted: ${new Date(item.created_at).toLocaleString()}`;
+      document.getElementById('detailDate').textContent = `Posted ${new Date(item.created_at).toLocaleString()}`;
 
       const imgWrap = document.getElementById('detailImageWrapper');
+      const mainImg = document.getElementById('detailMainImage');
+      const thumbs = document.getElementById('detailThumbnails');
+
       if (item.image_urls && item.image_urls.length > 0) {
-        document.getElementById('detailImage').src = item.image_urls[0];
+        mainImg.src = item.image_urls[0];
         imgWrap.classList.remove('hidden');
+        thumbs.innerHTML = item.image_urls.length > 1
+          ? item.image_urls.map(url => `<img src="${url}" onclick="document.getElementById('detailMainImage').src='${url}'" class="h-16 w-20 object-cover rounded-lg border border-zinc-200 cursor-pointer" />`).join('')
+          : '';
       } else {
         imgWrap.classList.add('hidden');
       }
@@ -333,9 +455,25 @@
 
     function closeDetailModal() { document.getElementById('detailModal').classList.add('hidden'); }
 
+    function handlePostCategoryChange() {
+      const cat = document.getElementById('postCategory').value;
+      const priceLabel = document.getElementById('priceLabel');
+      const priceInput = document.getElementById('postPrice');
+      if (cat === 'personal') {
+        priceLabel.textContent = 'Age / Optional #';
+        priceInput.placeholder = 'Leave blank if N/A';
+      } else if (cat === 'services') {
+        priceLabel.textContent = 'Rate ($)';
+        priceInput.placeholder = 'Optional starting rate';
+      } else {
+        priceLabel.textContent = 'Price ($)';
+        priceInput.placeholder = 'Optional / Free';
+      }
+    }
+
     function openPostModal() {
       if (!currentUser) {
-        openAuthModal('Please log in or sign up first to post a listing.');
+        openAuthModal('Please sign in or create an account to publish a listing.');
         return;
       }
       document.getElementById('postModal').classList.remove('hidden');
@@ -343,35 +481,80 @@
 
     function closePostModal() { document.getElementById('postModal').classList.add('hidden'); }
 
+    function previewSelectedImages(event) {
+      const files = Array.from(event.target.files).slice(0, 4);
+      const previewContainer = document.getElementById('imagePreviewContainer');
+      if (files.length === 0) {
+        previewContainer.innerHTML = '';
+        previewContainer.classList.add('hidden');
+        return;
+      }
+      previewContainer.classList.remove('hidden');
+      previewContainer.innerHTML = files.map(file => {
+        const tempUrl = URL.createObjectURL(file);
+        return `<img src="${tempUrl}" class="h-16 w-full object-cover rounded-lg border border-zinc-200" />`;
+      }).join('');
+    }
+
     async function submitListing(e) {
       e.preventDefault();
       const statusMsg = document.getElementById('postStatusMsg');
+      const submitBtn = document.getElementById('submitPostBtn');
       statusMsg.classList.add('hidden');
 
-      const priceVal = document.getElementById('postPrice').value;
-      const imageUrlVal = document.getElementById('postImageUrl').value.trim();
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Uploading...';
 
-      const payload = {
-        seller_id: currentUser.id,
-        title: document.getElementById('postTitle').value.trim(),
-        category_id: document.getElementById('postCategory').value,
-        price: priceVal === '' ? null : parseFloat(priceVal),
-        region: document.getElementById('postRegion').value,
-        neighborhood: document.getElementById('postNeighborhood').value.trim() || null,
-        image_urls: imageUrlVal ? [imageUrlVal] : [],
-        description: document.getElementById('postDesc').value.trim()
-      };
+      try {
+        const fileInput = document.getElementById('postImageFiles');
+        const files = Array.from(fileInput.files).slice(0, 4);
+        const uploadedUrls = [];
 
-      const { error } = await supabaseClient.from('listings').insert([payload]);
-      if (error) {
-        statusMsg.textContent = error.message;
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          const ext = file.name.split('.').pop().toLowerCase();
+          const filePath = `${currentUser.id}/${Date.now()}_${i}.${ext}`;
+
+          const { error: uploadError } = await supabaseClient.storage
+            .from('listing-images')
+            .upload(filePath, file, { cacheControl: '3600', upsert: false });
+
+          if (uploadError) throw uploadError;
+
+          const { data: publicUrlData } = supabaseClient.storage
+            .from('listing-images')
+            .getPublicUrl(filePath);
+
+          uploadedUrls.push(publicUrlData.publicUrl);
+        }
+
+        const priceVal = document.getElementById('postPrice').value;
+        const payload = {
+          seller_id: currentUser.id,
+          title: document.getElementById('postTitle').value.trim(),
+          category_id: document.getElementById('postCategory').value,
+          price: priceVal === '' ? null : parseFloat(priceVal),
+          region: document.getElementById('postRegion').value,
+          neighborhood: document.getElementById('postNeighborhood').value.trim() || null,
+          image_urls: uploadedUrls,
+          description: document.getElementById('postDesc').value.trim()
+        };
+
+        const { error: insertError } = await supabaseClient.from('listings').insert([payload]);
+        if (insertError) throw insertError;
+
+        e.target.reset();
+        document.getElementById('imagePreviewContainer').innerHTML = '';
+        document.getElementById('imagePreviewContainer').classList.add('hidden');
+        closePostModal();
+        loadListings();
+      } catch (err) {
+        statusMsg.textContent = err.message || 'Error publishing listing.';
         statusMsg.classList.remove('hidden');
-        return;
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Publish Now';
       }
-
-      e.target.reset();
-      closePostModal();
-      loadListings();
     }
 
     function openAuthModal(msg) {
@@ -391,14 +574,13 @@
       const email = document.getElementById('authEmail').value.trim();
       const password = document.getElementById('authPassword').value;
       const msgEl = document.getElementById('authMsg');
-
       const { error } = await supabaseClient.auth.signUp({ email, password });
       msgEl.classList.remove('hidden');
       if (error) {
         msgEl.textContent = error.message;
       } else {
-        msgEl.textContent = 'Account created! If email confirmation is off in Supabase, you are now logged in.';
-        setTimeout(closeAuthModal, 1500);
+        msgEl.textContent = 'Account ready! Signing you in...';
+        setTimeout(closeAuthModal, 1200);
       }
     }
 
@@ -406,7 +588,6 @@
       const email = document.getElementById('authEmail').value.trim();
       const password = document.getElementById('authPassword').value;
       const msgEl = document.getElementById('authMsg');
-
       const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
       if (error) {
         msgEl.textContent = error.message;
@@ -431,11 +612,12 @@
       document.getElementById('categoryFilter').value = 'all';
       document.getElementById('searchInput').value = '';
       document.getElementById('maxPriceInput').value = '';
+      document.getElementById('hasPicFilter').checked = false;
       loadListings();
     }
 
     function escapeHtml(str) {
-      return str.replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+      return String(str).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
     }
   </script>
 </body>
