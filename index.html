@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>locallist — for sale, services & personal</title>
+  <title>simplylists — for sale, services & personal</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,12 +19,12 @@
 <body class="bg-[#F8F7F4] text-zinc-900 min-h-screen flex flex-col">
 
   <!-- TOP NAVIGATION BAR -->
-  <header class="bg-white/90 backdrop-blur border-b border-zinc-200 px-4 py-3 sticky top-0 z-30">
+  <header class="bg-white/95 backdrop-blur border-b border-zinc-200 px-4 py-3 sticky top-0 z-30">
     <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center gap-4">
-        <button onclick="showHome()" class="brand-font text-2xl font-bold tracking-tight text-zinc-900 flex items-center gap-1.5">
+        <button onclick="showHome()" class="brand-font text-2xl font-bold tracking-tight text-zinc-900 flex items-center gap-2">
           <span class="inline-block w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
-          locallist
+          simplylists
         </button>
         <div class="h-4 w-px bg-zinc-300"></div>
         <select id="regionSelect" onchange="handleRegionChange()" class="bg-zinc-100 hover:bg-zinc-200/70 border border-zinc-200 rounded-lg px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-zinc-700 cursor-pointer focus:outline-none">
@@ -38,7 +38,7 @@
 
       <div class="flex items-center gap-2.5 text-sm">
         <button onclick="openPostModal()" class="bg-zinc-900 hover:bg-indigo-600 transition-colors text-white font-medium px-4 py-2 rounded-lg text-xs tracking-wide shadow-sm">
-          + New Listing
+          + Post Listing
         </button>
         <div id="authArea">
           <button onclick="openAuthModal()" class="bg-white border border-zinc-300 hover:bg-zinc-50 px-3.5 py-2 rounded-lg text-xs font-medium text-zinc-700">
@@ -51,16 +51,16 @@
 
   <!-- CONNECTION BANNER -->
   <div id="setupBanner" class="hidden bg-amber-50 border-b border-amber-200 px-4 py-2.5 text-amber-900 text-xs text-center">
-    ⚠️ <strong>Supabase Keys Not Configured Yet:</strong> Paste your <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> inside <code>index.html</code> to load your live database.
+    ⚠️ <strong>Supabase Keys Not Configured Yet:</strong> Paste your <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> at the bottom of <code>index.html</code> to connect your database.
   </div>
 
   <!-- MAIN CONTAINER -->
   <main class="max-w-6xl w-full mx-auto px-4 py-8 flex-1">
 
     <!-- 3-PILLAR HERO DIRECTORY -->
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
       <!-- FOR SALE -->
-      <button onclick="filterByCategory('for-sale')" id="card-for-sale" class="cat-card text-left bg-white border border-zinc-200 hover:border-emerald-500 rounded-xl p-5 shadow-sm group">
+      <button onclick="filterByCategory('for-sale')" class="cat-card text-left bg-white border border-zinc-200 hover:border-emerald-500 rounded-xl p-5 shadow-sm group">
         <div class="flex items-center justify-between mb-2">
           <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md">
             01 / Marketplace
@@ -68,11 +68,11 @@
           <span class="text-zinc-400 group-hover:text-emerald-600 transition-colors text-sm">→</span>
         </div>
         <h2 class="brand-font text-xl font-bold text-zinc-900">For Sale</h2>
-        <p class="text-xs text-zinc-500 mt-1">Cars, electronics, furniture, bikes, fashion & local goods</p>
+        <p class="text-xs text-zinc-500 mt-1">Cars, electronics, furniture, wardrobe, bikes & free stuff</p>
       </button>
 
       <!-- SERVICES -->
-      <button onclick="filterByCategory('services')" id="card-services" class="cat-card text-left bg-white border border-zinc-200 hover:border-indigo-500 rounded-xl p-5 shadow-sm group">
+      <button onclick="filterByCategory('services')" class="cat-card text-left bg-white border border-zinc-200 hover:border-indigo-500 rounded-xl p-5 shadow-sm group">
         <div class="flex items-center justify-between mb-2">
           <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-md">
             02 / Directory
@@ -80,11 +80,11 @@
           <span class="text-zinc-400 group-hover:text-indigo-600 transition-colors text-sm">→</span>
         </div>
         <h2 class="brand-font text-xl font-bold text-zinc-900">Services</h2>
-        <p class="text-xs text-zinc-500 mt-1">Tech support, creative styling, lessons, auto & home pros</p>
+        <p class="text-xs text-zinc-500 mt-1">Tech & computer support, styling, lessons, auto & local pros</p>
       </button>
 
       <!-- PERSONAL -->
-      <button onclick="filterByCategory('personal')" id="card-personal" class="cat-card text-left bg-white border border-zinc-200 hover:border-rose-500 rounded-xl p-5 shadow-sm group">
+      <button onclick="filterByCategory('personal')" class="cat-card text-left bg-white border border-zinc-200 hover:border-rose-500 rounded-xl p-5 shadow-sm group">
         <div class="flex items-center justify-between mb-2">
           <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-rose-700 bg-rose-50 px-2.5 py-1 rounded-md">
             03 / Connections
@@ -97,15 +97,15 @@
     </section>
 
     <!-- SEARCH & FILTER TOOLBAR -->
-    <section class="bg-white border border-zinc-200 rounded-xl p-3 mb-6 flex flex-wrap gap-2.5 items-center shadow-sm">
+    <section class="bg-white border border-zinc-200 rounded-xl p-3 mb-4 flex flex-wrap gap-2.5 items-center shadow-sm">
       <input
         id="searchInput"
         type="text"
-        placeholder="Search listings..."
+        placeholder="Search simplylists..."
         onkeydown="if(event.key === 'Enter') loadListings()"
         class="flex-1 min-w-[200px] bg-zinc-50 border border-zinc-200 rounded-lg px-3.5 py-2 text-sm focus:outline-none focus:bg-white focus:border-zinc-900"
       />
-      <select id="categoryFilter" onchange="loadListings()" class="bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-2 text-sm font-medium">
+      <select id="categoryFilter" onchange="handleCategoryDropdownChange()" class="bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-2 text-sm font-medium">
         <option value="all">All Categories</option>
         <option value="for-sale">For Sale</option>
         <option value="services">Services</option>
@@ -117,9 +117,12 @@
         Has Photo
       </label>
       <button onclick="loadListings()" class="bg-zinc-900 hover:bg-zinc-800 text-white px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider">
-        Filter
+        Search
       </button>
     </section>
+
+    <!-- DYNAMIC SUBCATEGORY PILLS -->
+    <div id="subcategoryBar" class="hidden flex-wrap gap-1.5 mb-5"></div>
 
     <!-- FEED HEADER + VIEW SWITCHER -->
     <div class="bg-white border border-zinc-200 rounded-xl shadow-sm overflow-hidden">
@@ -136,11 +139,16 @@
 
       <!-- LISTINGS CONTAINER -->
       <div id="listingsContainer" class="divide-y divide-zinc-100">
-        <div class="p-10 text-center text-zinc-400 text-sm">Connecting to database...</div>
+        <div class="p-10 text-center text-zinc-400 text-sm">Connecting to simplylists database...</div>
       </div>
     </div>
 
   </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-zinc-200 bg-white py-4 px-4 text-center text-xs text-zinc-400">
+    simplylists — simple local classifieds for sale, services & personal connections
+  </footer>
 
   <!-- LISTING DETAIL MODAL -->
   <div id="detailModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
@@ -159,7 +167,7 @@
       <p id="detailDesc" class="text-sm text-zinc-700 whitespace-pre-line leading-relaxed mb-6"></p>
       <div class="bg-zinc-50 border border-zinc-200 rounded-xl p-3.5 text-xs flex flex-wrap items-center justify-between gap-2">
         <div>
-          <span class="font-semibold text-zinc-700">Reply Relay:</span>
+          <span class="font-semibold text-zinc-700">Anonymized Reply Relay:</span>
           <code id="detailRelay" class="ml-1.5 bg-white px-2.5 py-1 rounded border border-zinc-200 select-all font-mono"></code>
         </div>
         <span id="detailDate" class="text-zinc-400"></span>
@@ -171,13 +179,13 @@
   <div id="postModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl border border-zinc-200 max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
       <div class="flex justify-between items-center border-b border-zinc-100 pb-3 mb-4">
-        <h3 class="brand-font font-bold text-xl">Publish a Listing</h3>
+        <h3 class="brand-font font-bold text-xl">Post to simplylists</h3>
         <button onclick="closePostModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
       </div>
       <form onsubmit="submitListing(event)" class="space-y-3.5 text-sm">
         <div>
           <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Title *</label>
-          <input id="postTitle" required minlength="3" maxlength="140" class="w-full border border-zinc-300 rounded-lg px-3.5 py-2" placeholder="e.g. Custom PC Build & Tech Setup / Coffee Partner in OC" />
+          <input id="postTitle" required minlength="3" maxlength="140" class="w-full border border-zinc-300 rounded-lg px-3.5 py-2" placeholder="What are you listing?" />
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
@@ -189,14 +197,18 @@
             </select>
           </div>
           <div>
-            <label id="priceLabel" class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Price ($)</label>
-            <input id="postPrice" type="number" min="0" step="0.01" class="w-full border border-zinc-300 rounded-lg px-3.5 py-2" placeholder="Optional / Free" />
+            <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Subcategory</label>
+            <select id="postSubcategory" class="w-full border border-zinc-300 rounded-lg px-3 py-2 bg-white"></select>
           </div>
         </div>
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label id="priceLabel" class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Price ($)</label>
+            <input id="postPrice" type="number" min="0" step="0.01" class="w-full border border-zinc-300 rounded-lg px-3 py-2" placeholder="Optional" />
+          </div>
           <div>
             <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Region *</label>
-            <select id="postRegion" required class="w-full border border-zinc-300 rounded-lg px-3 py-2 bg-white">
+            <select id="postRegion" required class="w-full border border-zinc-300 rounded-lg px-2.5 py-2 bg-white">
               <option value="orange-county">Orange County</option>
               <option value="los-angeles">Los Angeles</option>
               <option value="san-diego">San Diego</option>
@@ -205,7 +217,7 @@
           </div>
           <div>
             <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">City / Area</label>
-            <input id="postNeighborhood" class="w-full border border-zinc-300 rounded-lg px-3.5 py-2" placeholder="e.g. Westminster / Irvine" />
+            <input id="postNeighborhood" class="w-full border border-zinc-300 rounded-lg px-3 py-2" placeholder="Westminster" />
           </div>
         </div>
         <div>
@@ -228,7 +240,7 @@
         <div class="flex justify-end gap-2 pt-2">
           <button type="button" onclick="closePostModal()" class="px-4 py-2 border border-zinc-300 rounded-lg text-xs font-medium">Cancel</button>
           <button id="submitPostBtn" type="submit" class="px-5 py-2 bg-zinc-900 hover:bg-indigo-600 text-white font-semibold rounded-lg text-xs disabled:opacity-50">
-            Publish Now
+            Publish Listing
           </button>
         </div>
       </form>
@@ -239,7 +251,7 @@
   <div id="authModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl border border-zinc-200 max-w-sm w-full p-6 shadow-2xl">
       <div class="flex justify-between items-center border-b border-zinc-100 pb-3 mb-4">
-        <h3 class="brand-font font-bold text-lg">Sign In or Create Account</h3>
+        <h3 class="brand-font font-bold text-lg">Sign In to simplylists</h3>
         <button onclick="closeAuthModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
       </div>
       <div class="space-y-3 text-sm">
@@ -270,15 +282,49 @@
     let supabaseClient = null;
     let currentUser = null;
     let cachedListings = [];
+    let activeSubcategory = 'all';
     let viewMode = 'list';
 
     const CATEGORY_META = {
-      'for-sale': { label: 'For Sale', badgeClass: 'bg-emerald-50 text-emerald-700 border border-emerald-200' },
-      'services': { label: 'Services', badgeClass: 'bg-indigo-50 text-indigo-700 border border-indigo-200' },
-      'personal': { label: 'Personal', badgeClass: 'bg-rose-50 text-rose-700 border border-rose-200' }
+      'for-sale': {
+        label: 'For Sale',
+        badgeClass: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+        subcategories: [
+          { id: 'cars+trucks', label: 'cars & trucks' },
+          { id: 'electronics', label: 'electronics & tech' },
+          { id: 'furniture',   label: 'furniture & decor' },
+          { id: 'fashion',     label: 'clothing & wardrobe' },
+          { id: 'bicycles',    label: 'bicycles & gear' },
+          { id: 'free',        label: 'free stuff' },
+          { id: 'general',     label: 'general for sale' }
+        ]
+      },
+      'services': {
+        label: 'Services',
+        badgeClass: 'bg-indigo-50 text-indigo-700 border border-indigo-200',
+        subcategories: [
+          { id: 'computer',   label: 'computer & tech support' },
+          { id: 'creative',   label: 'creative & styling' },
+          { id: 'lessons',    label: 'lessons & coaching' },
+          { id: 'automotive', label: 'automotive services' },
+          { id: 'household',  label: 'household & local pros' }
+        ]
+      },
+      'personal': {
+        label: 'Personal',
+        badgeClass: 'bg-rose-50 text-rose-700 border border-rose-200',
+        subcategories: [
+          { id: 'missed-connections', label: 'missed connections' },
+          { id: 'dating-romance',     label: 'dating & romance' },
+          { id: 'platonic-friends',   label: 'friends & activity partners' },
+          { id: 'musicians-collab',   label: 'musicians & creative collabs' }
+        ]
+      }
     };
 
     const isConfigured = SUPABASE_URL.startsWith('http') && !SUPABASE_URL.includes('PASTE_YOUR');
+
+    handlePostCategoryChange();
 
     if (isConfigured) {
       supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -327,6 +373,38 @@
       renderListings();
     }
 
+    function renderSubcategoryBar() {
+      const cat = document.getElementById('categoryFilter').value;
+      const bar = document.getElementById('subcategoryBar');
+      if (cat === 'all' || !CATEGORY_META[cat]) {
+        bar.classList.add('hidden');
+        bar.innerHTML = '';
+        return;
+      }
+
+      const subs = CATEGORY_META[cat].subcategories;
+      bar.classList.remove('hidden');
+      bar.className = 'flex flex-wrap gap-1.5 mb-5';
+      bar.innerHTML = [
+        `<button onclick="selectSubcategory('all')" class="px-3 py-1 rounded-full text-xs font-medium border ${activeSubcategory === 'all' ? 'bg-zinc-900 text-white border-zinc-900' : 'bg-white text-zinc-600 border-zinc-200 hover:border-zinc-400'}">All ${CATEGORY_META[cat].label}</button>`,
+        ...subs.map(s => `
+          <button onclick="selectSubcategory('${s.id}')" class="px-3 py-1 rounded-full text-xs font-medium border ${activeSubcategory === s.id ? 'bg-zinc-900 text-white border-zinc-900' : 'bg-white text-zinc-600 border-zinc-200 hover:border-zinc-400'}">${s.label}</button>
+        `)
+      ].join('');
+    }
+
+    function selectSubcategory(subId) {
+      activeSubcategory = subId;
+      renderSubcategoryBar();
+      loadListings();
+    }
+
+    function handleCategoryDropdownChange() {
+      activeSubcategory = 'all';
+      renderSubcategoryBar();
+      loadListings();
+    }
+
     async function loadListings() {
       if (!supabaseClient) return;
       const container = document.getElementById('listingsContainer');
@@ -349,6 +427,7 @@
 
       if (region !== 'all') query = query.eq('region', region);
       if (category !== 'all') query = query.eq('category_id', category);
+      if (activeSubcategory !== 'all') query = query.eq('subcategory_id', activeSubcategory);
       if (maxPrice !== '') query = query.lte('price', parseFloat(maxPrice));
       if (hasPic) query = query.eq('has_image', true);
       if (search !== '') query = query.ilike('title', `%${search}%`);
@@ -368,7 +447,7 @@
       const container = document.getElementById('listingsContainer');
       if (cachedListings.length === 0) {
         container.className = '';
-        container.innerHTML = `<div class="p-12 text-center text-zinc-400 text-sm">No listings in this section yet. Click <strong>+ New Listing</strong> to post the first one.</div>`;
+        container.innerHTML = `<div class="p-12 text-center text-zinc-400 text-sm">No listings found here yet. Click <strong>+ Post Listing</strong> to publish the first one!</div>`;
         return;
       }
 
@@ -430,11 +509,11 @@
       const meta = CATEGORY_META[item.category_id] || { label: item.category_id, badgeClass: 'bg-zinc-100 text-zinc-700' };
       const badgeEl = document.getElementById('detailBadge');
       badgeEl.className = `inline-block text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md mb-1.5 ${meta.badgeClass}`;
-      badgeEl.textContent = `${meta.label} • ${item.neighborhood || item.region}`;
+      badgeEl.textContent = `${meta.label}${item.subcategory_id ? ' / ' + item.subcategory_id : ''} • ${item.neighborhood || item.region}`;
 
       document.getElementById('detailTitle').textContent = item.price !== null ? `${item.title} — $${Number(item.price).toLocaleString()}` : item.title;
       document.getElementById('detailDesc').textContent = item.description;
-      document.getElementById('detailRelay').textContent = item.relay_email || 'reply@locallist.org';
+      document.getElementById('detailRelay').textContent = item.relay_email || 'reply@simplylists.com';
       document.getElementById('detailDate').textContent = `Posted ${new Date(item.created_at).toLocaleString()}`;
 
       const imgWrap = document.getElementById('detailImageWrapper');
@@ -457,14 +536,19 @@
 
     function handlePostCategoryChange() {
       const cat = document.getElementById('postCategory').value;
+      const subSelect = document.getElementById('postSubcategory');
       const priceLabel = document.getElementById('priceLabel');
       const priceInput = document.getElementById('postPrice');
+
+      const subs = CATEGORY_META[cat]?.subcategories || [];
+      subSelect.innerHTML = subs.map(s => `<option value="${s.id}">${s.label}</option>`).join('');
+
       if (cat === 'personal') {
         priceLabel.textContent = 'Age / Optional #';
-        priceInput.placeholder = 'Leave blank if N/A';
+        priceInput.placeholder = 'Optional';
       } else if (cat === 'services') {
         priceLabel.textContent = 'Rate ($)';
-        priceInput.placeholder = 'Optional starting rate';
+        priceInput.placeholder = 'Starting rate';
       } else {
         priceLabel.textContent = 'Price ($)';
         priceInput.placeholder = 'Optional / Free';
@@ -473,7 +557,7 @@
 
     function openPostModal() {
       if (!currentUser) {
-        openAuthModal('Please sign in or create an account to publish a listing.');
+        openAuthModal('Please sign in or create an account to post on simplylists.');
         return;
       }
       document.getElementById('postModal').classList.remove('hidden');
@@ -533,6 +617,7 @@
           seller_id: currentUser.id,
           title: document.getElementById('postTitle').value.trim(),
           category_id: document.getElementById('postCategory').value,
+          subcategory_id: document.getElementById('postSubcategory').value || null,
           price: priceVal === '' ? null : parseFloat(priceVal),
           region: document.getElementById('postRegion').value,
           neighborhood: document.getElementById('postNeighborhood').value.trim() || null,
@@ -544,6 +629,7 @@
         if (insertError) throw insertError;
 
         e.target.reset();
+        handlePostCategoryChange();
         document.getElementById('imagePreviewContainer').innerHTML = '';
         document.getElementById('imagePreviewContainer').classList.add('hidden');
         closePostModal();
@@ -553,7 +639,7 @@
         statusMsg.classList.remove('hidden');
       } finally {
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Publish Now';
+        submitBtn.textContent = 'Publish Listing';
       }
     }
 
@@ -579,7 +665,7 @@
       if (error) {
         msgEl.textContent = error.message;
       } else {
-        msgEl.textContent = 'Account ready! Signing you in...';
+        msgEl.textContent = 'Account created! Signing you in...';
         setTimeout(closeAuthModal, 1200);
       }
     }
@@ -603,6 +689,8 @@
 
     function filterByCategory(cat) {
       document.getElementById('categoryFilter').value = cat;
+      activeSubcategory = 'all';
+      renderSubcategoryBar();
       loadListings();
     }
 
@@ -610,6 +698,8 @@
 
     function showHome() {
       document.getElementById('categoryFilter').value = 'all';
+      activeSubcategory = 'all';
+      renderSubcategoryBar();
       document.getElementById('searchInput').value = '';
       document.getElementById('maxPriceInput').value = '';
       document.getElementById('hasPicFilter').checked = false;
