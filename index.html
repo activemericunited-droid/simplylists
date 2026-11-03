@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>simplylists — for sale, services & personal</title>
+  <title>s i m p l y l i s t s — for sale, services & personal</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Load Inter across all weights: 100 (Thin) through 700 (Bold) -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Load Inter Regular (400), Medium (500), SemiBold (600), Bold (700) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     body, .brand-font {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -21,11 +21,10 @@
       transform: translateY(-2px);
       border-color: #1348FB;
     }
-    /* Ensure crisp rendering for Inter Thin (100) subcategories */
-    .subcat-thin {
+    /* Regular Inter (400) for subcategories */
+    .subcat-regular {
       font-family: 'Inter', sans-serif;
-      font-weight: 100;
-      letter-spacing: 0.02em;
+      font-weight: 400;
     }
   </style>
 </head>
@@ -35,40 +34,23 @@
   <header class="bg-white/95 backdrop-blur border-b border-zinc-200 px-4 py-3 sticky top-0 z-30">
     <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center gap-4">
-        <!-- LOGO (#F0A06A) WITH STRAWBERRY + 4-LEAF CLOVER LEAF SYMBOL -->
-        <button onclick="showHome()" class="text-2xl font-bold tracking-tight text-[#F0A06A] flex items-center gap-2 hover:opacity-90 transition-opacity">
-          <svg class="w-8 h-8 shrink-0 text-[#F0A06A]" viewBox="0 0 36 38" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <!-- 4-Leaf Clover Crown (Strawberry Leaf Calyx) -->
-            <g fill="currentColor">
-              <!-- Top-Left Clover Leaf -->
-              <path d="M18 11.5 C15 6, 9.5 5.5, 9.5 9 C9.5 11.5, 13.5 12.5, 18 11.5 Z" />
-              <!-- Top-Right Clover Leaf -->
-              <path d="M18 11.5 C21 6, 26.5 5.5, 26.5 9 C26.5 11.5, 22.5 12.5, 18 11.5 Z" />
-              <!-- Far-Left Clover Leaf -->
-              <path d="M18 11.5 C12.5 10, 7.5 12, 9 15 C10.2 17, 14.5 14.5, 18 11.5 Z" />
-              <!-- Far-Right Clover Leaf -->
-              <path d="M18 11.5 C23.5 10, 28.5 12, 27 15 C25.8 17, 21.5 14.5, 18 11.5 Z" />
-              <!-- Tiny Clover Stem -->
-              <path d="M18 11.5 C18 8.5, 19.2 6, 20.8 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-            </g>
-            <!-- Strawberry Berry Body -->
-            <path d="M18 12.5 C10.5 12.5, 6.5 17.5, 8 24.5 C9.4 30.8, 14.5 35.8, 18 36.5 C21.5 35.8, 26.6 30.8, 28 24.5 C29.5 17.5, 25.5 12.5, 18 12.5 Z" fill="currentColor" />
-            <!-- Strawberry Seeds (Cutout Details) -->
-            <g fill="#FFFFFF">
-              <ellipse cx="14" cy="18.5" rx="0.9" ry="1.3" />
-              <ellipse cx="18" cy="17.5" rx="0.9" ry="1.3" />
-              <ellipse cx="22" cy="18.5" rx="0.9" ry="1.3" />
-              <ellipse cx="12" cy="23.5" rx="0.9" ry="1.3" />
-              <ellipse cx="16" cy="23" rx="0.9" ry="1.3" />
-              <ellipse cx="20" cy="23" rx="0.9" ry="1.3" />
-              <ellipse cx="24" cy="23.5" rx="0.9" ry="1.3" />
-              <ellipse cx="14.5" cy="28" rx="0.9" ry="1.3" />
-              <ellipse cx="18" cy="28.5" rx="0.9" ry="1.3" />
-              <ellipse cx="21.5" cy="28" rx="0.9" ry="1.3" />
-              <ellipse cx="18" cy="32.8" rx="0.9" ry="1.3" />
-            </g>
+        <!-- LOGO (#F0A06A) WITH LV-STYLE 4-LEAF CLOVER STAR & SPACED LETTERS -->
+        <button onclick="showHome()" class="text-xl sm:text-2xl font-bold text-[#F0A06A] flex items-center gap-2.5 hover:opacity-90 transition-opacity">
+          <svg class="w-8 h-8 shrink-0 text-[#F0A06A]" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <!-- Outer LV-Inspired 4-Leaf Clover Star (Pointed Quatrefoil Monogram Flower) -->
+            <path
+              d="M18 1.5 C21.2 8.2, 23 11.8, 22.8 13.2 C24.2 13, 27.8 14.8, 34.5 18 C27.8 21.2, 24.2 23, 22.8 22.8 C23 24.2, 21.2 27.8, 18 34.5 C14.8 27.8, 13 24.2, 13.2 22.8 C11.8 23, 8.2 21.2, 1.5 18 C8.2 14.8, 11.8 13, 13.2 13.2 C13 11.8, 14.8 8.2, 18 1.5 Z"
+              fill="currentColor"
+            />
+            <!-- Inner Negative-Space Concave Star Cutout -->
+            <path
+              d="M18 10.5 Q19.2 16.8 25.5 18 Q19.2 19.2 18 25.5 Q16.8 19.2 10.5 18 Q16.8 16.8 18 10.5 Z"
+              fill="#FFFFFF"
+            />
+            <!-- Center Accent Dot -->
+            <circle cx="18" cy="18" r="1.8" fill="currentColor" />
           </svg>
-          <span>simplylists</span>
+          <span class="tracking-widest">s i m p l y l i s t s</span>
         </button>
 
         <div class="h-4 w-px bg-zinc-300"></div>
@@ -82,7 +64,8 @@
       </div>
 
       <div class="flex items-center gap-2.5 text-sm">
-        <button onclick="openPostModal()" class="bg-[#1348FB] hover:opacity-90 transition-opacity text-white font-semibold px-4 py-2 rounded-lg text-xs tracking-wide shadow-sm">
+        <!-- + POST LISTING BUTTON IN #1BF40B -->
+        <button onclick="openPostModal()" class="bg-[#1BF40B] hover:brightness-95 transition-all text-zinc-950 font-bold px-4 py-2 rounded-lg text-xs tracking-wide shadow-sm">
           + Post Listing
         </button>
         <div id="authArea">
@@ -102,7 +85,7 @@
   <!-- MAIN CONTAINER -->
   <main class="max-w-6xl w-full mx-auto px-4 py-8 flex-1">
 
-    <!-- 3-PILLAR HERO DIRECTORY (Categories in Inter Bold #1348FB, Subcategories in Inter Thin) -->
+    <!-- 3-PILLAR HERO DIRECTORY (Categories in Inter Bold #1348FB, Subcategories in Regular Inter) -->
     <section class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
       <!-- FOR SALE -->
       <div onclick="filterByCategory('for-sale')" class="cat-card cursor-pointer text-left bg-white border border-zinc-200 rounded-xl p-5 shadow-sm group">
@@ -114,15 +97,15 @@
         </div>
         <h2 class="text-xl font-bold text-[#1348FB]">For Sale</h2>
         <div class="mt-2.5 flex flex-wrap gap-1.5">
-          <span onclick="event.stopPropagation(); jumpToSubcategory('for-sale', 'cars+trucks')" class="subcat-thin text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">cars & trucks</span>
+          <span onclick="event.stopPropagation(); jumpToSubcategory('for-sale', 'cars+trucks')" class="subcat-regular text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">cars & trucks</span>
           <span class="text-zinc-300 text-xs">•</span>
-          <span onclick="event.stopPropagation(); jumpToSubcategory('for-sale', 'electronics')" class="subcat-thin text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">electronics & tech</span>
+          <span onclick="event.stopPropagation(); jumpToSubcategory('for-sale', 'electronics')" class="subcat-regular text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">electronics & tech</span>
           <span class="text-zinc-300 text-xs">•</span>
-          <span onclick="event.stopPropagation(); jumpToSubcategory('for-sale', 'furniture')" class="subcat-thin text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">furniture & decor</span>
+          <span onclick="event.stopPropagation(); jumpToSubcategory('for-sale', 'furniture')" class="subcat-regular text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">furniture & decor</span>
           <span class="text-zinc-300 text-xs">•</span>
-          <span onclick="event.stopPropagation(); jumpToSubcategory('for-sale', 'fashion')" class="subcat-thin text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">clothing & wardrobe</span>
+          <span onclick="event.stopPropagation(); jumpToSubcategory('for-sale', 'fashion')" class="subcat-regular text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">clothing & wardrobe</span>
           <span class="text-zinc-300 text-xs">•</span>
-          <span onclick="event.stopPropagation(); jumpToSubcategory('for-sale', 'free')" class="subcat-thin text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">free stuff</span>
+          <span onclick="event.stopPropagation(); jumpToSubcategory('for-sale', 'free')" class="subcat-regular text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">free stuff</span>
         </div>
       </div>
 
@@ -136,15 +119,15 @@
         </div>
         <h2 class="text-xl font-bold text-[#1348FB]">Services</h2>
         <div class="mt-2.5 flex flex-wrap gap-1.5">
-          <span onclick="event.stopPropagation(); jumpToSubcategory('services', 'computer')" class="subcat-thin text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">computer & tech support</span>
+          <span onclick="event.stopPropagation(); jumpToSubcategory('services', 'computer')" class="subcat-regular text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">computer & tech support</span>
           <span class="text-zinc-300 text-xs">•</span>
-          <span onclick="event.stopPropagation(); jumpToSubcategory('services', 'creative')" class="subcat-thin text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">creative & styling</span>
+          <span onclick="event.stopPropagation(); jumpToSubcategory('services', 'creative')" class="subcat-regular text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">creative & styling</span>
           <span class="text-zinc-300 text-xs">•</span>
-          <span onclick="event.stopPropagation(); jumpToSubcategory('services', 'lessons')" class="subcat-thin text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">lessons & coaching</span>
+          <span onclick="event.stopPropagation(); jumpToSubcategory('services', 'lessons')" class="subcat-regular text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">lessons & coaching</span>
           <span class="text-zinc-300 text-xs">•</span>
-          <span onclick="event.stopPropagation(); jumpToSubcategory('services', 'automotive')" class="subcat-thin text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">automotive</span>
+          <span onclick="event.stopPropagation(); jumpToSubcategory('services', 'automotive')" class="subcat-regular text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">automotive</span>
           <span class="text-zinc-300 text-xs">•</span>
-          <span onclick="event.stopPropagation(); jumpToSubcategory('services', 'household')" class="subcat-thin text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">household pros</span>
+          <span onclick="event.stopPropagation(); jumpToSubcategory('services', 'household')" class="subcat-regular text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">household pros</span>
         </div>
       </div>
 
@@ -158,13 +141,13 @@
         </div>
         <h2 class="text-xl font-bold text-[#1348FB]">Personal</h2>
         <div class="mt-2.5 flex flex-wrap gap-1.5">
-          <span onclick="event.stopPropagation(); jumpToSubcategory('personal', 'missed-connections')" class="subcat-thin text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">missed connections</span>
+          <span onclick="event.stopPropagation(); jumpToSubcategory('personal', 'missed-connections')" class="subcat-regular text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">missed connections</span>
           <span class="text-zinc-300 text-xs">•</span>
-          <span onclick="event.stopPropagation(); jumpToSubcategory('personal', 'dating-romance')" class="subcat-thin text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">dating & romance</span>
+          <span onclick="event.stopPropagation(); jumpToSubcategory('personal', 'dating-romance')" class="subcat-regular text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">dating & romance</span>
           <span class="text-zinc-300 text-xs">•</span>
-          <span onclick="event.stopPropagation(); jumpToSubcategory('personal', 'platonic-friends')" class="subcat-thin text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">friends & activity partners</span>
+          <span onclick="event.stopPropagation(); jumpToSubcategory('personal', 'platonic-friends')" class="subcat-regular text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">friends & activity partners</span>
           <span class="text-zinc-300 text-xs">•</span>
-          <span onclick="event.stopPropagation(); jumpToSubcategory('personal', 'musicians-collab')" class="subcat-thin text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">musicians & collabs</span>
+          <span onclick="event.stopPropagation(); jumpToSubcategory('personal', 'musicians-collab')" class="subcat-regular text-xs text-zinc-700 hover:text-[#1348FB] underline-offset-2 hover:underline">musicians & collabs</span>
         </div>
       </div>
     </section>
@@ -194,7 +177,7 @@
       </button>
     </section>
 
-    <!-- DYNAMIC SUBCATEGORY PILLS (Inter Thin) -->
+    <!-- DYNAMIC SUBCATEGORY PILLS (Regular Inter) -->
     <div id="subcategoryBar" class="hidden flex-wrap gap-1.5 mb-5"></div>
 
     <!-- FEED HEADER + VIEW SWITCHER -->
@@ -220,7 +203,7 @@
 
   <!-- FOOTER -->
   <footer class="border-t border-zinc-200 bg-white py-4 px-4 text-center text-xs text-zinc-400">
-    <span class="font-bold text-[#F0A06A]">simplylists</span> — simple local classifieds for sale, services & personal connections
+    <span class="font-bold text-[#F0A06A] tracking-widest">s i m p l y l i s t s</span> — simple local classifieds for sale, services & personal connections
   </footer>
 
   <!-- LISTING DETAIL MODAL -->
@@ -230,7 +213,7 @@
         <div>
           <div class="flex items-center gap-2 mb-1.5">
             <span id="detailCategoryBadge" class="inline-block text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-[#1348FB]/10 text-[#1348FB] border border-[#1348FB]/25"></span>
-            <span id="detailSubcategoryBadge" class="subcat-thin text-xs text-zinc-600"></span>
+            <span id="detailSubcategoryBadge" class="subcat-regular text-xs text-zinc-600"></span>
           </div>
           <h3 id="detailTitle" class="text-2xl font-bold text-zinc-900"></h3>
         </div>
@@ -255,7 +238,7 @@
   <div id="postModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl border border-zinc-200 max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
       <div class="flex justify-between items-center border-b border-zinc-100 pb-3 mb-4">
-        <h3 class="font-bold text-xl text-zinc-900">Post to <span class="text-[#F0A06A]">simplylists</span></h3>
+        <h3 class="font-bold text-xl text-zinc-900">Post to <span class="text-[#F0A06A] tracking-widest ml-1">s i m p l y l i s t s</span></h3>
         <button onclick="closePostModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
       </div>
       <form onsubmit="submitListing(event)" class="space-y-3.5 text-sm">
@@ -274,7 +257,7 @@
           </div>
           <div>
             <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Subcategory</label>
-            <select id="postSubcategory" class="subcat-thin w-full border border-zinc-300 rounded-lg px-3 py-2 bg-white text-zinc-900"></select>
+            <select id="postSubcategory" class="subcat-regular w-full border border-zinc-300 rounded-lg px-3 py-2 bg-white text-zinc-900"></select>
           </div>
         </div>
         <div class="grid grid-cols-3 gap-3">
@@ -315,7 +298,7 @@
         <div id="postStatusMsg" class="text-xs text-red-600 hidden"></div>
         <div class="flex justify-end gap-2 pt-2">
           <button type="button" onclick="closePostModal()" class="px-4 py-2 border border-zinc-300 rounded-lg text-xs font-medium">Cancel</button>
-          <button id="submitPostBtn" type="submit" class="px-5 py-2 bg-[#1348FB] hover:opacity-90 text-white font-bold rounded-lg text-xs disabled:opacity-50">
+          <button id="submitPostBtn" type="submit" class="px-5 py-2 bg-[#1BF40B] hover:brightness-95 text-zinc-950 font-bold rounded-lg text-xs disabled:opacity-50">
             Publish Listing
           </button>
         </div>
@@ -327,7 +310,7 @@
   <div id="authModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl border border-zinc-200 max-w-sm w-full p-6 shadow-2xl">
       <div class="flex justify-between items-center border-b border-zinc-100 pb-3 mb-4">
-        <h3 class="font-bold text-lg">Sign In to <span class="text-[#F0A06A]">simplylists</span></h3>
+        <h3 class="font-bold text-lg">Sign In to <span class="text-[#F0A06A] tracking-widest ml-1">s i m p l y l i s t s</span></h3>
         <button onclick="closeAuthModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
       </div>
       <div class="space-y-3 text-sm">
@@ -464,7 +447,7 @@
       bar.innerHTML = [
         `<button onclick="selectSubcategory('all')" class="px-3 py-1 rounded-full text-xs font-bold border ${activeSubcategory === 'all' ? 'bg-[#1348FB] text-white border-[#1348FB]' : 'bg-white text-[#1348FB] border-[#1348FB]/30 hover:border-[#1348FB]'}">All ${CATEGORY_META[cat].label}</button>`,
         ...subs.map(s => `
-          <button onclick="selectSubcategory('${s.id}')" class="subcat-thin px-3 py-1 rounded-full text-xs border ${activeSubcategory === s.id ? 'bg-[#1348FB] text-white border-[#1348FB]' : 'bg-white text-zinc-800 border-zinc-200 hover:border-[#1348FB]'}">${s.label}</button>
+          <button onclick="selectSubcategory('${s.id}')" class="subcat-regular px-3 py-1 rounded-full text-xs border ${activeSubcategory === s.id ? 'bg-[#1348FB] text-white border-[#1348FB]' : 'bg-white text-zinc-800 border-zinc-200 hover:border-[#1348FB]'}">${s.label}</button>
         `)
       ].join('');
     }
@@ -557,7 +540,7 @@
                   <div class="flex items-center justify-between gap-2 mb-1.5">
                     <div class="flex items-center gap-1.5">
                       <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${meta.badgeClass}">${meta.label}</span>
-                      ${subLabel ? `<span class="subcat-thin text-[11px] text-zinc-600">${escapeHtml(subLabel)}</span>` : ''}
+                      ${subLabel ? `<span class="subcat-regular text-[11px] text-zinc-600">${escapeHtml(subLabel)}</span>` : ''}
                     </div>
                     <span class="font-bold text-sm text-zinc-900">${priceStr}</span>
                   </div>
@@ -592,7 +575,7 @@
               ${picBadge}
             </div>
             <div class="flex items-center gap-2 shrink-0">
-              ${subLabel ? `<span class="subcat-thin text-xs text-zinc-600 hidden sm:inline">${escapeHtml(subLabel)}</span>` : ''}
+              ${subLabel ? `<span class="subcat-regular text-xs text-zinc-600 hidden sm:inline">${escapeHtml(subLabel)}</span>` : ''}
               <span class="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded ${meta.badgeClass}">${meta.label}</span>
             </div>
           </div>
@@ -641,7 +624,7 @@
       const priceInput = document.getElementById('postPrice');
 
       const subs = CATEGORY_META[cat]?.subcategories || [];
-      subSelect.innerHTML = subs.map(s => `<option value="${s.id}" class="subcat-thin">${s.label}</option>`).join('');
+      subSelect.innerHTML = subs.map(s => `<option value="${s.id}" class="subcat-regular">${s.label}</option>`).join('');
 
       if (cat === 'personal') {
         priceLabel.textContent = 'Age / Optional #';
