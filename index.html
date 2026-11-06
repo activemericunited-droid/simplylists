@@ -21,7 +21,6 @@
       transform: translateY(-2px);
       border-color: #1348FB;
     }
-    /* Regular Inter (400) for subcategories */
     .subcat-regular {
       font-family: 'Inter', sans-serif;
       font-weight: 400;
@@ -37,17 +36,14 @@
         <!-- LOGO (#F0A06A) WITH LV-STYLE 4-LEAF CLOVER STAR & SPACED LETTERS -->
         <button onclick="showHome()" class="text-xl sm:text-2xl font-bold text-[#F0A06A] flex items-center gap-2.5 hover:opacity-90 transition-opacity">
           <svg class="w-8 h-8 shrink-0 text-[#F0A06A]" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <!-- Outer LV-Inspired 4-Leaf Clover Star (Pointed Quatrefoil Monogram Flower) -->
             <path
               d="M18 1.5 C21.2 8.2, 23 11.8, 22.8 13.2 C24.2 13, 27.8 14.8, 34.5 18 C27.8 21.2, 24.2 23, 22.8 22.8 C23 24.2, 21.2 27.8, 18 34.5 C14.8 27.8, 13 24.2, 13.2 22.8 C11.8 23, 8.2 21.2, 1.5 18 C8.2 14.8, 11.8 13, 13.2 13.2 C13 11.8, 14.8 8.2, 18 1.5 Z"
               fill="currentColor"
             />
-            <!-- Inner Negative-Space Concave Star Cutout -->
             <path
               d="M18 10.5 Q19.2 16.8 25.5 18 Q19.2 19.2 18 25.5 Q16.8 19.2 10.5 18 Q16.8 16.8 18 10.5 Z"
               fill="#FFFFFF"
             />
-            <!-- Center Accent Dot -->
             <circle cx="18" cy="18" r="1.8" fill="currentColor" />
           </svg>
           <span class="tracking-widest">s i m p l y l i s t s</span>
@@ -68,6 +64,13 @@
         <button onclick="openPostModal()" class="bg-[#1BF40B] hover:brightness-95 transition-all text-zinc-950 font-bold px-4 py-2 rounded-lg text-xs tracking-wide shadow-sm">
           + Post Listing
         </button>
+
+        <!-- INBOX BUTTON (VISIBLE WHEN LOGGED IN) -->
+        <button id="inboxNavBtn" onclick="openInboxModal()" class="hidden relative bg-white border border-zinc-300 hover:border-[#1348FB] px-3.5 py-2 rounded-lg text-xs font-semibold text-zinc-800 items-center gap-1.5">
+          <span>💬 Inbox</span>
+          <span id="unreadBadge" class="hidden bg-[#1348FB] text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">0</span>
+        </button>
+
         <div id="authArea">
           <button onclick="openAuthModal()" class="bg-white border border-zinc-300 hover:bg-zinc-50 px-3.5 py-2 rounded-lg text-xs font-medium text-zinc-700">
             Sign In
@@ -206,9 +209,9 @@
     <span class="font-bold text-[#F0A06A] tracking-widest">s i m p l y l i s t s</span> — simple local classifieds for sale, services & personal connections
   </footer>
 
-  <!-- LISTING DETAIL MODAL -->
+  <!-- LISTING DETAIL & IN-APP MESSAGE MODAL -->
   <div id="detailModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl border border-zinc-200 max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
+    <div class="bg-white rounded-2xl border border-zinc-200 max-w-2xl w-full max-h-[92vh] overflow-y-auto p-6 shadow-2xl">
       <div class="flex justify-between items-start gap-4 border-b border-zinc-100 pb-4 mb-4">
         <div>
           <div class="flex items-center gap-2 mb-1.5">
@@ -219,11 +222,44 @@
         </div>
         <button onclick="closeDetailModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
       </div>
+
       <div id="detailImageWrapper" class="mb-5 hidden space-y-2">
         <img id="detailMainImage" src="" alt="Listing photo" class="w-full max-h-96 object-cover rounded-xl border border-zinc-200" />
         <div id="detailThumbnails" class="flex gap-2 overflow-x-auto"></div>
       </div>
+
       <p id="detailDesc" class="text-sm text-zinc-700 whitespace-pre-line leading-relaxed mb-6"></p>
+
+      <!-- IN-WEBSITE DIRECT MESSAGING BOX -->
+      <div id="directMessageSection" class="bg-zinc-50 border border-zinc-200 rounded-xl p-4 mb-4">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-[#1348FB]">💬 Send Direct Message to Poster</h4>
+          <span id="detailSellerBadge" class="text-xs text-zinc-500"></span>
+        </div>
+        <div id="dmFormContainer">
+          <textarea
+            id="dmInput"
+            rows="3"
+            placeholder="Hi! Is this still available? Write your message here..."
+            class="w-full bg-white border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1348FB] mb-2.5"
+          ></textarea>
+          <div class="flex items-center justify-between gap-2">
+            <span id="dmFeedback" class="text-xs font-medium text-emerald-700 hidden"></span>
+            <button
+              id="sendDmBtn"
+              onclick="sendListingMessage()"
+              class="ml-auto bg-[#1BF40B] hover:brightness-95 text-zinc-950 font-bold px-4 py-2 rounded-lg text-xs shadow-sm disabled:opacity-50"
+            >
+              Send Message
+            </button>
+          </div>
+        </div>
+        <div id="ownListingNotice" class="hidden text-xs text-zinc-500 flex items-center justify-between">
+          <span>This is your listing. Buyers can message you directly from here.</span>
+          <button onclick="deleteOwnListing()" class="text-red-600 hover:underline font-semibold">Delete Listing</button>
+        </div>
+      </div>
+
       <div class="bg-zinc-50 border border-zinc-200 rounded-xl p-3.5 text-xs flex flex-wrap items-center justify-between gap-2">
         <div>
           <span class="font-semibold text-zinc-700">Anonymized Reply Relay:</span>
@@ -234,9 +270,55 @@
     </div>
   </div>
 
-  <!-- CREATE LISTING MODAL -->
+  <!-- IN-WEBSITE INBOX & CHAT MODAL -->
+  <div id="inboxModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-zinc-200 max-w-4xl w-full h-[80vh] flex flex-col overflow-hidden shadow-2xl">
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-zinc-200 flex items-center justify-between bg-zinc-50">
+        <div class="flex items-center gap-2">
+          <h3 class="font-bold text-lg text-[#1348FB]">Messages & Inbox</h3>
+          <button onclick="loadInbox()" class="text-xs text-zinc-500 hover:text-zinc-900 underline ml-2">↻ Refresh</button>
+        </div>
+        <button onclick="closeInboxModal()" class="w-8 h-8 rounded-full bg-zinc-200/70 hover:bg-zinc-300 flex items-center justify-center text-zinc-700 font-bold">&times;</button>
+      </div>
+
+      <!-- Two-Pane Chat Body -->
+      <div class="flex-1 grid grid-cols-1 md:grid-cols-3 min-h-0">
+        <!-- Left Pane: Conversation Threads -->
+        <div id="threadsList" class="border-r border-zinc-200 overflow-y-auto divide-y divide-zinc-100 bg-zinc-50/50">
+          <div class="p-6 text-center text-xs text-zinc-400">Loading conversations...</div>
+        </div>
+
+        <!-- Right Pane: Active Chat Messages -->
+        <div class="md:col-span-2 flex flex-col min-h-0 bg-white">
+          <div id="chatHeader" class="px-5 py-3 border-b border-zinc-100 text-xs font-semibold text-zinc-700 bg-white">
+            Select a conversation on the left to view messages
+          </div>
+
+          <div id="chatMessagesContainer" class="flex-1 overflow-y-auto p-5 space-y-3 bg-[#F8F7F4]/60">
+            <div class="text-center text-xs text-zinc-400 mt-12">No conversation selected.</div>
+          </div>
+
+          <form id="chatReplyForm" onsubmit="sendInboxReply(event)" class="hidden p-3 border-t border-zinc-200 bg-white flex gap-2 items-center">
+            <input
+              id="chatReplyInput"
+              type="text"
+              required
+              placeholder="Write a reply..."
+              class="flex-1 border border-zinc-300 rounded-lg px-3.5 py-2 text-sm focus:outline-none focus:border-[#1348FB]"
+            />
+            <button type="submit" id="chatReplyBtn" class="bg-[#1BF40B] hover:brightness-95 text-zinc-950 font-bold px-4 py-2 rounded-lg text-xs shrink-0">
+              Send
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CREATE LISTING MODAL (WITH DIRECT DEVICE PHOTO UPLOAD) -->
   <div id="postModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl border border-zinc-200 max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
+    <div class="bg-white rounded-2xl border border-zinc-200 max-w-lg w-full max-h-[92vh] overflow-y-auto p-6 shadow-2xl">
       <div class="flex justify-between items-center border-b border-zinc-100 pb-3 mb-4">
         <h3 class="font-bold text-xl text-zinc-900">Post to <span class="text-[#F0A06A] tracking-widest ml-1">s i m p l y l i s t s</span></h3>
         <button onclick="closePostModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
@@ -279,18 +361,28 @@
             <input id="postNeighborhood" class="w-full border border-zinc-300 rounded-lg px-3 py-2" placeholder="Westminster" />
           </div>
         </div>
+
+        <!-- DIRECT PHONE / COMPUTER PHOTO PICKER -->
         <div>
-          <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Photos (up to 4 images)</label>
-          <input
-            id="postImageFiles"
-            type="file"
-            accept="image/*"
-            multiple
-            onchange="previewSelectedImages(event)"
-            class="w-full border border-zinc-300 rounded-lg px-2.5 py-1.5 text-xs bg-zinc-50 file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-[#1348FB] file:text-white cursor-pointer"
-          />
-          <div id="imagePreviewContainer" class="grid grid-cols-4 gap-2 mt-2 hidden"></div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600">Upload Photos (Up to 4 from phone or computer)</label>
+            <span id="photoCounter" class="text-[11px] text-zinc-400">0 / 4 selected</span>
+          </div>
+          <label for="postImageFiles" class="flex flex-col items-center justify-center border-2 border-dashed border-zinc-300 hover:border-[#1348FB] rounded-xl p-4 bg-zinc-50 hover:bg-[#1348FB]/5 cursor-pointer transition text-center">
+            <span class="text-xs font-bold text-[#1348FB]">+ Tap to choose photos from device or camera</span>
+            <span class="text-[11px] text-zinc-400 mt-0.5">Supports JPG, PNG, WEBP, HEIC</span>
+            <input
+              id="postImageFiles"
+              type="file"
+              accept="image/*"
+              multiple
+              onchange="handleFileSelection(event)"
+              class="hidden"
+            />
+          </label>
+          <div id="imagePreviewContainer" class="grid grid-cols-4 gap-2 mt-2.5 hidden"></div>
         </div>
+
         <div>
           <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Description *</label>
           <textarea id="postDesc" required rows="4" class="w-full border border-zinc-300 rounded-lg px-3.5 py-2" placeholder="Share full details..."></textarea>
@@ -341,8 +433,15 @@
     let supabaseClient = null;
     let currentUser = null;
     let cachedListings = [];
+    let selectedListing = null;
+    let selectedUploadFiles = [];
     let activeSubcategory = 'all';
     let viewMode = 'list';
+
+    // Messaging state
+    let inboxMessages = [];
+    let conversationMap = {};
+    let activeThreadKey = null;
 
     const CATEGORY_META = {
       'for-sale': {
@@ -401,26 +500,80 @@
       const { data: { session } } = await supabaseClient.auth.getSession();
       currentUser = session?.user || null;
       renderAuthUI();
+      if (currentUser) refreshUnreadCount();
+
       supabaseClient.auth.onAuthStateChange((_event, session) => {
         currentUser = session?.user || null;
         renderAuthUI();
+        if (currentUser) refreshUnreadCount();
       });
     }
 
     function renderAuthUI() {
       const authArea = document.getElementById('authArea');
+      const inboxBtn = document.getElementById('inboxNavBtn');
       if (currentUser) {
+        inboxBtn.classList.remove('hidden');
+        inboxBtn.classList.add('inline-flex');
         authArea.innerHTML = `
-          <span class="text-xs text-zinc-500 mr-2">${currentUser.email}</span>
+          <span class="text-xs text-zinc-500 mr-2 hidden sm:inline">${currentUser.email}</span>
           <button onclick="handleSignOut()" class="bg-white border border-zinc-300 hover:bg-zinc-100 px-3 py-1.5 rounded-lg text-xs font-medium">Sign Out</button>
         `;
       } else {
+        inboxBtn.classList.add('hidden');
+        inboxBtn.classList.remove('inline-flex');
         authArea.innerHTML = `
           <button onclick="openAuthModal()" class="bg-white border border-zinc-300 hover:bg-zinc-50 px-3.5 py-2 rounded-lg text-xs font-medium text-zinc-700">Sign In</button>
         `;
       }
     }
 
+    // ============================================================================
+    // DIRECT PHOTO SELECTION, PREVIEW & REMOVAL
+    // ============================================================================
+    function handleFileSelection(event) {
+      const incoming = Array.from(event.target.files || []);
+      selectedUploadFiles = [...selectedUploadFiles, ...incoming].slice(0, 4);
+      event.target.value = '';
+      renderSelectedImagePreviews();
+    }
+
+    function removeSelectedImage(index) {
+      selectedUploadFiles.splice(index, 1);
+      renderSelectedImagePreviews();
+    }
+
+    function renderSelectedImagePreviews() {
+      const previewContainer = document.getElementById('imagePreviewContainer');
+      const counter = document.getElementById('photoCounter');
+      counter.textContent = `${selectedUploadFiles.length} / 4 selected`;
+
+      if (selectedUploadFiles.length === 0) {
+        previewContainer.innerHTML = '';
+        previewContainer.classList.add('hidden');
+        return;
+      }
+
+      previewContainer.classList.remove('hidden');
+      previewContainer.innerHTML = selectedUploadFiles.map((file, idx) => {
+        const tempUrl = URL.createObjectURL(file);
+        return `
+          <div class="relative group">
+            <img src="${tempUrl}" class="h-16 w-full object-cover rounded-lg border border-zinc-200" />
+            <button
+              type="button"
+              onclick="removeSelectedImage(${idx})"
+              class="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-zinc-900 text-white text-xs flex items-center justify-center shadow"
+              title="Remove photo"
+            >&times;</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ============================================================================
+    // DIRECTORY, FILTERING & LISTINGS
+    // ============================================================================
     function setViewMode(mode) {
       viewMode = mode;
       document.getElementById('btnViewList').className = mode === 'list'
@@ -586,6 +739,8 @@
     function openDetailModal(id) {
       const item = cachedListings.find(x => x.id === id);
       if (!item) return;
+      selectedListing = item;
+
       const meta = CATEGORY_META[item.category_id] || { label: item.category_id };
       const subLabel = getSubcategoryLabel(item.category_id, item.subcategory_id);
 
@@ -612,11 +767,261 @@
       } else {
         imgWrap.classList.add('hidden');
       }
+
+      // Configure Direct Messaging UI
+      const dmForm = document.getElementById('dmFormContainer');
+      const ownNotice = document.getElementById('ownListingNotice');
+      const dmFeedback = document.getElementById('dmFeedback');
+      document.getElementById('dmInput').value = '';
+      dmFeedback.classList.add('hidden');
+
+      if (currentUser && currentUser.id === item.seller_id) {
+        dmForm.classList.add('hidden');
+        ownNotice.classList.remove('hidden');
+      } else {
+        dmForm.classList.remove('hidden');
+        ownNotice.classList.add('hidden');
+      }
+
       document.getElementById('detailModal').classList.remove('hidden');
     }
 
     function closeDetailModal() { document.getElementById('detailModal').classList.add('hidden'); }
 
+    async function deleteOwnListing() {
+      if (!selectedListing || !currentUser) return;
+      const { error } = await supabaseClient
+        .from('listings')
+        .delete()
+        .eq('id', selectedListing.id)
+        .eq('seller_id', currentUser.id);
+      if (!error) {
+        closeDetailModal();
+        loadListings();
+      }
+    }
+
+    // ============================================================================
+    // IN-WEBSITE MESSAGING & INBOX SYSTEM
+    // ============================================================================
+    async function sendListingMessage() {
+      if (!currentUser) {
+        closeDetailModal();
+        openAuthModal('Please sign in or create an account to message this poster.');
+        return;
+      }
+      if (!selectedListing) return;
+
+      const body = document.getElementById('dmInput').value.trim();
+      const feedback = document.getElementById('dmFeedback');
+      const btn = document.getElementById('sendDmBtn');
+      if (!body) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+
+      const { error } = await supabaseClient.from('messages').insert([{
+        listing_id: selectedListing.id,
+        sender_id: currentUser.id,
+        receiver_id: selectedListing.seller_id,
+        body
+      }]);
+
+      btn.disabled = false;
+      btn.textContent = 'Send Message';
+
+      if (error) {
+        feedback.textContent = `Error: ${error.message}`;
+        feedback.className = 'text-xs font-medium text-red-600';
+      } else {
+        document.getElementById('dmInput').value = '';
+        feedback.textContent = '✓ Message sent! View replies anytime in your Inbox.';
+        feedback.className = 'text-xs font-medium text-emerald-700';
+      }
+      feedback.classList.remove('hidden');
+    }
+
+    async function refreshUnreadCount() {
+      if (!supabaseClient || !currentUser) return;
+      const { count } = await supabaseClient
+        .from('messages')
+        .select('*', { count: 'exact', head: true })
+        .eq('receiver_id', currentUser.id)
+        .eq('is_read', false);
+
+      const badge = document.getElementById('unreadBadge');
+      if (count && count > 0) {
+        badge.textContent = count;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+
+    function openInboxModal() {
+      if (!currentUser) {
+        openAuthModal('Please sign in to access your inbox.');
+        return;
+      }
+      document.getElementById('inboxModal').classList.remove('hidden');
+      loadInbox();
+    }
+
+    function closeInboxModal() {
+      document.getElementById('inboxModal').classList.add('hidden');
+      refreshUnreadCount();
+    }
+
+    async function loadInbox() {
+      if (!supabaseClient || !currentUser) return;
+      const threadsList = document.getElementById('threadsList');
+
+      // Fetch all messages where the logged-in user is sender or receiver
+      const { data: msgs, error } = await supabaseClient
+        .from('messages')
+        .select('*, listings(title), sender:profiles!messages_sender_id_fkey(email, display_name), receiver:profiles!messages_receiver_id_fkey(email, display_name)')
+        .or(`sender_id.eq.${currentUser.id},receiver_id.eq.${currentUser.id}`)
+        .order('created_at', { ascending: true });
+
+      if (error) {
+        threadsList.innerHTML = `<div class="p-4 text-xs text-red-600">${error.message}</div>`;
+        return;
+      }
+
+      inboxMessages = msgs || [];
+      conversationMap = {};
+
+      // Group messages into threads by (listing_id + other_user_id)
+      inboxMessages.forEach(m => {
+        const otherId = m.sender_id === currentUser.id ? m.receiver_id : m.sender_id;
+        const otherProfile = m.sender_id === currentUser.id ? m.receiver : m.sender;
+        const otherName = otherProfile?.display_name || otherProfile?.email || 'User';
+        const listingTitle = m.listings?.title || 'Listing';
+        const key = `${m.listing_id}_${otherId}`;
+
+        if (!conversationMap[key]) {
+          conversationMap[key] = {
+            key,
+            listing_id: m.listing_id,
+            listing_title: listingTitle,
+            other_id: otherId,
+            other_name: otherName,
+            messages: [],
+            unread: 0
+          };
+        }
+        conversationMap[key].messages.push(m);
+        if (m.receiver_id === currentUser.id && !m.is_read) {
+          conversationMap[key].unread += 1;
+        }
+      });
+
+      const threads = Object.values(conversationMap).sort((a, b) => {
+        const lastA = a.messages[a.messages.length - 1]?.created_at || '';
+        const lastB = b.messages[b.messages.length - 1]?.created_at || '';
+        return lastB.localeCompare(lastA);
+      });
+
+      if (threads.length === 0) {
+        threadsList.innerHTML = `<div class="p-8 text-center text-xs text-zinc-400">No messages yet. Open any listing to message a poster!</div>`;
+        return;
+      }
+
+      threadsList.innerHTML = threads.map(t => {
+        const lastMsg = t.messages[t.messages.length - 1];
+        const isActive = activeThreadKey === t.key;
+        return `
+          <div onclick="selectConversation('${t.key}')" class="p-3.5 cursor-pointer hover:bg-white transition ${isActive ? 'bg-white border-l-4 border-l-[#1348FB]' : ''}">
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-bold text-xs text-zinc-900 truncate">${escapeHtml(t.listing_title)}</span>
+              ${t.unread > 0 ? `<span class="bg-[#1348FB] text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">${t.unread}</span>` : ''}
+            </div>
+            <div class="text-[11px] text-[#1348FB] font-medium mt-0.5">with ${escapeHtml(t.other_name)}</div>
+            <p class="text-xs text-zinc-500 truncate mt-1">${escapeHtml(lastMsg.body)}</p>
+          </div>
+        `;
+      }).join('');
+
+      if (activeThreadKey && conversationMap[activeThreadKey]) {
+        renderActiveThread(activeThreadKey);
+      }
+    }
+
+    async function selectConversation(key) {
+      activeThreadKey = key;
+      const thread = conversationMap[key];
+      if (!thread) return;
+
+      // Mark unread messages in this thread as read
+      const unreadIds = thread.messages
+        .filter(m => m.receiver_id === currentUser.id && !m.is_read)
+        .map(m => m.id);
+
+      if (unreadIds.length > 0) {
+        await supabaseClient
+          .from('messages')
+          .update({ is_read: true })
+          .in('id', unreadIds);
+        thread.unread = 0;
+        refreshUnreadCount();
+      }
+
+      renderActiveThread(key);
+      loadInbox();
+    }
+
+    function renderActiveThread(key) {
+      const thread = conversationMap[key];
+      if (!thread) return;
+
+      document.getElementById('chatHeader').innerHTML = `
+        <span class="text-[#1348FB] font-bold">${escapeHtml(thread.listing_title)}</span>
+        <span class="text-zinc-400 mx-1.5">•</span>
+        <span class="text-zinc-600">Chatting with ${escapeHtml(thread.other_name)}</span>
+      `;
+
+      const container = document.getElementById('chatMessagesContainer');
+      container.innerHTML = thread.messages.map(m => {
+        const isMine = m.sender_id === currentUser.id;
+        const timeStr = new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        return `
+          <div class="flex ${isMine ? 'justify-end' : 'justify-start'}">
+            <div class="max-w-[78%] rounded-2xl px-3.5 py-2 text-xs ${isMine ? 'bg-[#1348FB] text-white' : 'bg-white border border-zinc-200 text-zinc-900'}">
+              <div class="whitespace-pre-line leading-relaxed">${escapeHtml(m.body)}</div>
+              <div class="text-[10px] mt-1 ${isMine ? 'text-white/70 text-right' : 'text-zinc-400'}">${timeStr}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      container.scrollTop = container.scrollHeight;
+      document.getElementById('chatReplyForm').classList.remove('hidden');
+    }
+
+    async function sendInboxReply(e) {
+      e.preventDefault();
+      if (!activeThreadKey || !conversationMap[activeThreadKey]) return;
+      const thread = conversationMap[activeThreadKey];
+      const input = document.getElementById('chatReplyInput');
+      const body = input.value.trim();
+      if (!body) return;
+
+      input.value = '';
+      const { error } = await supabaseClient.from('messages').insert([{
+        listing_id: thread.listing_id,
+        sender_id: currentUser.id,
+        receiver_id: thread.other_id,
+        body
+      }]);
+
+      if (!error) {
+        await loadInbox();
+      }
+    }
+
+    // ============================================================================
+    // POSTING MODAL & STORAGE UPLOAD
+    // ============================================================================
     function handlePostCategoryChange() {
       const cat = document.getElementById('postCategory').value;
       const subSelect = document.getElementById('postSubcategory');
@@ -648,21 +1053,6 @@
 
     function closePostModal() { document.getElementById('postModal').classList.add('hidden'); }
 
-    function previewSelectedImages(event) {
-      const files = Array.from(event.target.files).slice(0, 4);
-      const previewContainer = document.getElementById('imagePreviewContainer');
-      if (files.length === 0) {
-        previewContainer.innerHTML = '';
-        previewContainer.classList.add('hidden');
-        return;
-      }
-      previewContainer.classList.remove('hidden');
-      previewContainer.innerHTML = files.map(file => {
-        const tempUrl = URL.createObjectURL(file);
-        return `<img src="${tempUrl}" class="h-16 w-full object-cover rounded-lg border border-zinc-200" />`;
-      }).join('');
-    }
-
     async function submitListing(e) {
       e.preventDefault();
       const statusMsg = document.getElementById('postStatusMsg');
@@ -673,13 +1063,11 @@
       submitBtn.textContent = 'Uploading...';
 
       try {
-        const fileInput = document.getElementById('postImageFiles');
-        const files = Array.from(fileInput.files).slice(0, 4);
         const uploadedUrls = [];
 
-        for (let i = 0; i < files.length; i++) {
-          const file = files[i];
-          const ext = file.name.split('.').pop().toLowerCase();
+        for (let i = 0; i < selectedUploadFiles.length; i++) {
+          const file = selectedUploadFiles[i];
+          const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
           const filePath = `${currentUser.id}/${Date.now()}_${i}.${ext}`;
 
           const { error: uploadError } = await supabaseClient.storage
@@ -712,9 +1100,9 @@
         if (insertError) throw insertError;
 
         e.target.reset();
+        selectedUploadFiles = [];
+        renderSelectedImagePreviews();
         handlePostCategoryChange();
-        document.getElementById('imagePreviewContainer').innerHTML = '';
-        document.getElementById('imagePreviewContainer').classList.add('hidden');
         closePostModal();
         loadListings();
       } catch (err) {
@@ -726,6 +1114,9 @@
       }
     }
 
+    // ============================================================================
+    // AUTHENTICATION
+    // ============================================================================
     function openAuthModal(msg) {
       const msgEl = document.getElementById('authMsg');
       if (msg) {
