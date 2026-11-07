@@ -59,21 +59,31 @@
         </select>
       </div>
 
-      <div class="flex items-center gap-2.5 text-sm">
+      <div class="flex items-center gap-2 text-sm">
         <!-- + POST LISTING BUTTON IN #1BF40B -->
         <button onclick="openPostModal()" class="bg-[#1BF40B] hover:brightness-95 transition-all text-zinc-950 font-bold px-4 py-2 rounded-lg text-xs tracking-wide shadow-sm">
           + Post Listing
         </button>
 
-        <!-- INBOX BUTTON (VISIBLE WHEN LOGGED IN) -->
-        <button id="inboxNavBtn" onclick="openInboxModal()" class="hidden relative bg-white border border-zinc-300 hover:border-[#1348FB] px-3.5 py-2 rounded-lg text-xs font-semibold text-zinc-800 items-center gap-1.5">
+        <!-- MY LISTINGS FILTER BUTTON (VISIBLE WHEN LOGGED IN) -->
+        <button id="myListingsNavBtn" onclick="toggleMyListings()" class="hidden bg-transparent border-[1.5px] border-zinc-300 hover:border-[#1348FB] px-3.5 py-2 rounded-lg text-xs font-semibold text-zinc-800 items-center gap-1.5 transition">
+          <span>📋 My Listings</span>
+        </button>
+
+        <!-- INBOX BUTTON (VISIBLE WHEN LOGGED IN, WITH LIVE REALTIME DOT) -->
+        <button id="inboxNavBtn" onclick="openInboxModal()" class="hidden relative bg-transparent border-[1.5px] border-zinc-300 hover:border-[#1348FB] px-3.5 py-2 rounded-lg text-xs font-semibold text-zinc-800 items-center gap-1.5">
+          <span id="realtimeDot" class="w-2 h-2 rounded-full bg-zinc-300" title="Realtime status"></span>
           <span>💬 Inbox</span>
           <span id="unreadBadge" class="hidden bg-[#1348FB] text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">0</span>
         </button>
 
-        <div id="authArea">
-          <button onclick="openAuthModal()" class="bg-white border border-zinc-300 hover:bg-zinc-50 px-3.5 py-2 rounded-lg text-xs font-medium text-zinc-700">
+        <!-- HOLLOW LINED AUTH BUTTONS -->
+        <div id="authArea" class="flex items-center gap-2">
+          <button onclick="openAuthModal()" class="bg-transparent border-[1.5px] border-[#1348FB] text-[#1348FB] hover:bg-[#1348FB]/5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition">
             Sign In
+          </button>
+          <button onclick="openAuthModal()" class="hidden sm:inline-flex bg-transparent border-[1.5px] border-[#F0A06A] text-[#F0A06A] hover:bg-[#F0A06A]/10 px-3.5 py-1.5 rounded-lg text-xs font-bold transition">
+            Create Account
           </button>
         </div>
       </div>
@@ -83,6 +93,15 @@
   <!-- CONNECTION BANNER -->
   <div id="setupBanner" class="hidden bg-amber-50 border-b border-amber-200 px-4 py-2.5 text-amber-900 text-xs text-center">
     ⚠️ <strong>Supabase Keys Not Configured Yet:</strong> Paste your <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> at the bottom of <code>index.html</code> to connect your database.
+  </div>
+
+  <!-- LIVE TOAST NOTIFICATION FOR INCOMING MESSAGES -->
+  <div id="liveToast" onclick="openInboxModal()" class="hidden fixed bottom-5 right-5 z-50 bg-zinc-900 text-white px-4 py-3 rounded-xl shadow-2xl border border-zinc-700 cursor-pointer flex items-center gap-3 max-w-xs transition-all">
+    <span class="w-2.5 h-2.5 rounded-full bg-[#1BF40B] shrink-0 animate-ping"></span>
+    <div class="text-xs">
+      <div class="font-bold text-[#F0A06A]">New Live Message</div>
+      <div id="liveToastText" class="text-zinc-300 truncate mt-0.5"></div>
+    </div>
   </div>
 
   <!-- MAIN CONTAINER -->
@@ -180,11 +199,20 @@
       </button>
     </section>
 
+    <!-- MY LISTINGS ACTIVE BANNER -->
+    <div id="myListingsBanner" class="hidden bg-[#1348FB]/10 border border-[#1348FB]/25 rounded-xl px-4 py-2.5 mb-4 flex items-center justify-between text-xs">
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-[#1348FB]">📋 Viewing Your Listings</span>
+        <span class="text-zinc-600">— Click any of your posts below to edit price/details, mark as sold, or delete.</span>
+      </div>
+      <button onclick="showHome()" class="font-bold text-[#1348FB] hover:underline">← Back to All Public Listings</button>
+    </div>
+
     <!-- DYNAMIC SUBCATEGORY PILLS (Regular Inter) -->
     <div id="subcategoryBar" class="hidden flex-wrap gap-1.5 mb-5"></div>
 
     <!-- FEED HEADER + VIEW SWITCHER -->
-    <div class="bg-white border border-zinc-200 rounded-xl shadow-sm overflow-hidden">
+    <div class="bg-white border border-zinc-200 rounded-xl shadow-sm overflow-hidden mb-12">
       <div class="border-b border-zinc-200 px-5 py-3 flex flex-wrap items-center justify-between gap-2 bg-zinc-50/70">
         <div class="flex items-center gap-2.5">
           <h3 id="feedTitle" class="font-bold text-xs uppercase tracking-wider text-[#1348FB]">All Listings</h3>
@@ -202,6 +230,91 @@
       </div>
     </div>
 
+    <!-- AESTHETIC COMMUNITY FEEDBACK SECTION -->
+    <section class="relative overflow-hidden rounded-2xl bg-white border border-zinc-200/90 shadow-sm p-6 sm:p-8">
+      <!-- Subtle decorative background glow -->
+      <div class="pointer-events-none absolute -top-20 -right-20 w-64 h-64 rounded-full bg-[#F0A06A]/15 blur-3xl"></div>
+      <div class="pointer-events-none absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-[#1348FB]/10 blur-3xl"></div>
+
+      <div class="relative grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <!-- Left Column: Editorial Copy & Monogram Accent -->
+        <div class="lg:col-span-5 space-y-3">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F0A06A]/15 text-[#F0A06A] text-xs font-bold tracking-wider uppercase">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 36 36" fill="currentColor">
+              <path d="M18 1.5 C21.2 8.2, 23 11.8, 22.8 13.2 C24.2 13, 27.8 14.8, 34.5 18 C27.8 21.2, 24.2 23, 22.8 22.8 C23 24.2, 21.2 27.8, 18 34.5 C14.8 27.8, 13 24.2, 13.2 22.8 C11.8 23, 8.2 21.2, 1.5 18 C8.2 14.8, 11.8 13, 13.2 13.2 C13 11.8, 14.8 8.2, 18 1.5 Z"/>
+            </svg>
+            Shape the Platform
+          </div>
+          <h3 class="text-2xl font-bold text-zinc-900 tracking-tight">
+            Help us curate <span class="text-[#F0A06A] tracking-widest">s i m p l y l i s t s</span>
+          </h3>
+          <p class="text-xs sm:text-sm text-zinc-500 leading-relaxed">
+            Built for clean, fast local connections. Tell us what features, categories, or visual touches you want to see next.
+          </p>
+          <div class="pt-1 flex items-center gap-4 text-xs text-zinc-400">
+            <span>✦ Zero clutter</span>
+            <span>✦ Direct local chat</span>
+            <span>✦ Community driven</span>
+          </div>
+        </div>
+
+        <!-- Right Column: Interactive Feedback Form -->
+        <form onsubmit="submitFeedback(event)" class="lg:col-span-7 bg-[#F8F7F4]/80 border border-zinc-200/80 rounded-xl p-5 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <!-- Interactive Star Rating -->
+            <div>
+              <span class="block text-[11px] font-bold uppercase tracking-wider text-zinc-500 mb-1">Your Experience</span>
+              <div id="starRatingContainer" class="flex items-center gap-1 text-xl">
+                <button type="button" onclick="setFeedbackRating(1)" class="star-btn text-[#F0A06A] hover:scale-110 transition">★</button>
+                <button type="button" onclick="setFeedbackRating(2)" class="star-btn text-[#F0A06A] hover:scale-110 transition">★</button>
+                <button type="button" onclick="setFeedbackRating(3)" class="star-btn text-[#F0A06A] hover:scale-110 transition">★</button>
+                <button type="button" onclick="setFeedbackRating(4)" class="star-btn text-[#F0A06A] hover:scale-110 transition">★</button>
+                <button type="button" onclick="setFeedbackRating(5)" class="star-btn text-[#F0A06A] hover:scale-110 transition">★</button>
+              </div>
+            </div>
+
+            <!-- Feedback Topic Pills -->
+            <div>
+              <span class="block text-[11px] font-bold uppercase tracking-wider text-zinc-500 mb-1">Topic</span>
+              <div class="flex flex-wrap gap-1.5" id="feedbackTopicPills">
+                <button type="button" onclick="setFeedbackTopic('feature-idea')" data-topic="feature-idea" class="fb-topic-btn px-2.5 py-1 rounded-full text-xs font-bold bg-[#1348FB] text-white border border-[#1348FB]">Feature Idea</button>
+                <button type="button" onclick="setFeedbackTopic('design-vibe')" data-topic="design-vibe" class="fb-topic-btn px-2.5 py-1 rounded-full text-xs font-medium bg-white text-zinc-600 border border-zinc-200 hover:border-[#1348FB]">Design & Vibe</button>
+                <button type="button" onclick="setFeedbackTopic('bug-report')" data-topic="bug-report" class="fb-topic-btn px-2.5 py-1 rounded-full text-xs font-medium bg-white text-zinc-600 border border-zinc-200 hover:border-[#1348FB]">Bug Report</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="sm:col-span-2">
+              <textarea
+                id="feedbackMessage"
+                required
+                rows="2"
+                placeholder="Share a feature request, idea, or note..."
+                class="w-full bg-white border border-zinc-200 rounded-lg px-3.5 py-2 text-xs sm:text-sm focus:outline-none focus:border-[#1348FB]"
+              ></textarea>
+            </div>
+            <div class="flex flex-col justify-between gap-2">
+              <input
+                id="feedbackEmail"
+                type="email"
+                placeholder="Email (optional)"
+                class="w-full bg-white border border-zinc-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-[#1348FB]"
+              />
+              <button
+                id="feedbackSubmitBtn"
+                type="submit"
+                class="w-full bg-transparent border-[1.5px] border-[#1348FB] text-[#1348FB] hover:bg-[#1348FB] hover:text-white font-bold py-2 px-4 rounded-lg text-xs transition"
+              >
+                Send Feedback
+              </button>
+            </div>
+          </div>
+          <div id="feedbackStatus" class="hidden text-xs font-semibold text-emerald-700"></div>
+        </form>
+      </div>
+    </section>
+
   </main>
 
   <!-- FOOTER -->
@@ -209,14 +322,16 @@
     <span class="font-bold text-[#F0A06A] tracking-widest">s i m p l y l i s t s</span> — simple local classifieds for sale, services & personal connections
   </footer>
 
-  <!-- LISTING DETAIL & IN-APP MESSAGE MODAL -->
+  <!-- LISTING DETAIL, OWNER MANAGEMENT & IN-APP MESSAGE MODAL -->
   <div id="detailModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl border border-zinc-200 max-w-2xl w-full max-h-[92vh] overflow-y-auto p-6 shadow-2xl">
       <div class="flex justify-between items-start gap-4 border-b border-zinc-100 pb-4 mb-4">
         <div>
-          <div class="flex items-center gap-2 mb-1.5">
+          <div class="flex items-center flex-wrap gap-2 mb-1.5">
             <span id="detailCategoryBadge" class="inline-block text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-[#1348FB]/10 text-[#1348FB] border border-[#1348FB]/25"></span>
+            <span id="detailStatusBadge" class="hidden text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-800 border border-amber-300">SOLD</span>
             <span id="detailSubcategoryBadge" class="subcat-regular text-xs text-zinc-600"></span>
+            <span id="detailExpiresBadge" class="text-[11px] font-medium px-2 py-0.5 rounded bg-zinc-100 text-zinc-600"></span>
           </div>
           <h3 id="detailTitle" class="text-2xl font-bold text-zinc-900"></h3>
         </div>
@@ -230,13 +345,19 @@
 
       <p id="detailDesc" class="text-sm text-zinc-700 whitespace-pre-line leading-relaxed mb-6"></p>
 
-      <!-- IN-WEBSITE DIRECT MESSAGING BOX -->
+      <!-- BUYER DIRECT MESSAGING BOX (WITH QUICK-REPLY PILLS) -->
       <div id="directMessageSection" class="bg-zinc-50 border border-zinc-200 rounded-xl p-4 mb-4">
         <div class="flex items-center justify-between mb-2">
           <h4 class="text-xs font-bold uppercase tracking-wider text-[#1348FB]">💬 Send Direct Message to Poster</h4>
           <span id="detailSellerBadge" class="text-xs text-zinc-500"></span>
         </div>
         <div id="dmFormContainer">
+          <!-- One-Tap Quick Replies -->
+          <div class="flex flex-wrap gap-1.5 mb-2">
+            <button type="button" onclick="fillQuickReply('Hi! Is this still available?')" class="text-[11px] bg-white border border-zinc-200 hover:border-[#1348FB] text-zinc-700 px-2.5 py-1 rounded-full transition">👋 Is this available?</button>
+            <button type="button" onclick="fillQuickReply('Hi! When and where can I pick this up?')" class="text-[11px] bg-white border border-zinc-200 hover:border-[#1348FB] text-zinc-700 px-2.5 py-1 rounded-full transition">📍 Pickup details?</button>
+            <button type="button" onclick="fillQuickReply('Hi! Would you be open to an offer on this?')" class="text-[11px] bg-white border border-zinc-200 hover:border-[#1348FB] text-zinc-700 px-2.5 py-1 rounded-full transition">🏷️ Open to offers?</button>
+          </div>
           <textarea
             id="dmInput"
             rows="3"
@@ -254,42 +375,100 @@
             </button>
           </div>
         </div>
-        <div id="ownListingNotice" class="hidden text-xs text-zinc-500 flex items-center justify-between">
-          <span>This is your listing. Buyers can message you directly from here.</span>
-          <button onclick="deleteOwnListing()" class="text-red-600 hover:underline font-semibold">Delete Listing</button>
-        </div>
       </div>
 
-      <div class="bg-zinc-50 border border-zinc-200 rounded-xl p-3.5 text-xs flex flex-wrap items-center justify-between gap-2">
-        <div>
-          <span class="font-semibold text-zinc-700">Anonymized Reply Relay:</span>
-          <code id="detailRelay" class="ml-1.5 bg-white px-2.5 py-1 rounded border border-zinc-200 select-all font-mono"></code>
+      <!-- SELLER MANAGEMENT PANEL -->
+      <div id="ownerManageSection" class="hidden bg-[#1348FB]/5 border border-[#1348FB]/25 rounded-xl p-4 mb-4">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h4 class="text-xs font-bold uppercase tracking-wider text-[#1348FB]">Manage Your Listing</h4>
+            <p class="text-xs text-zinc-500 mt-0.5">Update price or details, mark as sold, or remove permanently.</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button
+              id="toggleEditBtn"
+              onclick="toggleEditForm()"
+              class="bg-white border border-zinc-300 hover:border-[#1348FB] text-zinc-800 font-semibold px-3 py-1.5 rounded-lg text-xs"
+            >
+              ✏️ Edit Details
+            </button>
+            <button
+              id="toggleSoldBtn"
+              onclick="toggleListingSoldStatus()"
+              class="bg-amber-500 hover:bg-amber-600 text-white font-bold px-3 py-1.5 rounded-lg text-xs"
+            >
+              Mark as Sold
+            </button>
+            <button
+              onclick="deleteOwnListing()"
+              class="bg-red-600 hover:bg-red-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs"
+            >
+              🗑 Delete
+            </button>
+          </div>
         </div>
-        <span id="detailDate" class="text-zinc-400"></span>
+
+        <!-- INLINE EDIT FORM -->
+        <form id="editListingForm" onsubmit="saveListingEdits(event)" class="hidden mt-4 pt-4 border-t border-[#1348FB]/20 space-y-3 text-xs">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <div class="sm:col-span-2">
+              <label class="block font-bold uppercase text-zinc-600 mb-1">Title</label>
+              <input id="editTitle" required minlength="3" maxlength="140" class="w-full bg-white border border-zinc-300 rounded-lg px-3 py-1.5 text-sm" />
+            </div>
+            <div>
+              <label class="block font-bold uppercase text-zinc-600 mb-1">Price / Rate ($)</label>
+              <input id="editPrice" type="number" min="0" step="0.01" class="w-full bg-white border border-zinc-300 rounded-lg px-3 py-1.5 text-sm" placeholder="Optional" />
+            </div>
+          </div>
+          <div>
+            <label class="block font-bold uppercase text-zinc-600 mb-1">City / Area</label>
+            <input id="editNeighborhood" class="w-full bg-white border border-zinc-300 rounded-lg px-3 py-1.5 text-sm" />
+          </div>
+          <div>
+            <label class="block font-bold uppercase text-zinc-600 mb-1">Description</label>
+            <textarea id="editDesc" required rows="3" class="w-full bg-white border border-zinc-300 rounded-lg px-3 py-1.5 text-sm"></textarea>
+          </div>
+          <div class="flex justify-end gap-2">
+            <button type="button" onclick="toggleEditForm()" class="px-3 py-1.5 border border-zinc-300 bg-white rounded-lg font-medium">Cancel</button>
+            <button id="saveEditBtn" type="submit" class="px-4 py-1.5 bg-[#1BF40B] text-zinc-950 font-bold rounded-lg">Save Changes</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- ANONYMIZED REPLY RELAY + DATE POSTED (NO CLOCK TIME) + ELAPSED DURATION + EXPIRATION -->
+      <div class="bg-zinc-50 border border-zinc-200 rounded-xl p-3.5 text-xs space-y-1.5">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <span class="font-semibold text-zinc-700">Anonymized Reply Relay:</span>
+            <code id="detailRelay" class="ml-1.5 bg-white px-2.5 py-1 rounded border border-zinc-200 select-all font-mono"></code>
+          </div>
+        </div>
+        <div class="flex flex-wrap items-center justify-between gap-2 text-zinc-500 pt-1 border-t border-zinc-200/70">
+          <span id="detailDate"></span>
+          <span id="detailExpirationFooter" class="font-medium text-zinc-600"></span>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- IN-WEBSITE INBOX & CHAT MODAL -->
+  <!-- IN-WEBSITE INBOX & REALTIME CHAT MODAL -->
   <div id="inboxModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl border border-zinc-200 max-w-4xl w-full h-[80vh] flex flex-col overflow-hidden shadow-2xl">
-      <!-- Modal Header -->
       <div class="px-6 py-4 border-b border-zinc-200 flex items-center justify-between bg-zinc-50">
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2.5">
           <h3 class="font-bold text-lg text-[#1348FB]">Messages & Inbox</h3>
-          <button onclick="loadInbox()" class="text-xs text-zinc-500 hover:text-zinc-900 underline ml-2">↻ Refresh</button>
+          <span class="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Live Realtime
+          </span>
         </div>
         <button onclick="closeInboxModal()" class="w-8 h-8 rounded-full bg-zinc-200/70 hover:bg-zinc-300 flex items-center justify-center text-zinc-700 font-bold">&times;</button>
       </div>
 
-      <!-- Two-Pane Chat Body -->
       <div class="flex-1 grid grid-cols-1 md:grid-cols-3 min-h-0">
-        <!-- Left Pane: Conversation Threads -->
         <div id="threadsList" class="border-r border-zinc-200 overflow-y-auto divide-y divide-zinc-100 bg-zinc-50/50">
           <div class="p-6 text-center text-xs text-zinc-400">Loading conversations...</div>
         </div>
 
-        <!-- Right Pane: Active Chat Messages -->
         <div class="md:col-span-2 flex flex-col min-h-0 bg-white">
           <div id="chatHeader" class="px-5 py-3 border-b border-zinc-100 text-xs font-semibold text-zinc-700 bg-white">
             Select a conversation on the left to view messages
@@ -304,7 +483,7 @@
               id="chatReplyInput"
               type="text"
               required
-              placeholder="Write a reply..."
+              placeholder="Write a message..."
               class="flex-1 border border-zinc-300 rounded-lg px-3.5 py-2 text-sm focus:outline-none focus:border-[#1348FB]"
             />
             <button type="submit" id="chatReplyBtn" class="bg-[#1BF40B] hover:brightness-95 text-zinc-950 font-bold px-4 py-2 rounded-lg text-xs shrink-0">
@@ -316,7 +495,7 @@
     </div>
   </div>
 
-  <!-- CREATE LISTING MODAL (WITH DIRECT DEVICE PHOTO UPLOAD) -->
+  <!-- CREATE LISTING MODAL (WITH EXPIRATION DURATION & DIRECT DEVICE PHOTO UPLOAD) -->
   <div id="postModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl border border-zinc-200 max-w-lg w-full max-h-[92vh] overflow-y-auto p-6 shadow-2xl">
       <div class="flex justify-between items-center border-b border-zinc-100 pb-3 mb-4">
@@ -342,14 +521,14 @@
             <select id="postSubcategory" class="subcat-regular w-full border border-zinc-300 rounded-lg px-3 py-2 bg-white text-zinc-900"></select>
           </div>
         </div>
-        <div class="grid grid-cols-3 gap-3">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
           <div>
             <label id="priceLabel" class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Price ($)</label>
             <input id="postPrice" type="number" min="0" step="0.01" class="w-full border border-zinc-300 rounded-lg px-3 py-2" placeholder="Optional" />
           </div>
           <div>
             <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Region *</label>
-            <select id="postRegion" required class="w-full border border-zinc-300 rounded-lg px-2.5 py-2 bg-white">
+            <select id="postRegion" required class="w-full border border-zinc-300 rounded-lg px-2 py-2 bg-white text-xs">
               <option value="orange-county">Orange County</option>
               <option value="los-angeles">Los Angeles</option>
               <option value="san-diego">San Diego</option>
@@ -359,6 +538,14 @@
           <div>
             <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">City / Area</label>
             <input id="postNeighborhood" class="w-full border border-zinc-300 rounded-lg px-3 py-2" placeholder="Westminster" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Expires In</label>
+            <select id="postDurationDays" class="w-full border border-zinc-300 rounded-lg px-2 py-2 bg-white text-xs font-semibold text-zinc-700">
+              <option value="30" selected>30 Days</option>
+              <option value="14">14 Days</option>
+              <option value="7">7 Days</option>
+            </select>
           </div>
         </div>
 
@@ -398,7 +585,7 @@
     </div>
   </div>
 
-  <!-- AUTH MODAL -->
+  <!-- AUTH MODAL (WITH HOLLOW LINED SIGN IN & CREATE ACCOUNT BUTTONS) -->
   <div id="authModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl border border-zinc-200 max-w-sm w-full p-6 shadow-2xl">
       <div class="flex justify-between items-center border-b border-zinc-100 pb-3 mb-4">
@@ -411,15 +598,42 @@
           <input id="authEmail" type="email" required class="w-full border border-zinc-300 rounded-lg px-3.5 py-2" placeholder="you@example.com" />
         </div>
         <div>
-          <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Password</label>
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600">Password</label>
+            <button type="button" onclick="handleForgotPassword()" class="text-[11px] font-semibold text-[#1348FB] hover:underline">Forgot password?</button>
+          </div>
           <input id="authPassword" type="password" required minlength="6" class="w-full border border-zinc-300 rounded-lg px-3.5 py-2" placeholder="••••••••" />
         </div>
         <div id="authMsg" class="text-xs text-[#1348FB] bg-[#1348FB]/10 p-2.5 rounded-lg hidden"></div>
-        <div class="flex gap-2 pt-2">
-          <button onclick="handleSignIn()" class="flex-1 bg-zinc-900 hover:bg-zinc-800 text-white font-semibold py-2 rounded-lg text-xs">Sign In</button>
-          <button onclick="handleSignUp()" class="flex-1 bg-[#1348FB] hover:opacity-90 text-white font-semibold py-2 rounded-lg text-xs">Create Account</button>
+        <div class="flex gap-2.5 pt-2">
+          <button onclick="handleSignIn()" class="flex-1 bg-transparent border-[1.5px] border-[#1348FB] text-[#1348FB] hover:bg-[#1348FB]/5 font-bold py-2 rounded-lg text-xs transition">
+            Sign In
+          </button>
+          <button onclick="handleSignUp()" class="flex-1 bg-transparent border-[1.5px] border-[#F0A06A] text-[#F0A06A] hover:bg-[#F0A06A]/10 font-bold py-2 rounded-lg text-xs transition">
+            Create Account
+          </button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- RESET PASSWORD MODAL (POPS UP WHEN EMAIL RECOVERY LINK IS CLICKED) -->
+  <div id="resetPasswordModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-zinc-200 max-w-sm w-full p-6 shadow-2xl">
+      <div class="flex justify-between items-center border-b border-zinc-100 pb-3 mb-4">
+        <h3 class="font-bold text-lg text-zinc-900">Set New Password</h3>
+        <button onclick="document.getElementById('resetPasswordModal').classList.add('hidden')" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
+      </div>
+      <form onsubmit="handlePasswordUpdate(event)" class="space-y-3 text-sm">
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">New Password (min 6 chars)</label>
+          <input id="newPasswordInput" type="password" required minlength="6" class="w-full border border-zinc-300 rounded-lg px-3.5 py-2" placeholder="••••••••" />
+        </div>
+        <div id="resetMsg" class="text-xs text-[#1348FB] bg-[#1348FB]/10 p-2.5 rounded-lg hidden"></div>
+        <button type="submit" id="updatePwdBtn" class="w-full bg-transparent border-[1.5px] border-[#1348FB] text-[#1348FB] hover:bg-[#1348FB] hover:text-white font-bold py-2 rounded-lg text-xs transition">
+          Update Password & Sign In
+        </button>
+      </form>
     </div>
   </div>
 
@@ -427,8 +641,8 @@
     // ============================================================================
     // PASTE YOUR SUPABASE CREDENTIALS RIGHT HERE:
     // ============================================================================
-    const SUPABASE_URL = 'https://xqpinjcstaqdbtczgykp.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_Vq3EYb717vMAHomU5U0k3A_ibTfyNAb';
+    const SUPABASE_URL = 'PASTE_YOUR_SUPABASE_URL_HERE';
+    const SUPABASE_ANON_KEY = 'PASTE_YOUR_SUPABASE_ANON_KEY_HERE';
 
     let supabaseClient = null;
     let currentUser = null;
@@ -437,11 +651,18 @@
     let selectedUploadFiles = [];
     let activeSubcategory = 'all';
     let viewMode = 'list';
+    let onlyMyListings = false;
 
-    // Messaging state
+    // Feedback form state
+    let feedbackRating = 5;
+    let feedbackTopic = 'feature-idea';
+
+    // Messaging & Realtime state
     let inboxMessages = [];
     let conversationMap = {};
     let activeThreadKey = null;
+    let realtimeChannel = null;
+    let toastTimeout = null;
 
     const CATEGORY_META = {
       'for-sale': {
@@ -496,36 +717,249 @@
         </div>`;
     }
 
+    // ============================================================================
+    // TIME & EXPIRATION HELPERS (DATE ONLY + ELAPSED MINS/HOURS/DAYS)
+    // ============================================================================
+    function formatElapsedSincePosted(createdAtIso) {
+      const createdMs = new Date(createdAtIso).getTime();
+      const diffMs = Math.max(0, Date.now() - createdMs);
+      const totalMinutes = Math.floor(diffMs / 60000);
+
+      if (totalMinutes < 1) return 'less than a minute ago';
+      if (totalMinutes < 60) {
+        return `${totalMinutes} ${totalMinutes === 1 ? 'minute' : 'minutes'} ago`;
+      }
+      const totalHours = Math.floor(totalMinutes / 60);
+      if (totalHours < 24) {
+        return `${totalHours} ${totalHours === 1 ? 'hour' : 'hours'} ago`;
+      }
+      const totalDays = Math.floor(totalHours / 24);
+      return `${totalDays} ${totalDays === 1 ? 'day' : 'days'} ago`;
+    }
+
+    function formatPostedDateAndAgo(createdAtIso) {
+      const d = new Date(createdAtIso);
+      const datePart = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      const agoPart = formatElapsedSincePosted(createdAtIso);
+      return `Posted ${datePart} • ${agoPart}`;
+    }
+
+    function formatExpirationInfo(expiresAtIso, createdAtIso) {
+      const expDate = expiresAtIso
+        ? new Date(expiresAtIso)
+        : new Date(new Date(createdAtIso).getTime() + 30 * 86400000);
+      const dateStr = expDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      const diffMs = expDate.getTime() - Date.now();
+      const daysLeft = Math.ceil(diffMs / 86400000);
+
+      if (daysLeft <= 0) {
+        return { short: `Expired ${dateStr}`, full: `Expired on ${dateStr}`, urgent: true };
+      }
+      if (daysLeft <= 3) {
+        return { short: `Expires ${dateStr} (${daysLeft}d left)`, full: `Expires ${dateStr} (${daysLeft} day${daysLeft === 1 ? '' : 's'} remaining)`, urgent: true };
+      }
+      return { short: `Expires ${dateStr}`, full: `Expires ${dateStr} (${daysLeft} days remaining)`, urgent: false };
+    }
+
+    // ============================================================================
+    // AUTHENTICATION & PASSWORD RECOVERY
+    // ============================================================================
     async function initAuth() {
       const { data: { session } } = await supabaseClient.auth.getSession();
       currentUser = session?.user || null;
       renderAuthUI();
-      if (currentUser) refreshUnreadCount();
+      if (currentUser) {
+        refreshUnreadCount();
+        setupRealtimeMessages();
+      }
 
-      supabaseClient.auth.onAuthStateChange((_event, session) => {
+      supabaseClient.auth.onAuthStateChange((event, session) => {
         currentUser = session?.user || null;
+        if (event === 'PASSWORD_RECOVERY') {
+          document.getElementById('resetPasswordModal').classList.remove('hidden');
+        }
+        if (!currentUser && onlyMyListings) {
+          onlyMyListings = false;
+        }
         renderAuthUI();
-        if (currentUser) refreshUnreadCount();
+        if (currentUser) {
+          refreshUnreadCount();
+          setupRealtimeMessages();
+        } else {
+          teardownRealtimeMessages();
+        }
+        loadListings();
       });
     }
 
     function renderAuthUI() {
       const authArea = document.getElementById('authArea');
       const inboxBtn = document.getElementById('inboxNavBtn');
+      const myListingsBtn = document.getElementById('myListingsNavBtn');
+
       if (currentUser) {
         inboxBtn.classList.remove('hidden');
         inboxBtn.classList.add('inline-flex');
+        myListingsBtn.classList.remove('hidden');
+        myListingsBtn.classList.add('inline-flex');
+        updateMyListingsNavStyle();
+
         authArea.innerHTML = `
-          <span class="text-xs text-zinc-500 mr-2 hidden sm:inline">${currentUser.email}</span>
-          <button onclick="handleSignOut()" class="bg-white border border-zinc-300 hover:bg-zinc-100 px-3 py-1.5 rounded-lg text-xs font-medium">Sign Out</button>
+          <span class="text-xs text-zinc-500 mr-1 hidden lg:inline">${currentUser.email}</span>
+          <button onclick="handleSignOut()" class="bg-transparent border-[1.5px] border-zinc-400 text-zinc-700 hover:border-zinc-900 hover:text-zinc-900 px-3 py-1.5 rounded-lg text-xs font-semibold transition">
+            Sign Out
+          </button>
         `;
       } else {
         inboxBtn.classList.add('hidden');
         inboxBtn.classList.remove('inline-flex');
+        myListingsBtn.classList.add('hidden');
+        myListingsBtn.classList.remove('inline-flex');
+
         authArea.innerHTML = `
-          <button onclick="openAuthModal()" class="bg-white border border-zinc-300 hover:bg-zinc-50 px-3.5 py-2 rounded-lg text-xs font-medium text-zinc-700">Sign In</button>
+          <button onclick="openAuthModal()" class="bg-transparent border-[1.5px] border-[#1348FB] text-[#1348FB] hover:bg-[#1348FB]/5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition">
+            Sign In
+          </button>
+          <button onclick="openAuthModal()" class="hidden sm:inline-flex bg-transparent border-[1.5px] border-[#F0A06A] text-[#F0A06A] hover:bg-[#F0A06A]/10 px-3.5 py-1.5 rounded-lg text-xs font-bold transition">
+            Create Account
+          </button>
         `;
       }
+    }
+
+    async function handleForgotPassword() {
+      const email = document.getElementById('authEmail').value.trim();
+      const msgEl = document.getElementById('authMsg');
+      msgEl.classList.remove('hidden');
+      if (!email) {
+        msgEl.textContent = 'Enter your email address above first, then click Forgot password.';
+        return;
+      }
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin
+      });
+      if (error) {
+        msgEl.textContent = error.message;
+      } else {
+        msgEl.textContent = '✓ Password reset link sent! Check your email inbox.';
+      }
+    }
+
+    async function handlePasswordUpdate(e) {
+      e.preventDefault();
+      const newPassword = document.getElementById('newPasswordInput').value;
+      const msgEl = document.getElementById('resetMsg');
+      const btn = document.getElementById('updatePwdBtn');
+      msgEl.classList.add('hidden');
+
+      btn.disabled = true;
+      btn.textContent = 'Updating...';
+
+      const { error } = await supabaseClient.auth.updateUser({ password: newPassword });
+
+      btn.disabled = false;
+      btn.textContent = 'Update Password & Sign In';
+
+      if (error) {
+        msgEl.textContent = error.message;
+        msgEl.classList.remove('hidden');
+      } else {
+        msgEl.textContent = '✓ Password updated! Signing you in...';
+        msgEl.classList.remove('hidden');
+        setTimeout(() => {
+          document.getElementById('resetPasswordModal').classList.add('hidden');
+          loadListings();
+        }, 1200);
+      }
+    }
+
+    // ============================================================================
+    // SUPABASE REALTIME WEBSOCKET SUBSCRIPTION FOR INSTANT CHAT
+    // ============================================================================
+    function setupRealtimeMessages() {
+      if (!supabaseClient || !currentUser) return;
+      teardownRealtimeMessages();
+
+      const dot = document.getElementById('realtimeDot');
+
+      realtimeChannel = supabaseClient
+        .channel('simplylists-live-messages')
+        .on(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'messages' },
+          async (payload) => {
+            const newMsg = payload.new;
+            if (!newMsg) return;
+
+            if (newMsg.receiver_id !== currentUser.id && newMsg.sender_id !== currentUser.id) {
+              return;
+            }
+
+            const inboxOpen = !document.getElementById('inboxModal').classList.contains('hidden');
+
+            if (inboxOpen) {
+              const otherId = newMsg.sender_id === currentUser.id ? newMsg.receiver_id : newMsg.sender_id;
+              const incomingKey = `${newMsg.listing_id}_${otherId}`;
+              if (newMsg.receiver_id === currentUser.id && activeThreadKey === incomingKey) {
+                await supabaseClient.from('messages').update({ is_read: true }).eq('id', newMsg.id);
+              }
+              await loadInbox();
+            } else if (newMsg.receiver_id === currentUser.id) {
+              showLiveToast(newMsg.body);
+            }
+
+            refreshUnreadCount();
+          }
+        )
+        .subscribe((status) => {
+          if (dot) {
+            dot.className = status === 'SUBSCRIBED'
+              ? 'w-2 h-2 rounded-full bg-[#1BF40B]'
+              : 'w-2 h-2 rounded-full bg-amber-400';
+          }
+        });
+    }
+
+    function teardownRealtimeMessages() {
+      if (realtimeChannel && supabaseClient) {
+        supabaseClient.removeChannel(realtimeChannel);
+        realtimeChannel = null;
+      }
+    }
+
+    function showLiveToast(previewText) {
+      const toast = document.getElementById('liveToast');
+      const textEl = document.getElementById('liveToastText');
+      textEl.textContent = previewText;
+      toast.classList.remove('hidden');
+
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 5000);
+    }
+
+    function updateMyListingsNavStyle() {
+      const btn = document.getElementById('myListingsNavBtn');
+      const banner = document.getElementById('myListingsBanner');
+      if (!btn) return;
+      if (onlyMyListings) {
+        btn.className = 'inline-flex bg-[#1348FB] text-white border-[1.5px] border-[#1348FB] px-3.5 py-2 rounded-lg text-xs font-bold items-center gap-1.5 shadow-sm';
+        banner.classList.remove('hidden');
+      } else {
+        btn.className = 'inline-flex bg-transparent border-[1.5px] border-zinc-300 hover:border-[#1348FB] px-3.5 py-2 rounded-lg text-xs font-semibold text-zinc-800 items-center gap-1.5';
+        banner.classList.add('hidden');
+      }
+    }
+
+    function toggleMyListings() {
+      if (!currentUser) {
+        openAuthModal('Please sign in to view your listings.');
+        return;
+      }
+      onlyMyListings = !onlyMyListings;
+      updateMyListingsNavStyle();
+      loadListings();
     }
 
     // ============================================================================
@@ -606,6 +1040,8 @@
     }
 
     function jumpToSubcategory(catId, subId) {
+      onlyMyListings = false;
+      updateMyListingsNavStyle();
       document.getElementById('categoryFilter').value = catId;
       activeSubcategory = subId;
       renderSubcategoryBar();
@@ -633,18 +1069,27 @@
       const maxPrice = document.getElementById('maxPriceInput').value;
       const hasPic = document.getElementById('hasPicFilter').checked;
 
-      document.getElementById('feedTitle').textContent = category === 'all'
-        ? 'All Listings'
-        : CATEGORY_META[category]?.label || category;
+      if (onlyMyListings && currentUser) {
+        document.getElementById('feedTitle').textContent = 'My Listings (Active & Sold)';
+      } else {
+        document.getElementById('feedTitle').textContent = category === 'all'
+          ? 'All Listings'
+          : CATEGORY_META[category]?.label || category;
+      }
 
       let query = supabaseClient
         .from('listings')
         .select('*')
-        .eq('status', 'active')
         .in('category_id', ['for-sale', 'services', 'personal'])
         .order('created_at', { ascending: false });
 
-      if (region !== 'all') query = query.eq('region', region);
+      if (onlyMyListings && currentUser) {
+        query = query.eq('seller_id', currentUser.id);
+      } else {
+        query = query.eq('status', 'active').gt('expires_at', new Date().toISOString());
+        if (region !== 'all') query = query.eq('region', region);
+      }
+
       if (category !== 'all') query = query.eq('category_id', category);
       if (activeSubcategory !== 'all') query = query.eq('subcategory_id', activeSubcategory);
       if (maxPrice !== '') query = query.lte('price', parseFloat(maxPrice));
@@ -672,7 +1117,9 @@
       const container = document.getElementById('listingsContainer');
       if (cachedListings.length === 0) {
         container.className = '';
-        container.innerHTML = `<div class="p-12 text-center text-zinc-400 text-sm">No listings found here yet. Click <strong>+ Post Listing</strong> to publish the first one!</div>`;
+        container.innerHTML = onlyMyListings
+          ? `<div class="p-12 text-center text-zinc-400 text-sm">You haven't published any listings yet. Click <strong>+ Post Listing</strong> to create one!</div>`
+          : `<div class="p-12 text-center text-zinc-400 text-sm">No listings found here yet. Click <strong>+ Post Listing</strong> to publish the first one!</div>`;
         return;
       }
 
@@ -681,8 +1128,11 @@
         container.innerHTML = cachedListings.map(item => {
           const meta = CATEGORY_META[item.category_id] || { label: item.category_id, badgeClass: 'bg-[#1348FB]/10 text-[#1348FB] font-bold' };
           const subLabel = getSubcategoryLabel(item.category_id, item.subcategory_id);
+          const expInfo = formatExpirationInfo(item.expires_at, item.created_at);
+          const isSold = item.status === 'sold';
+          const soldBadge = isSold ? `<span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-300">SOLD</span>` : '';
           const thumb = (item.image_urls && item.image_urls.length > 0)
-            ? `<img src="${item.image_urls[0]}" class="h-44 w-full object-cover border-b border-zinc-100" />`
+            ? `<img src="${item.image_urls[0]}" class="h-44 w-full object-cover border-b border-zinc-100 ${isSold ? 'opacity-60 grayscale' : ''}" />`
             : `<div class="h-44 w-full bg-zinc-100 flex items-center justify-center text-xs text-zinc-400 border-b border-zinc-100">No Photo</div>`;
           const priceStr = item.price !== null ? `$${Number(item.price).toLocaleString()}` : '';
           return `
@@ -691,17 +1141,18 @@
               <div class="p-3.5 flex-1 flex flex-col justify-between">
                 <div>
                   <div class="flex items-center justify-between gap-2 mb-1.5">
-                    <div class="flex items-center gap-1.5">
+                    <div class="flex items-center gap-1.5 flex-wrap">
                       <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${meta.badgeClass}">${meta.label}</span>
+                      ${soldBadge}
                       ${subLabel ? `<span class="subcat-regular text-[11px] text-zinc-600">${escapeHtml(subLabel)}</span>` : ''}
                     </div>
                     <span class="font-bold text-sm text-zinc-900">${priceStr}</span>
                   </div>
-                  <h4 class="font-semibold text-sm text-zinc-900 line-clamp-1">${escapeHtml(item.title)}</h4>
+                  <h4 class="font-semibold text-sm text-zinc-900 line-clamp-1 ${isSold ? 'line-through text-zinc-400' : ''}">${escapeHtml(item.title)}</h4>
                 </div>
-                <div class="text-xs text-zinc-400 mt-2 flex justify-between">
+                <div class="text-[11px] text-zinc-400 mt-2.5 pt-2 border-t border-zinc-100 flex justify-between items-center">
                   <span>${escapeHtml(item.neighborhood || item.region)}</span>
-                  <span>${new Date(item.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                  <span class="${expInfo.urgent ? 'text-amber-700 font-medium' : 'text-zinc-400'}">${expInfo.short}</span>
                 </div>
               </div>
             </div>
@@ -715,6 +1166,11 @@
         const meta = CATEGORY_META[item.category_id] || { label: item.category_id, badgeClass: 'bg-[#1348FB]/10 text-[#1348FB] font-bold' };
         const subLabel = getSubcategoryLabel(item.category_id, item.subcategory_id);
         const dateStr = new Date(item.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const expInfo = formatExpirationInfo(item.expires_at, item.created_at);
+        const isSold = item.status === 'sold';
+        const soldBadge = isSold ? `<span class="bg-amber-100 text-amber-800 border border-amber-300 text-[10px] font-bold uppercase px-2 py-0.5 rounded mr-2">SOLD</span>` : '';
+        const isMine = currentUser && item.seller_id === currentUser.id;
+        const mineBadge = isMine ? `<span class="bg-zinc-100 text-zinc-600 text-[10px] font-semibold px-2 py-0.5 rounded ml-2">Yours</span>` : '';
         const priceBadge = item.price !== null ? `<span class="font-bold text-zinc-900 ml-2">$${Number(item.price).toLocaleString()}</span>` : '';
         const hood = item.neighborhood ? `<span class="text-zinc-400 text-xs ml-2">(${escapeHtml(item.neighborhood)})</span>` : '';
         const picBadge = item.has_image ? `<span class="text-[#1348FB] text-[11px] ml-2 font-semibold">📷 photo</span>` : '';
@@ -722,12 +1178,15 @@
           <div onclick="openDetailModal('${item.id}')" class="px-5 py-3.5 hover:bg-zinc-50 cursor-pointer flex items-center justify-between gap-4 text-sm">
             <div class="flex items-center flex-wrap gap-y-1">
               <span class="text-zinc-400 text-xs w-14 shrink-0">${dateStr}</span>
-              <span class="font-medium text-zinc-900 hover:text-[#1348FB]">${escapeHtml(item.title)}</span>
+              ${soldBadge}
+              <span class="font-medium ${isSold ? 'line-through text-zinc-400' : 'text-zinc-900 hover:text-[#1348FB]'}">${escapeHtml(item.title)}</span>
               ${priceBadge}
               ${hood}
               ${picBadge}
+              ${mineBadge}
             </div>
-            <div class="flex items-center gap-2 shrink-0">
+            <div class="flex items-center gap-2.5 shrink-0">
+              <span class="text-[11px] hidden md:inline ${expInfo.urgent ? 'text-amber-700 font-medium' : 'text-zinc-400'}">${expInfo.short}</span>
               ${subLabel ? `<span class="subcat-regular text-xs text-zinc-600 hidden sm:inline">${escapeHtml(subLabel)}</span>` : ''}
               <span class="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded ${meta.badgeClass}">${meta.label}</span>
             </div>
@@ -736,6 +1195,9 @@
       }).join('');
     }
 
+    // ============================================================================
+    // LISTING DETAIL & SELLER MANAGEMENT
+    // ============================================================================
     function openDetailModal(id) {
       const item = cachedListings.find(x => x.id === id);
       if (!item) return;
@@ -743,16 +1205,33 @@
 
       const meta = CATEGORY_META[item.category_id] || { label: item.category_id };
       const subLabel = getSubcategoryLabel(item.category_id, item.subcategory_id);
+      const expInfo = formatExpirationInfo(item.expires_at, item.created_at);
 
       document.getElementById('detailCategoryBadge').textContent = meta.label;
       document.getElementById('detailSubcategoryBadge').textContent = subLabel
         ? `${subLabel} • ${item.neighborhood || item.region}`
         : (item.neighborhood || item.region);
 
+      const expBadge = document.getElementById('detailExpiresBadge');
+      expBadge.textContent = `⏳ ${expInfo.short}`;
+      expBadge.className = expInfo.urgent
+        ? 'text-[11px] font-semibold px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200'
+        : 'text-[11px] font-medium px-2 py-0.5 rounded bg-zinc-100 text-zinc-600';
+
+      const statusBadge = document.getElementById('detailStatusBadge');
+      if (item.status === 'sold') {
+        statusBadge.classList.remove('hidden');
+      } else {
+        statusBadge.classList.add('hidden');
+      }
+
       document.getElementById('detailTitle').textContent = item.price !== null ? `${item.title} — $${Number(item.price).toLocaleString()}` : item.title;
       document.getElementById('detailDesc').textContent = item.description;
-      document.getElementById('detailRelay').textContent = item.relay_email || 'reply@simplylists.com';
-      document.getElementById('detailDate').textContent = `Posted ${new Date(item.created_at).toLocaleString()}`;
+      document.getElementById('detailRelay').textContent = item.relay_email || 'reply@simplylists.org';
+
+      // Display Posted Date (without clock time) + Elapsed Duration in minutes/hours/days
+      document.getElementById('detailDate').textContent = formatPostedDateAndAgo(item.created_at);
+      document.getElementById('detailExpirationFooter').textContent = expInfo.full;
 
       const imgWrap = document.getElementById('detailImageWrapper');
       const mainImg = document.getElementById('detailMainImage');
@@ -768,25 +1247,106 @@
         imgWrap.classList.add('hidden');
       }
 
-      // Configure Direct Messaging UI
-      const dmForm = document.getElementById('dmFormContainer');
-      const ownNotice = document.getElementById('ownListingNotice');
+      const dmSection = document.getElementById('directMessageSection');
+      const ownerSection = document.getElementById('ownerManageSection');
+      const editForm = document.getElementById('editListingForm');
       const dmFeedback = document.getElementById('dmFeedback');
       document.getElementById('dmInput').value = '';
       dmFeedback.classList.add('hidden');
+      editForm.classList.add('hidden');
 
       if (currentUser && currentUser.id === item.seller_id) {
-        dmForm.classList.add('hidden');
-        ownNotice.classList.remove('hidden');
+        dmSection.classList.add('hidden');
+        ownerSection.classList.remove('hidden');
+        const soldBtn = document.getElementById('toggleSoldBtn');
+        if (item.status === 'sold') {
+          soldBtn.textContent = '↺ Mark Active';
+          soldBtn.className = 'bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs';
+        } else {
+          soldBtn.textContent = '✓ Mark as Sold';
+          soldBtn.className = 'bg-amber-500 hover:bg-amber-600 text-white font-bold px-3 py-1.5 rounded-lg text-xs';
+        }
       } else {
-        dmForm.classList.remove('hidden');
-        ownNotice.classList.add('hidden');
+        dmSection.classList.remove('hidden');
+        ownerSection.classList.add('hidden');
       }
 
       document.getElementById('detailModal').classList.remove('hidden');
     }
 
     function closeDetailModal() { document.getElementById('detailModal').classList.add('hidden'); }
+
+    function fillQuickReply(text) {
+      const input = document.getElementById('dmInput');
+      input.value = text;
+      input.focus();
+    }
+
+    function toggleEditForm() {
+      if (!selectedListing) return;
+      const form = document.getElementById('editListingForm');
+      if (form.classList.contains('hidden')) {
+        document.getElementById('editTitle').value = selectedListing.title;
+        document.getElementById('editPrice').value = selectedListing.price !== null ? selectedListing.price : '';
+        document.getElementById('editNeighborhood').value = selectedListing.neighborhood || '';
+        document.getElementById('editDesc').value = selectedListing.description;
+        form.classList.remove('hidden');
+      } else {
+        form.classList.add('hidden');
+      }
+    }
+
+    async function saveListingEdits(e) {
+      e.preventDefault();
+      if (!selectedListing || !currentUser) return;
+      const saveBtn = document.getElementById('saveEditBtn');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving...';
+
+      const priceVal = document.getElementById('editPrice').value;
+      const updates = {
+        title: document.getElementById('editTitle').value.trim(),
+        price: priceVal === '' ? null : parseFloat(priceVal),
+        neighborhood: document.getElementById('editNeighborhood').value.trim() || null,
+        description: document.getElementById('editDesc').value.trim(),
+        updated_at: new Date().toISOString()
+      };
+
+      const { error } = await supabaseClient
+        .from('listings')
+        .update(updates)
+        .eq('id', selectedListing.id)
+        .eq('seller_id', currentUser.id);
+
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Save Changes';
+
+      if (!error) {
+        await loadListings();
+        openDetailModal(selectedListing.id);
+      }
+    }
+
+    async function toggleListingSoldStatus() {
+      if (!selectedListing || !currentUser) return;
+      const newStatus = selectedListing.status === 'sold' ? 'active' : 'sold';
+
+      const { error } = await supabaseClient
+        .from('listings')
+        .update({ status: newStatus, updated_at: new Date().toISOString() })
+        .eq('id', selectedListing.id)
+        .eq('seller_id', currentUser.id);
+
+      if (!error) {
+        await loadListings();
+        const stillInFeed = cachedListings.find(x => x.id === selectedListing.id);
+        if (stillInFeed) {
+          openDetailModal(selectedListing.id);
+        } else {
+          closeDetailModal();
+        }
+      }
+    }
 
     async function deleteOwnListing() {
       if (!selectedListing || !currentUser) return;
@@ -835,7 +1395,7 @@
         feedback.className = 'text-xs font-medium text-red-600';
       } else {
         document.getElementById('dmInput').value = '';
-        feedback.textContent = '✓ Message sent! View replies anytime in your Inbox.';
+        feedback.textContent = '✓ Message sent! View live replies in your Inbox.';
         feedback.className = 'text-xs font-medium text-emerald-700';
       }
       feedback.classList.remove('hidden');
@@ -863,6 +1423,7 @@
         openAuthModal('Please sign in to access your inbox.');
         return;
       }
+      document.getElementById('liveToast').classList.add('hidden');
       document.getElementById('inboxModal').classList.remove('hidden');
       loadInbox();
     }
@@ -876,7 +1437,6 @@
       if (!supabaseClient || !currentUser) return;
       const threadsList = document.getElementById('threadsList');
 
-      // Fetch all messages where the logged-in user is sender or receiver
       const { data: msgs, error } = await supabaseClient
         .from('messages')
         .select('*, listings(title), sender:profiles!messages_sender_id_fkey(email, display_name), receiver:profiles!messages_receiver_id_fkey(email, display_name)')
@@ -891,7 +1451,6 @@
       inboxMessages = msgs || [];
       conversationMap = {};
 
-      // Group messages into threads by (listing_id + other_user_id)
       inboxMessages.forEach(m => {
         const otherId = m.sender_id === currentUser.id ? m.receiver_id : m.sender_id;
         const otherProfile = m.sender_id === currentUser.id ? m.receiver : m.sender;
@@ -952,7 +1511,6 @@
       const thread = conversationMap[key];
       if (!thread) return;
 
-      // Mark unread messages in this thread as read
       const unreadIds = thread.messages
         .filter(m => m.receiver_id === currentUser.id && !m.is_read)
         .map(m => m.id);
@@ -1007,20 +1565,16 @@
       if (!body) return;
 
       input.value = '';
-      const { error } = await supabaseClient.from('messages').insert([{
+      await supabaseClient.from('messages').insert([{
         listing_id: thread.listing_id,
         sender_id: currentUser.id,
         receiver_id: thread.other_id,
         body
       }]);
-
-      if (!error) {
-        await loadInbox();
-      }
     }
 
     // ============================================================================
-    // POSTING MODAL & STORAGE UPLOAD
+    // POSTING MODAL & STORAGE UPLOAD (WITH EXPIRATION DATE)
     // ============================================================================
     function handlePostCategoryChange() {
       const cat = document.getElementById('postCategory').value;
@@ -1084,6 +1638,9 @@
         }
 
         const priceVal = document.getElementById('postPrice').value;
+        const durationDays = parseInt(document.getElementById('postDurationDays').value || '30', 10);
+        const expiresAtIso = new Date(Date.now() + durationDays * 86400000).toISOString();
+
         const payload = {
           seller_id: currentUser.id,
           title: document.getElementById('postTitle').value.trim(),
@@ -1093,7 +1650,8 @@
           region: document.getElementById('postRegion').value,
           neighborhood: document.getElementById('postNeighborhood').value.trim() || null,
           image_urls: uploadedUrls,
-          description: document.getElementById('postDesc').value.trim()
+          description: document.getElementById('postDesc').value.trim(),
+          expires_at: expiresAtIso
         };
 
         const { error: insertError } = await supabaseClient.from('listings').insert([payload]);
@@ -1115,7 +1673,62 @@
     }
 
     // ============================================================================
-    // AUTHENTICATION
+    // COMMUNITY FEEDBACK STUDIO HANDLERS
+    // ============================================================================
+    function setFeedbackRating(stars) {
+      feedbackRating = stars;
+      const btns = document.querySelectorAll('#starRatingContainer .star-btn');
+      btns.forEach((btn, idx) => {
+        btn.className = idx < stars
+          ? 'star-btn text-[#F0A06A] hover:scale-110 transition'
+          : 'star-btn text-zinc-300 hover:scale-110 transition';
+      });
+    }
+
+    function setFeedbackTopic(topic) {
+      feedbackTopic = topic;
+      document.querySelectorAll('.fb-topic-btn').forEach(btn => {
+        if (btn.dataset.topic === topic) {
+          btn.className = 'fb-topic-btn px-2.5 py-1 rounded-full text-xs font-bold bg-[#1348FB] text-white border border-[#1348FB]';
+        } else {
+          btn.className = 'fb-topic-btn px-2.5 py-1 rounded-full text-xs font-medium bg-white text-zinc-600 border border-zinc-200 hover:border-[#1348FB]';
+        }
+      });
+    }
+
+    async function submitFeedback(e) {
+      e.preventDefault();
+      const msgInput = document.getElementById('feedbackMessage');
+      const emailInput = document.getElementById('feedbackEmail');
+      const statusEl = document.getElementById('feedbackStatus');
+      const btn = document.getElementById('feedbackSubmitBtn');
+
+      const message = msgInput.value.trim();
+      if (!message) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+
+      if (supabaseClient) {
+        await supabaseClient.from('feedback').insert([{
+          user_id: currentUser?.id || null,
+          email: emailInput.value.trim() || currentUser?.email || null,
+          rating: feedbackRating,
+          category: feedbackTopic,
+          message
+        }]);
+      }
+
+      btn.disabled = false;
+      btn.textContent = 'Send Feedback';
+      msgInput.value = '';
+      statusEl.textContent = '✦ Thank you! Your feedback has been recorded for simplylists.';
+      statusEl.classList.remove('hidden');
+      setTimeout(() => statusEl.classList.add('hidden'), 5000);
+    }
+
+    // ============================================================================
+    // AUTH MODAL HELPERS
     // ============================================================================
     function openAuthModal(msg) {
       const msgEl = document.getElementById('authMsg');
@@ -1139,8 +1752,7 @@
       if (error) {
         msgEl.textContent = error.message;
       } else {
-        msgEl.textContent = 'Account created! Signing you in...';
-        setTimeout(closeAuthModal, 1200);
+        msgEl.textContent = 'Check your email inbox to confirm your simplylists account!';
       }
     }
 
@@ -1162,6 +1774,8 @@
     }
 
     function filterByCategory(cat) {
+      onlyMyListings = false;
+      updateMyListingsNavStyle();
       document.getElementById('categoryFilter').value = cat;
       activeSubcategory = 'all';
       renderSubcategoryBar();
@@ -1171,6 +1785,8 @@
     function handleRegionChange() { loadListings(); }
 
     function showHome() {
+      onlyMyListings = false;
+      updateMyListingsNavStyle();
       document.getElementById('categoryFilter').value = 'all';
       activeSubcategory = 'all';
       renderSubcategoryBar();
