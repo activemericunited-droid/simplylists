@@ -62,7 +62,7 @@
         </select>
       </div>
 
-      <div class="flex items-center gap-2 text-sm">
+      <div class="flex items-center flex-wrap gap-2 text-sm">
         <!-- + POST LISTING BUTTON IN #1BF40B -->
         <button onclick="openPostModal()" class="bg-[#1BF40B] hover:brightness-95 transition-all text-zinc-950 font-bold px-4 py-2 rounded-lg text-xs tracking-wide shadow-sm">
           + Post Listing
@@ -85,6 +85,12 @@
           <span id="realtimeDot" class="w-2 h-2 rounded-full bg-zinc-300" title="Realtime status"></span>
           <span>💬 Inbox</span>
           <span id="unreadBadge" class="hidden bg-[#1348FB] text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">0</span>
+        </button>
+
+        <!-- PRIVATE ADMIN MODERATION BUTTON (ONLY VISIBLE TO ADMINS) -->
+        <button id="adminNavBtn" onclick="openAdminModal()" class="hidden bg-transparent border-[1.5px] border-red-600 text-red-600 hover:bg-red-50 px-3.5 py-1.5 rounded-lg text-xs font-bold items-center gap-1.5 transition">
+          <span>🛡️ Admin</span>
+          <span id="adminFlagCountBadge" class="hidden bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">0</span>
         </button>
 
         <!-- HOLLOW LINED AUTH BUTTONS -->
@@ -184,16 +190,13 @@
       </div>
     </section>
 
-    <!-- ====================================================================== -->
-    <!-- FEATURED LISTING PHOTO CAROUSEL (ABOVE SEARCH BAR, REFRESHES WEEKLY)   -->
-    <!-- ====================================================================== -->
+    <!-- FEATURED LISTING PHOTO CAROUSEL (TOP 3 LISTINGS, 1 COVER PHOTO EACH) -->
     <section
       id="featuredCarouselSection"
       onmouseenter="pauseFeaturedCarousel()"
       onmouseleave="resumeFeaturedCarousel()"
       class="bg-white border border-zinc-200 rounded-2xl p-4 sm:p-5 mb-5 shadow-sm overflow-hidden"
     >
-      <!-- Carousel Top Header Bar -->
       <div class="flex flex-wrap items-center justify-between gap-2 mb-3.5">
         <div class="flex items-center gap-2">
           <span class="inline-flex items-center gap-1.5 bg-[#F0A06A]/15 text-[#F0A06A] border border-[#F0A06A]/30 px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider">
@@ -208,14 +211,13 @@
         </div>
         <div class="flex items-center gap-2 text-[11px] text-zinc-400">
           <span id="featuredWeekWindow">Refreshes every Monday</span>
-          <span id="featuredViewsBadge" class="hidden bg-[#1348FB]/10 text-[#1348FB] font-bold px-2 py-0.5 rounded-full"></span>
+          <span id="featuredViewsBadge" class="hidden bg-[#1348FB]/10 text-[#1348FB] font-bold px-2.5 py-0.5 rounded-full"></span>
         </div>
       </div>
 
-      <!-- Carousel Stage -->
       <div id="featuredCarouselBody">
         <div class="h-48 sm:h-64 rounded-xl bg-zinc-100 flex items-center justify-center text-xs text-zinc-400">
-          Loading this week's most clicked photo listing...
+          Loading this week's most clicked listings...
         </div>
       </div>
     </section>
@@ -372,7 +374,7 @@
     <span class="font-bold text-[#F0A06A] tracking-widest">s i m p l y l i s t s</span> — simple local classifieds for sale, services & personal connections
   </footer>
 
-  <!-- LISTING DETAIL, OWNER MANAGEMENT & IN-APP MESSAGE MODAL -->
+  <!-- LISTING DETAIL, REPORT BUTTON, OWNER MANAGEMENT & IN-APP MESSAGE MODAL -->
   <div id="detailModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl border border-zinc-200 max-w-2xl w-full max-h-[92vh] overflow-y-auto p-6 shadow-2xl">
       <div class="flex justify-between items-start gap-4 border-b border-zinc-100 pb-4 mb-4">
@@ -387,6 +389,12 @@
           <h3 id="detailTitle" class="text-2xl font-bold text-zinc-900"></h3>
         </div>
         <div class="flex items-center gap-2 shrink-0">
+          <!-- REPORT / FLAG LISTING BUTTON -->
+          <button id="detailReportBtn" onclick="reportCurrentListing()" class="px-2.5 h-8 rounded-full border border-zinc-200 hover:border-red-500 text-zinc-500 hover:text-red-600 flex items-center justify-center text-xs font-semibold gap-1 transition" title="Report spam or abusive post">
+            <span>🚩</span>
+            <span class="hidden sm:inline">Report</span>
+          </button>
+          <!-- FAVORITE / SAVE HEART BUTTON -->
           <button id="detailFavoriteBtn" onclick="toggleFavorite(selectedListing?.id, event)" class="w-8 h-8 rounded-full border border-zinc-200 hover:border-[#F0A06A] flex items-center justify-center text-lg transition" title="Save listing">
             ♡
           </button>
@@ -691,6 +699,40 @@
     </div>
   </div>
 
+  <!-- PRIVATE ADMIN MODERATION MODAL (4 TABS INCL. USER FEEDBACK) -->
+  <div id="adminModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-zinc-200 max-w-5xl w-full max-h-[88vh] flex flex-col overflow-hidden shadow-2xl">
+      <div class="px-6 py-4 border-b border-zinc-200 flex flex-wrap items-center justify-between gap-3 bg-zinc-900 text-white">
+        <div class="flex items-center gap-2.5">
+          <span class="text-lg">🛡️</span>
+          <div>
+            <h3 class="font-bold text-base tracking-tight">simplylists Admin Moderation Center</h3>
+            <p class="text-[11px] text-zinc-400">Review flagged posts, approve clean listings, ban repeat offenders, and read user feedback</p>
+          </div>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="setAdminFilter('flagged')" id="adminTabFlagged" class="px-3 py-1 rounded-lg text-xs font-bold bg-red-600 text-white">
+            Flagged / Reported
+          </button>
+          <button onclick="setAdminFilter('all')" id="adminTabAll" class="px-3 py-1 rounded-lg text-xs font-semibold bg-zinc-800 text-zinc-300 hover:text-white">
+            All Recent Posts
+          </button>
+          <button onclick="setAdminFilter('banned')" id="adminTabBanned" class="px-3 py-1 rounded-lg text-xs font-semibold bg-zinc-800 text-zinc-300 hover:text-white">
+            Banned Users
+          </button>
+          <button onclick="setAdminFilter('feedback')" id="adminTabFeedback" class="px-3 py-1 rounded-lg text-xs font-semibold bg-zinc-800 text-zinc-300 hover:text-white">
+            ★ User Feedback
+          </button>
+          <button onclick="closeAdminModal()" class="ml-2 w-8 h-8 rounded-full bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center text-zinc-300 font-bold">&times;</button>
+        </div>
+      </div>
+
+      <div id="adminQueueContainer" class="flex-1 overflow-y-auto divide-y divide-zinc-200 p-4 bg-[#F8F7F4]">
+        <div class="p-8 text-center text-xs text-zinc-400">Loading moderation queue...</div>
+      </div>
+    </div>
+  </div>
+
   <script>
     // ============================================================================
     // PASTE YOUR SUPABASE CREDENTIALS RIGHT HERE:
@@ -709,8 +751,12 @@
     let onlySavedListings = false;
     let favoriteIds = new Set(JSON.parse(localStorage.getItem('simplylists_favs') || '[]'));
 
-    // Featured Listing Weekly Carousel State
-    let featuredListing = null;
+    // Admin Moderation State
+    let isAdminUser = false;
+    let adminFilterMode = 'flagged';
+
+    // Featured Listing Weekly Carousel State (Top 3 Listings, 1 Cover Photo Each)
+    let featuredListings = [];
     let featuredSlideIndex = 0;
     let featuredCarouselTimer = null;
     let featuredCarouselPaused = false;
@@ -782,12 +828,11 @@
     }
 
     // ============================================================================
-    // WEEKLY FEATURED LISTING PHOTO CAROUSEL (MOST CLICKED OF THE WEEK)
+    // WEEKLY FEATURED LISTINGS CAROUSEL (TOP 3 LISTINGS, 1 COVER PHOTO EACH)
     // ============================================================================
     function getStartOfCurrentWeekInfo() {
       const now = new Date();
-      // Calculate Monday 00:00:00 of the current week
-      const dayOfWeek = now.getDay(); // 0 = Sun, 1 = Mon ...
+      const dayOfWeek = now.getDay();
       const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
       const monday = new Date(now);
       monday.setDate(now.getDate() - diffToMonday);
@@ -811,7 +856,6 @@
 
       const region = document.getElementById('regionSelect').value;
 
-      // 1. Query most clicked active photo listing from the last 7 days
       let weeklyQuery = supabaseClient
         .from('listings')
         .select('*')
@@ -821,13 +865,12 @@
         .gt('expires_at', new Date().toISOString())
         .order('views_count', { ascending: false })
         .order('created_at', { ascending: false })
-        .limit(1);
+        .limit(3);
 
       if (region !== 'all') weeklyQuery = weeklyQuery.eq('region', region);
 
       let { data: weeklyData } = await weeklyQuery;
 
-      // 2. Fallback: if no photo listing was posted in the last 7 days yet, pick the most clicked active photo listing overall
       if (!weeklyData || weeklyData.length === 0) {
         let fallbackQuery = supabaseClient
           .from('listings')
@@ -837,15 +880,15 @@
           .gt('expires_at', new Date().toISOString())
           .order('views_count', { ascending: false })
           .order('created_at', { ascending: false })
-          .limit(1);
+          .limit(3);
 
         if (region !== 'all') fallbackQuery = fallbackQuery.eq('region', region);
         const { data: fallbackData } = await fallbackQuery;
         weeklyData = fallbackData;
       }
 
-      featuredListing = (weeklyData && weeklyData[0]) ? weeklyData[0] : null;
-      featuredSlideIndex = 0;
+      featuredListings = (weeklyData || []).filter(item => item.image_urls && item.image_urls.length > 0);
+      if (featuredSlideIndex >= featuredListings.length) featuredSlideIndex = 0;
       renderFeaturedCarousel();
       startFeaturedCarouselAutoPlay();
     }
@@ -854,61 +897,60 @@
       const container = document.getElementById('featuredCarouselBody');
       const viewsBadge = document.getElementById('featuredViewsBadge');
 
-      if (!featuredListing || !featuredListing.image_urls || featuredListing.image_urls.length === 0) {
+      if (!featuredListings || featuredListings.length === 0) {
         viewsBadge.classList.add('hidden');
         container.innerHTML = `
           <div class="h-44 sm:h-52 rounded-xl bg-[#F8F7F4] border border-dashed border-zinc-300 flex flex-col items-center justify-center p-6 text-center">
             <span class="text-xs font-bold text-[#1348FB] uppercase tracking-wider">No Featured Photo Listing Yet This Week</span>
-            <p class="text-xs text-zinc-500 mt-1">Post a listing with photos—the most clicked listing of the week is featured right here!</p>
+            <p class="text-xs text-zinc-500 mt-1">Post a listing with a photo—the most clicked listings of the week are featured right here!</p>
             <button onclick="openPostModal()" class="mt-3 bg-[#1BF40B] text-zinc-950 font-bold px-3.5 py-1.5 rounded-lg text-xs shadow-xs">
-              + Post with Photos
+              + Post with Photo
             </button>
           </div>
         `;
         return;
       }
 
-      const images = featuredListing.image_urls;
-      if (featuredSlideIndex >= images.length) featuredSlideIndex = 0;
-      if (featuredSlideIndex < 0) featuredSlideIndex = images.length - 1;
+      if (featuredSlideIndex >= featuredListings.length) featuredSlideIndex = 0;
+      if (featuredSlideIndex < 0) featuredSlideIndex = featuredListings.length - 1;
 
-      const currentPhotoUrl = images[featuredSlideIndex];
-      const meta = CATEGORY_META[featuredListing.category_id] || { label: featuredListing.category_id };
-      const subLabel = getSubcategoryLabel(featuredListing.category_id, featuredListing.subcategory_id);
-      const priceStr = featuredListing.price !== null ? `$${Number(featuredListing.price).toLocaleString()}` : 'View Listing';
-      const clicks = Number(featuredListing.views_count || 0);
+      const currentItem = featuredListings[featuredSlideIndex];
+      const singleCoverPhotoUrl = currentItem.image_urls[0];
+      const meta = CATEGORY_META[currentItem.category_id] || { label: currentItem.category_id };
+      const subLabel = getSubcategoryLabel(currentItem.category_id, currentItem.subcategory_id);
+      const priceStr = currentItem.price !== null ? `$${Number(currentItem.price).toLocaleString()}` : 'View Listing';
+      const clicks = Number(currentItem.views_count || 0);
 
-      viewsBadge.textContent = `🔥 ${clicks} ${clicks === 1 ? 'click' : 'clicks'} this week`;
+      viewsBadge.textContent = `#${featuredSlideIndex + 1} This Week • 🔥 ${clicks} ${clicks === 1 ? 'click' : 'clicks'}`;
       viewsBadge.classList.remove('hidden');
 
       container.innerHTML = `
         <div class="relative rounded-xl overflow-hidden border border-zinc-200 bg-zinc-900 group">
-          <!-- Clickable Featured Photo Link -->
           <div
-            onclick="openFeaturedListingModal()"
+            onclick="openFeaturedListingModal('${currentItem.id}')"
             class="cursor-pointer relative h-60 sm:h-80 w-full overflow-hidden flex items-center justify-center"
-            title="Click to open featured listing"
+            title="Click to view ${escapeHtml(currentItem.title)}"
           >
-            <!-- Blurred ambient backdrop for portrait photos -->
-            <img src="${currentPhotoUrl}" alt="" class="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-110 pointer-events-none" />
-            <!-- Main crisp photo -->
+            <img src="${singleCoverPhotoUrl}" alt="" class="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-110 pointer-events-none" />
             <img
-              src="${currentPhotoUrl}"
-              alt="${escapeHtml(featuredListing.title)}"
+              src="${singleCoverPhotoUrl}"
+              alt="${escapeHtml(currentItem.title)}"
               class="carousel-fade relative z-10 max-h-full max-w-full object-contain group-hover:scale-[1.02] transition-transform duration-300"
             />
-            <!-- Bottom Gradient Overlay with Clickable Listing Info -->
             <div class="absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-black/85 via-black/45 to-transparent p-4 sm:p-5 flex flex-wrap items-end justify-between gap-3">
               <div class="space-y-1 max-w-xl">
                 <div class="flex items-center gap-2">
+                  <span class="bg-[#F0A06A] text-zinc-950 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded">
+                    #${featuredSlideIndex + 1} Most Clicked
+                  </span>
                   <span class="bg-[#1348FB] text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded">
                     ${meta.label}
                   </span>
                   ${subLabel ? `<span class="subcat-regular text-xs text-zinc-200">${escapeHtml(subLabel)}</span>` : ''}
-                  <span class="text-xs text-zinc-300">• ${escapeHtml(featuredListing.neighborhood || featuredListing.region)}</span>
+                  <span class="text-xs text-zinc-300">• ${escapeHtml(currentItem.neighborhood || currentItem.region)}</span>
                 </div>
                 <h4 class="text-base sm:text-xl font-bold text-white group-hover:text-[#F0A06A] transition-colors line-clamp-1">
-                  ${escapeHtml(featuredListing.title)}
+                  ${escapeHtml(currentItem.title)}
                 </h4>
               </div>
               <div class="flex items-center gap-2.5">
@@ -919,39 +961,41 @@
             </div>
           </div>
 
-          <!-- Prev / Next Controls (Shown when listing has multiple photos, or to cycle) -->
-          ${images.length > 1 ? `
+          ${featuredListings.length > 1 ? `
             <button
               type="button"
               onclick="stepFeaturedSlide(-1, event)"
               class="absolute left-3 top-1/2 -translate-y-1/2 z-30 w-9 h-9 rounded-full bg-white/90 hover:bg-white text-zinc-900 font-bold shadow-md flex items-center justify-center transition"
-              title="Previous photo"
+              title="Previous featured listing"
             >‹</button>
             <button
               type="button"
               onclick="stepFeaturedSlide(1, event)"
               class="absolute right-3 top-1/2 -translate-y-1/2 z-30 w-9 h-9 rounded-full bg-white/90 hover:bg-white text-zinc-900 font-bold shadow-md flex items-center justify-center transition"
-              title="Next photo"
+              title="Next featured listing"
             >›</button>
           ` : ''}
         </div>
 
-        <!-- Thumbnail Strip & Slide Dots -->
-        ${images.length > 1 ? `
-          <div class="flex items-center justify-between gap-2 mt-2.5">
+        ${featuredListings.length > 1 ? `
+          <div class="flex items-center justify-between gap-2 mt-3">
             <div class="flex items-center gap-2 overflow-x-auto py-0.5">
-              ${images.map((url, idx) => `
+              ${featuredListings.map((item, idx) => `
                 <button
                   type="button"
                   onclick="goToFeaturedSlide(${idx}, event)"
-                  class="relative h-12 w-16 rounded-lg overflow-hidden border-2 transition shrink-0 ${idx === featuredSlideIndex ? 'border-[#1348FB] scale-105 shadow-xs' : 'border-transparent opacity-65 hover:opacity-100'}"
+                  class="flex items-center gap-2 pr-3 pl-1 py-1 rounded-lg border transition shrink-0 text-left ${idx === featuredSlideIndex ? 'border-[#1348FB] bg-[#1348FB]/5 shadow-xs' : 'border-zinc-200 bg-white opacity-70 hover:opacity-100'}"
                 >
-                  <img src="${url}" class="w-full h-full object-cover" />
+                  <img src="${item.image_urls[0]}" class="h-9 w-12 rounded object-cover shrink-0" />
+                  <div class="max-w-[130px]">
+                    <div class="text-[10px] font-bold text-[#1348FB] uppercase">#${idx + 1} • ${Number(item.views_count || 0)} clicks</div>
+                    <div class="text-xs font-medium text-zinc-800 truncate">${escapeHtml(item.title)}</div>
+                  </div>
                 </button>
               `).join('')}
             </div>
-            <span class="text-[11px] text-zinc-400 font-medium shrink-0">
-              Photo ${featuredSlideIndex + 1} of ${images.length}
+            <span class="text-[11px] text-zinc-400 font-medium shrink-0 hidden sm:inline">
+              Featured ${featuredSlideIndex + 1} of ${featuredListings.length}
             </span>
           </div>
         ` : ''}
@@ -960,8 +1004,8 @@
 
     function stepFeaturedSlide(direction, event) {
       if (event) event.stopPropagation();
-      if (!featuredListing || !featuredListing.image_urls) return;
-      featuredSlideIndex = (featuredSlideIndex + direction + featuredListing.image_urls.length) % featuredListing.image_urls.length;
+      if (!featuredListings || featuredListings.length <= 1) return;
+      featuredSlideIndex = (featuredSlideIndex + direction + featuredListings.length) % featuredListings.length;
       renderFeaturedCarousel();
     }
 
@@ -975,8 +1019,8 @@
       if (featuredCarouselTimer) clearInterval(featuredCarouselTimer);
       featuredCarouselTimer = setInterval(() => {
         if (featuredCarouselPaused) return;
-        if (featuredListing && featuredListing.image_urls && featuredListing.image_urls.length > 1) {
-          featuredSlideIndex = (featuredSlideIndex + 1) % featuredListing.image_urls.length;
+        if (featuredListings && featuredListings.length > 1) {
+          featuredSlideIndex = (featuredSlideIndex + 1) % featuredListings.length;
           renderFeaturedCarousel();
         }
       }, 4500);
@@ -985,13 +1029,13 @@
     function pauseFeaturedCarousel() { featuredCarouselPaused = true; }
     function resumeFeaturedCarousel() { featuredCarouselPaused = false; }
 
-    function openFeaturedListingModal() {
-      if (!featuredListing) return;
-      // Ensure featuredListing is available in cachedListings so openDetailModal finds it
-      if (!cachedListings.find(x => x.id === featuredListing.id)) {
-        cachedListings.unshift(featuredListing);
+    function openFeaturedListingModal(listingId) {
+      const target = featuredListings.find(x => x.id === listingId);
+      if (!target) return;
+      if (!cachedListings.find(x => x.id === target.id)) {
+        cachedListings.unshift(target);
       }
-      openDetailModal(featuredListing.id);
+      openDetailModal(target.id);
     }
 
     // ============================================================================
@@ -1131,13 +1175,14 @@
     }
 
     // ============================================================================
-    // AUTHENTICATION & PASSWORD RECOVERY
+    // AUTHENTICATION, PASSWORD RECOVERY & ADMIN CHECK
     // ============================================================================
     async function initAuth() {
       const { data: { session } } = await supabaseClient.auth.getSession();
       currentUser = session?.user || null;
       renderAuthUI();
       loadFavorites();
+      checkAdminStatus();
       if (currentUser) {
         refreshUnreadCount();
         setupRealtimeMessages();
@@ -1153,6 +1198,7 @@
         }
         renderAuthUI();
         loadFavorites();
+        checkAdminStatus();
         if (currentUser) {
           refreshUnreadCount();
           setupRealtimeMessages();
@@ -1242,6 +1288,359 @@
           loadListings();
         }, 1200);
       }
+    }
+
+    // ============================================================================
+    // PRIVATE ADMIN MODERATION CENTER & COMMUNITY REPORTING
+    // ============================================================================
+    async function checkAdminStatus() {
+      const adminBtn = document.getElementById('adminNavBtn');
+      if (!supabaseClient || !currentUser) {
+        isAdminUser = false;
+        adminBtn?.classList.add('hidden');
+        adminBtn?.classList.remove('inline-flex');
+        return;
+      }
+
+      const { data: profile } = await supabaseClient
+        .from('profiles')
+        .select('is_admin, is_banned')
+        .eq('id', currentUser.id)
+        .single();
+
+      if (profile?.is_banned) {
+        await supabaseClient.auth.signOut();
+        alert('Your account has been suspended for violating community guidelines.');
+        return;
+      }
+
+      isAdminUser = Boolean(profile?.is_admin);
+      if (isAdminUser) {
+        adminBtn.classList.remove('hidden');
+        adminBtn.classList.add('inline-flex');
+        refreshAdminFlagBadge();
+      } else {
+        adminBtn.classList.add('hidden');
+        adminBtn.classList.remove('inline-flex');
+      }
+    }
+
+    async function refreshAdminFlagBadge() {
+      if (!supabaseClient || !isAdminUser) return;
+      const { count } = await supabaseClient
+        .from('listings')
+        .select('*', { count: 'exact', head: true })
+        .or('status.eq.flagged,flags_count.gt.0');
+
+      const badge = document.getElementById('adminFlagCountBadge');
+      if (count && count > 0) {
+        badge.textContent = count;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+
+    async function reportCurrentListing() {
+      if (!currentUser) {
+        closeDetailModal();
+        openAuthModal('Please sign in to report a listing.');
+        return;
+      }
+      if (!selectedListing) return;
+      if (selectedListing.seller_id === currentUser.id) {
+        alert('You cannot report your own listing.');
+        return;
+      }
+
+      const reason = prompt(
+        'Why are you reporting this listing?\n(e.g., Spam, Scam, Prohibited item, Harassment)',
+        'Spam or scam'
+      );
+      if (!reason) return;
+
+      const { error } = await supabaseClient.from('listing_flags').insert([{
+        listing_id: selectedListing.id,
+        reporter_id: currentUser.id,
+        reason: reason.trim()
+      }]);
+
+      if (error) {
+        if (error.code === '23505') {
+          alert('You have already reported this listing. Our moderation system is reviewing it.');
+        } else {
+          alert(`Could not submit report: ${error.message}`);
+        }
+        return;
+      }
+
+      alert('Thank you. Your report has been recorded. Listings with 3 reports are automatically hidden.');
+      closeDetailModal();
+      loadListings();
+      if (isAdminUser) refreshAdminFlagBadge();
+    }
+
+    function openAdminModal() {
+      if (!isAdminUser) return;
+      document.getElementById('adminModal').classList.remove('hidden');
+      loadAdminQueue();
+    }
+
+    function closeAdminModal() {
+      document.getElementById('adminModal').classList.add('hidden');
+      refreshAdminFlagBadge();
+      loadListings();
+      loadWeeklyFeaturedListing();
+    }
+
+    function setAdminFilter(mode) {
+      adminFilterMode = mode;
+      document.getElementById('adminTabFlagged').className = mode === 'flagged'
+        ? 'px-3 py-1 rounded-lg text-xs font-bold bg-red-600 text-white'
+        : 'px-3 py-1 rounded-lg text-xs font-semibold bg-zinc-800 text-zinc-300 hover:text-white';
+      document.getElementById('adminTabAll').className = mode === 'all'
+        ? 'px-3 py-1 rounded-lg text-xs font-bold bg-[#1348FB] text-white'
+        : 'px-3 py-1 rounded-lg text-xs font-semibold bg-zinc-800 text-zinc-300 hover:text-white';
+      document.getElementById('adminTabBanned').className = mode === 'banned'
+        ? 'px-3 py-1 rounded-lg text-xs font-bold bg-amber-500 text-zinc-950'
+        : 'px-3 py-1 rounded-lg text-xs font-semibold bg-zinc-800 text-zinc-300 hover:text-white';
+      document.getElementById('adminTabFeedback').className = mode === 'feedback'
+        ? 'px-3 py-1 rounded-lg text-xs font-bold bg-[#F0A06A] text-zinc-950'
+        : 'px-3 py-1 rounded-lg text-xs font-semibold bg-zinc-800 text-zinc-300 hover:text-white';
+      loadAdminQueue();
+    }
+
+    async function loadAdminQueue() {
+      if (!supabaseClient || !isAdminUser) return;
+      const container = document.getElementById('adminQueueContainer');
+      container.innerHTML = `<div class="p-8 text-center text-xs text-zinc-400">Loading...</div>`;
+
+      // Tab 4: User Feedback & Star Ratings
+      if (adminFilterMode === 'feedback') {
+        const { data: feedbackRows, error } = await supabaseClient
+          .from('feedback')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(100);
+
+        if (error) {
+          container.innerHTML = `<div class="p-4 text-xs text-red-600">${error.message}</div>`;
+          return;
+        }
+        if (!feedbackRows || feedbackRows.length === 0) {
+          container.innerHTML = `<div class="p-12 text-center text-xs text-zinc-400">No user feedback submitted yet.</div>`;
+          return;
+        }
+
+        const avgRating = (
+          feedbackRows.reduce((sum, r) => sum + (Number(r.rating) || 5), 0) / feedbackRows.length
+        ).toFixed(1);
+
+        const summaryBar = `
+          <div class="bg-white rounded-xl border border-zinc-200 p-4 mb-3 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl font-bold text-[#F0A06A]">★ ${avgRating}</span>
+              <span class="text-xs text-zinc-500">Average rating across <strong>${feedbackRows.length}</strong> submission(s)</span>
+            </div>
+          </div>
+        `;
+
+        const cardsHtml = feedbackRows.map(fb => {
+          const starsCount = Math.max(1, Math.min(5, Number(fb.rating) || 5));
+          const starsStr = '★'.repeat(starsCount) + '☆'.repeat(5 - starsCount);
+          const dateStr = new Date(fb.created_at).toLocaleDateString('en-US', {
+            month: 'short', day: 'numeric', year: 'numeric'
+          });
+          const topicLabel = fb.category || 'feature-idea';
+
+          return `
+            <div class="bg-white rounded-xl border border-zinc-200 p-4 mb-2.5 flex flex-wrap items-start justify-between gap-4">
+              <div class="space-y-1.5 max-w-2xl">
+                <div class="flex items-center flex-wrap gap-2">
+                  <span class="text-[#F0A06A] font-bold text-sm tracking-tight">${starsStr}</span>
+                  <span class="bg-[#1348FB]/10 text-[#1348FB] border border-[#1348FB]/25 text-[10px] font-bold uppercase px-2 py-0.5 rounded">
+                    ${escapeHtml(topicLabel)}
+                  </span>
+                  <span class="text-xs text-zinc-500">
+                    From: <strong class="text-zinc-800">${escapeHtml(fb.email || 'Anonymous visitor')}</strong>
+                  </span>
+                  <span class="text-[11px] text-zinc-400">• ${dateStr}</span>
+                </div>
+                <p class="text-xs sm:text-sm text-zinc-800 whitespace-pre-line leading-relaxed">${escapeHtml(fb.message)}</p>
+              </div>
+              <button
+                onclick="adminDeleteFeedback('${fb.id}')"
+                class="bg-zinc-100 hover:bg-red-50 text-zinc-500 hover:text-red-600 border border-zinc-200 hover:border-red-200 font-semibold px-3 py-1.5 rounded-lg text-xs shrink-0 transition"
+                title="Dismiss feedback"
+              >
+                🗑 Dismiss
+              </button>
+            </div>
+          `;
+        }).join('');
+
+        container.innerHTML = summaryBar + cardsHtml;
+        return;
+      }
+
+      // Tab 3: Banned Users List
+      if (adminFilterMode === 'banned') {
+        const { data: bannedUsers, error } = await supabaseClient
+          .from('profiles')
+          .select('*')
+          .eq('is_banned', true)
+          .order('updated_at', { ascending: false });
+
+        if (error) {
+          container.innerHTML = `<div class="p-4 text-xs text-red-600">${error.message}</div>`;
+          return;
+        }
+        if (!bannedUsers || bannedUsers.length === 0) {
+          container.innerHTML = `<div class="p-10 text-center text-xs text-zinc-400">No banned users currently.</div>`;
+          return;
+        }
+
+        container.innerHTML = bannedUsers.map(u => `
+          <div class="bg-white rounded-xl border border-zinc-200 p-4 mb-2.5 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <span class="bg-red-100 text-red-700 text-[10px] font-bold uppercase px-2 py-0.5 rounded mr-2">BANNED</span>
+              <span class="font-bold text-sm text-zinc-900">${escapeHtml(u.email)}</span>
+              <div class="text-xs text-zinc-400 mt-0.5">User ID: ${u.id}</div>
+            </div>
+            <button
+              onclick="adminToggleBanUser('${u.id}', false)"
+              class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-1.5 rounded-lg text-xs"
+            >
+              ✓ Unban User
+            </button>
+          </div>
+        `).join('');
+        return;
+      }
+
+      // Tab 1 & 2: Flagged Posts or All Recent Posts
+      let query = supabaseClient
+        .from('listings')
+        .select('*, seller:profiles!listings_seller_id_fkey(id, email, display_name, is_banned)')
+        .order('flags_count', { ascending: false })
+        .order('created_at', { ascending: false })
+        .limit(50);
+
+      if (adminFilterMode === 'flagged') {
+        query = query.or('status.eq.flagged,flags_count.gt.0');
+      }
+
+      const { data: rows, error } = await query;
+      if (error) {
+        container.innerHTML = `<div class="p-4 text-xs text-red-600">${error.message}</div>`;
+        return;
+      }
+
+      if (!rows || rows.length === 0) {
+        container.innerHTML = `<div class="p-12 text-center text-xs text-zinc-400">🎉 Queue is clean! No flagged or reported listings to review.</div>`;
+        return;
+      }
+
+      container.innerHTML = rows.map(item => {
+        const sellerEmail = item.seller?.email || 'Unknown seller';
+        const isBanned = Boolean(item.seller?.is_banned);
+        const isQuarantined = item.status === 'flagged';
+
+        return `
+          <div class="bg-white rounded-xl border ${isQuarantined ? 'border-red-300' : 'border-zinc-200'} p-4 mb-3 shadow-2xs">
+            <div class="flex flex-wrap items-start justify-between gap-4">
+              <div class="space-y-1 max-w-2xl">
+                <div class="flex items-center flex-wrap gap-2">
+                  <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded ${isQuarantined ? 'bg-red-100 text-red-700' : 'bg-emerald-50 text-emerald-700'}">
+                    Status: ${escapeHtml(item.status)}
+                  </span>
+                  <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-amber-100 text-amber-800">
+                    🚩 ${item.flags_count || 0} report(s)
+                  </span>
+                  <span class="text-xs text-zinc-500">
+                    Seller: <strong class="text-zinc-800">${escapeHtml(sellerEmail)}</strong>
+                    ${isBanned ? '<span class="ml-1 text-red-600 font-bold">(BANNED)</span>' : ''}
+                  </span>
+                </div>
+                <h4 class="font-bold text-base text-zinc-900">${escapeHtml(item.title)}</h4>
+                <p class="text-xs text-zinc-600 line-clamp-2">${escapeHtml(item.description)}</p>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-2 shrink-0">
+                <button
+                  onclick="adminApprovePost('${item.id}')"
+                  class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs"
+                  title="Clear flags and restore to public feed"
+                >
+                  ✓ Approve & Clear Flags
+                </button>
+                <button
+                  onclick="adminDeletePost('${item.id}')"
+                  class="bg-zinc-900 hover:bg-zinc-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs"
+                  title="Permanently delete this listing"
+                >
+                  🗑 Delete Post
+                </button>
+                <button
+                  onclick="adminToggleBanUser('${item.seller_id}', ${!isBanned})"
+                  class="${isBanned ? 'bg-amber-500 text-zinc-950' : 'bg-red-600 hover:bg-red-700 text-white'} font-bold px-3 py-1.5 rounded-lg text-xs"
+                >
+                  ${isBanned ? 'Unban Seller' : '🚫 Ban Seller'}
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function adminApprovePost(listingId) {
+      const { error } = await supabaseClient.rpc('admin_approve_listing', {
+        target_listing_id: listingId
+      });
+      if (error) {
+        alert(`Error approving post: ${error.message}`);
+        return;
+      }
+      loadAdminQueue();
+      refreshAdminFlagBadge();
+    }
+
+    async function adminDeletePost(listingId) {
+      if (!confirm('Permanently delete this listing?')) return;
+      const { error } = await supabaseClient.from('listings').delete().eq('id', listingId);
+      if (error) {
+        alert(`Error deleting post: ${error.message}`);
+        return;
+      }
+      loadAdminQueue();
+      refreshAdminFlagBadge();
+    }
+
+    async function adminToggleBanUser(userId, banState) {
+      const actionLabel = banState ? 'ban this seller and hide all of their active listings' : 'unban this seller';
+      if (!confirm(`Are you sure you want to ${actionLabel}?`)) return;
+
+      const { error } = await supabaseClient.rpc('admin_set_user_ban', {
+        target_user_id: userId,
+        ban_state: banState
+      });
+      if (error) {
+        alert(`Error updating ban status: ${error.message}`);
+        return;
+      }
+      loadAdminQueue();
+      refreshAdminFlagBadge();
+    }
+
+    async function adminDeleteFeedback(feedbackId) {
+      if (!confirm('Dismiss and delete this feedback entry?')) return;
+      const { error } = await supabaseClient.from('feedback').delete().eq('id', feedbackId);
+      if (error) {
+        alert(`Error deleting feedback: ${error.message}`);
+        return;
+      }
+      loadAdminQueue();
     }
 
     // ============================================================================
@@ -1606,28 +2005,24 @@
       if (!item || !supabaseClient) return;
       item.views_count = Number(item.views_count || 0) + 1;
 
-      // Call the SECURITY DEFINER RPC function in Supabase so both guests and signed-in users increment clicks
       const { error } = await supabaseClient.rpc('increment_listing_views', {
         target_listing_id: item.id
       });
 
-      // Fallback if the RPC function hasn't been created in SQL Editor yet
       if (error && currentUser && currentUser.id === item.seller_id) {
         await supabaseClient.from('listings').update({ views_count: item.views_count }).eq('id', item.id);
       }
 
-      // Refresh Featured Carousel if this click pushes a photo listing into the #1 spot
-      if (item.has_image && (!featuredListing || item.views_count >= Number(featuredListing.views_count || 0))) {
+      if (item.has_image) {
         loadWeeklyFeaturedListing();
       }
     }
 
     function openDetailModal(id) {
-      const item = cachedListings.find(x => x.id === id) || (featuredListing && featuredListing.id === id ? featuredListing : null);
+      const item = cachedListings.find(x => x.id === id) || featuredListings.find(x => x.id === id);
       if (!item) return;
       selectedListing = item;
 
-      // Increment click count for weekly Featured Listing leaderboard
       recordListingClick(item);
 
       const meta = CATEGORY_META[item.category_id] || { label: item.category_id };
@@ -1659,7 +2054,6 @@
       document.getElementById('detailDesc').textContent = item.description;
       document.getElementById('detailRelay').textContent = item.relay_email || 'reply@simplylists.org';
 
-      // Display Posted Date (without clock time) + Elapsed Duration in minutes/hours/days
       document.getElementById('detailDate').textContent = formatPostedDateAndAgo(item.created_at);
       document.getElementById('detailExpirationFooter').textContent = expInfo.full;
       renderDetailFavoriteButton(item.id);
@@ -2245,4 +2639,3 @@
   </script>
 </body>
 </html>
-
