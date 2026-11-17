@@ -26,7 +26,7 @@
       font-weight: 400;
     }
     .carousel-fade {
-      transition: opacity 0.28s ease-in-out, transform 0.28s ease-in-out;
+      transition: opacity 0.28s ease-in-out, transform 0.35s ease-out;
     }
   </style>
 </head>
@@ -190,33 +190,17 @@
       </div>
     </section>
 
-    <!-- FEATURED LISTING PHOTO CAROUSEL (TOP 3 LISTINGS, 1 COVER PHOTO EACH) -->
+    <!-- ====================================================================== -->
+    <!-- FULL-BLEED FEATURED LISTING CAROUSEL (ZERO WHITE BORDERS OR PADDING)   -->
+    <!-- ====================================================================== -->
     <section
       id="featuredCarouselSection"
       onmouseenter="pauseFeaturedCarousel()"
       onmouseleave="resumeFeaturedCarousel()"
-      class="bg-white border border-zinc-200 rounded-2xl p-4 sm:p-5 mb-5 shadow-sm overflow-hidden"
+      class="relative rounded-2xl overflow-hidden mb-5 shadow-md bg-zinc-950"
     >
-      <div class="flex flex-wrap items-center justify-between gap-2 mb-3.5">
-        <div class="flex items-center gap-2">
-          <span class="inline-flex items-center gap-1.5 bg-[#F0A06A]/15 text-[#F0A06A] border border-[#F0A06A]/30 px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider">
-            <svg class="w-3 h-3" viewBox="0 0 36 36" fill="currentColor">
-              <path d="M18 1.5 C21.2 8.2, 23 11.8, 22.8 13.2 C24.2 13, 27.8 14.8, 34.5 18 C27.8 21.2, 24.2 23, 22.8 22.8 C23 24.2, 21.2 27.8, 18 34.5 C14.8 27.8, 13 24.2, 13.2 22.8 C11.8 23, 8.2 21.2, 1.5 18 C8.2 14.8, 11.8 13, 13.2 13.2 C13 11.8, 14.8 8.2, 18 1.5 Z"/>
-            </svg>
-            Featured Listing
-          </span>
-          <h3 class="text-xs sm:text-sm font-bold text-[#1348FB] uppercase tracking-wider">
-            Most Clicked This Week
-          </h3>
-        </div>
-        <div class="flex items-center gap-2 text-[11px] text-zinc-400">
-          <span id="featuredWeekWindow">Refreshes every Monday</span>
-          <span id="featuredViewsBadge" class="hidden bg-[#1348FB]/10 text-[#1348FB] font-bold px-2.5 py-0.5 rounded-full"></span>
-        </div>
-      </div>
-
-      <div id="featuredCarouselBody">
-        <div class="h-48 sm:h-64 rounded-xl bg-zinc-100 flex items-center justify-center text-xs text-zinc-400">
+      <div id="featuredCarouselBody" class="w-full">
+        <div class="h-64 sm:h-80 w-full bg-zinc-900 flex items-center justify-center text-xs text-zinc-400">
           Loading this week's most clicked listings...
         </div>
       </div>
@@ -367,12 +351,52 @@
       </div>
     </section>
 
+    <!-- ====================================================================== -->
+    <!-- LEGAL, PRIVACY, CONTACT & SAFETY LINKS (UNDER FEEDBACK BOX)            -->
+    <!-- ====================================================================== -->
+    <nav aria-label="Platform policies and support" class="mt-6 pt-2 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-zinc-500">
+      <button type="button" onclick="openInfoModal('terms')" class="hover:text-[#1348FB] font-medium transition underline-offset-4 hover:underline">
+        Terms of Use
+      </button>
+      <span class="text-zinc-300">•</span>
+      <button type="button" onclick="openInfoModal('privacy')" class="hover:text-[#1348FB] font-medium transition underline-offset-4 hover:underline">
+        Privacy
+      </button>
+      <span class="text-zinc-300">•</span>
+      <button type="button" onclick="openInfoModal('contact')" class="hover:text-[#1348FB] font-medium transition underline-offset-4 hover:underline">
+        Contact
+      </button>
+      <span class="text-zinc-300">•</span>
+      <button type="button" onclick="openInfoModal('scam')" class="hover:text-[#1348FB] font-medium transition underline-offset-4 hover:underline">
+        Scam &amp; Fraud
+      </button>
+    </nav>
+
   </main>
 
   <!-- FOOTER -->
   <footer class="border-t border-zinc-200 bg-white py-4 px-4 text-center text-xs text-zinc-400">
-    <span class="font-bold text-[#F0A06A] tracking-widest">s i m p l y l i s t s</span> — simple local classifieds for sale, services & personal connections
+    <span class="font-bold text-[#F0A06A] tracking-widest">s i m p l y l i s t s</span> — simple local classifieds for sale, services &amp; personal connections
   </footer>
+
+  <!-- INFO & POLICY MODAL (TERMS OF USE, PRIVACY, CONTACT, SCAM & FRAUD) -->
+  <div id="infoModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-zinc-200 max-w-xl w-full max-h-[85vh] overflow-y-auto p-6 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-zinc-100 pb-3 mb-4">
+        <div class="flex items-center gap-2">
+          <span id="infoModalBadge" class="bg-[#1348FB]/10 text-[#1348FB] text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded">Policy</span>
+          <h3 id="infoModalTitle" class="font-bold text-lg text-zinc-900"></h3>
+        </div>
+        <button onclick="closeInfoModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
+      </div>
+      <div id="infoModalBody" class="text-xs sm:text-sm text-zinc-600 space-y-3 leading-relaxed"></div>
+      <div class="mt-6 pt-3 border-t border-zinc-100 flex justify-end">
+        <button onclick="closeInfoModal()" class="bg-transparent border-[1.5px] border-[#1348FB] text-[#1348FB] hover:bg-[#1348FB] hover:text-white font-bold px-4 py-1.5 rounded-lg text-xs transition">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- LISTING DETAIL, REPORT BUTTON, OWNER MANAGEMENT & IN-APP MESSAGE MODAL -->
   <div id="detailModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
@@ -478,7 +502,7 @@
               <input id="editTitle" required minlength="3" maxlength="140" class="w-full bg-white border border-zinc-300 rounded-lg px-3 py-1.5 text-sm" />
             </div>
             <div>
-              <label class="block font-bold uppercase text-zinc-600 mb-1">Price / Rate ($)</label>
+              <label id="editPriceLabel" class="block font-bold uppercase text-zinc-600 mb-1">Price / Rate ($)</label>
               <input id="editPrice" type="number" min="0" step="0.01" class="w-full bg-white border border-zinc-300 rounded-lg px-3 py-1.5 text-sm" placeholder="Optional" />
             </div>
           </div>
@@ -518,7 +542,7 @@
     <div class="bg-white rounded-2xl border border-zinc-200 max-w-4xl w-full h-[80vh] flex flex-col overflow-hidden shadow-2xl">
       <div class="px-6 py-4 border-b border-zinc-200 flex items-center justify-between bg-zinc-50">
         <div class="flex items-center gap-2.5">
-          <h3 class="font-bold text-lg text-[#1348FB]">Messages & Inbox</h3>
+          <h3 class="font-bold text-lg text-[#1348FB]">Messages &amp; Inbox</h3>
           <span class="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Live Realtime
           </span>
@@ -693,7 +717,7 @@
         </div>
         <div id="resetMsg" class="text-xs text-[#1348FB] bg-[#1348FB]/10 p-2.5 rounded-lg hidden"></div>
         <button type="submit" id="updatePwdBtn" class="w-full bg-transparent border-[1.5px] border-[#1348FB] text-[#1348FB] hover:bg-[#1348FB] hover:text-white font-bold py-2 rounded-lg text-xs transition">
-          Update Password & Sign In
+          Update Password &amp; Sign In
         </button>
       </form>
     </div>
@@ -737,8 +761,8 @@
     // ============================================================================
     // PASTE YOUR SUPABASE CREDENTIALS RIGHT HERE:
     // ============================================================================
-    const SUPABASE_URL = 'https://xqpinjcstaqdbtczgykp.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_Vq3EYb717vMAHomU5U0k3A_ibTfyNAb';
+    const SUPABASE_URL = 'PASTE_YOUR_SUPABASE_URL_HERE';
+    const SUPABASE_ANON_KEY = 'PASTE_YOUR_SUPABASE_ANON_KEY_HERE';
 
     let supabaseClient = null;
     let currentUser = null;
@@ -809,6 +833,61 @@
       }
     };
 
+    // Policy & Safety Modal Content
+    const INFO_MODAL_CONTENT = {
+      terms: {
+        badge: 'Legal',
+        title: 'Terms of Use',
+        body: `
+          <p>Welcome to <strong>s i m p l y l i s t s</strong> (<code>simplylists.org</code>). By accessing or posting on this platform, you agree to these Terms of Use:</p>
+          <ul class="list-disc pl-5 space-y-1.5">
+            <li><strong>Eligibility &amp; Personal Category (18+):</strong> You must be at least 18 years old to use simplylists. All listings and interactions in the Personal category are strictly restricted to adults 18 and older.</li>
+            <li><strong>User Responsibility:</strong> All listings, photos, prices, and messages are the sole responsibility of the user who posted them. simplylists acts strictly as a local venue and does not take possession of or guarantee any listed items or services.</li>
+            <li><strong>Prohibited Content:</strong> Illegal goods, stolen property, weapons, controlled substances, spam, duplicate flooding, and harassment are strictly prohibited. Listings flagged 3 times by the community are automatically quarantined.</li>
+            <li><strong>Listing Expiration:</strong> Listings automatically expire after their selected duration (7, 14, or 30 days) unless renewed or marked as sold.</li>
+          </ul>
+        `
+      },
+      privacy: {
+        badge: 'Privacy',
+        title: 'Privacy Policy',
+        body: `
+          <p><strong>s i m p l y l i s t s</strong> is designed to protect your privacy while connecting you locally:</p>
+          <ul class="list-disc pl-5 space-y-1.5">
+            <li><strong>Minimal Data Collection:</strong> We only store your account email, encrypted authentication credentials via Supabase Auth, and the listings, photos, and messages you explicitly choose to publish.</li>
+            <li><strong>Private In-Website Chat &amp; Relay:</strong> Your personal email address is never exposed publicly on your listings. Buyers and sellers communicate through our in-website Realtime Inbox or anonymized relay.</li>
+            <li><strong>No Third-Party Data Selling:</strong> We never sell, rent, or trade your personal information or browsing activity to advertisers or third parties.</li>
+            <li><strong>Account &amp; Listing Deletion:</strong> You can permanently delete your listings at any time from your <strong>📋 My Listings</strong> tab.</li>
+          </ul>
+        `
+      },
+      contact: {
+        badge: 'Support',
+        title: 'Contact simplylists',
+        body: `
+          <p>Need help with your account, a listing, or a moderation inquiry? Reach out to our team:</p>
+          <div class="bg-[#F8F7F4] border border-zinc-200 rounded-xl p-4 space-y-2 text-xs">
+            <div><strong class="text-zinc-900">General Support:</strong> <span class="text-[#1348FB] font-mono select-all">support@simplylists.org</span></div>
+            <div><strong class="text-zinc-900">Trust &amp; Safety / Abuse Reports:</strong> <span class="text-[#1348FB] font-mono select-all">safety@simplylists.org</span></div>
+          </div>
+          <p class="text-xs text-zinc-500">You can also use the <strong>Shape the Platform</strong> feedback studio right on the homepage to send feature requests, design notes, or bug reports directly to our Admin team.</p>
+        `
+      },
+      scam: {
+        badge: 'Safety Guide',
+        title: 'Avoiding Scams & Fraud',
+        body: `
+          <p class="font-semibold text-zinc-900">Follow these golden rules to stay 100% safe when buying, selling, or meeting locally:</p>
+          <ul class="list-disc pl-5 space-y-1.5">
+            <li><strong>Deal Locally &amp; In Person:</strong> Meet in a well-lit public place (such as a busy coffee shop, shopping center, or local police station Safe Exchange Zone).</li>
+            <li><strong>Never Wire Money or Send Deposits First:</strong> Never send Zelle, Venmo, CashApp, gift cards, or wire transfers before inspecting an item in person. Anyone asking for a "hold deposit" or "shipping fee" is likely running a scam.</li>
+            <li><strong>Keep Conversations on simplylists:</strong> Use our built-in <strong>💬 Inbox</strong> chat rather than moving immediately to external text or WhatsApp numbers.</li>
+            <li><strong>Report Suspicious Posts:</strong> Click the <strong>🚩 Report</strong> button inside any listing modal to flag suspicious posts. Three community flags automatically remove a listing from the public feed.</li>
+          </ul>
+        `
+      }
+    };
+
     const isConfigured = SUPABASE_URL.startsWith('http') && !SUPABASE_URL.includes('PASTE_YOUR');
 
     handlePostCategoryChange();
@@ -828,7 +907,36 @@
     }
 
     // ============================================================================
-    // WEEKLY FEATURED LISTINGS CAROUSEL (TOP 3 LISTINGS, 1 COVER PHOTO EACH)
+    // UNIFIED PRICE OR PERSONAL AGE (18+, NO $) FORMATTER
+    // ============================================================================
+    function formatPriceOrAge(item, fallbackText = '') {
+      if (item.price === null || item.price === undefined || item.price === '') {
+        return fallbackText;
+      }
+      if (item.category_id === 'personal') {
+        return `Age ${Math.round(Number(item.price))}`;
+      }
+      return `$${Number(item.price).toLocaleString()}`;
+    }
+
+    // ============================================================================
+    // POLICY & SAFETY MODAL HANDLERS
+    // ============================================================================
+    function openInfoModal(key) {
+      const info = INFO_MODAL_CONTENT[key];
+      if (!info) return;
+      document.getElementById('infoModalBadge').textContent = info.badge;
+      document.getElementById('infoModalTitle').textContent = info.title;
+      document.getElementById('infoModalBody').innerHTML = info.body;
+      document.getElementById('infoModal').classList.remove('hidden');
+    }
+
+    function closeInfoModal() {
+      document.getElementById('infoModal').classList.add('hidden');
+    }
+
+    // ============================================================================
+    // FULL-BLEED WEEKLY FEATURED LISTINGS CAROUSEL (NO WHITE BORDERS OR SPACE)
     // ============================================================================
     function getStartOfCurrentWeekInfo() {
       const now = new Date();
@@ -845,15 +953,13 @@
       return {
         mondayIso: monday.toISOString(),
         rollingSevenDaysIso: new Date(Date.now() - 7 * 86400000).toISOString(),
-        label: `Week of ${fmt(monday)} – ${fmt(nextMonday)} • Refreshes weekly`
+        label: `Week of ${fmt(monday)} – ${fmt(nextMonday)}`
       };
     }
 
     async function loadWeeklyFeaturedListing() {
       if (!supabaseClient) return;
       const weekInfo = getStartOfCurrentWeekInfo();
-      document.getElementById('featuredWeekWindow').textContent = weekInfo.label;
-
       const region = document.getElementById('regionSelect').value;
 
       let weeklyQuery = supabaseClient
@@ -895,15 +1001,16 @@
 
     function renderFeaturedCarousel() {
       const container = document.getElementById('featuredCarouselBody');
-      const viewsBadge = document.getElementById('featuredViewsBadge');
+      const weekInfo = getStartOfCurrentWeekInfo();
 
       if (!featuredListings || featuredListings.length === 0) {
-        viewsBadge.classList.add('hidden');
         container.innerHTML = `
-          <div class="h-44 sm:h-52 rounded-xl bg-[#F8F7F4] border border-dashed border-zinc-300 flex flex-col items-center justify-center p-6 text-center">
-            <span class="text-xs font-bold text-[#1348FB] uppercase tracking-wider">No Featured Photo Listing Yet This Week</span>
-            <p class="text-xs text-zinc-500 mt-1">Post a listing with a photo—the most clicked listings of the week are featured right here!</p>
-            <button onclick="openPostModal()" class="mt-3 bg-[#1BF40B] text-zinc-950 font-bold px-3.5 py-1.5 rounded-lg text-xs shadow-xs">
+          <div class="h-56 sm:h-72 w-full bg-zinc-900 flex flex-col items-center justify-center p-6 text-center text-white">
+            <span class="inline-flex items-center gap-1.5 bg-[#F0A06A]/20 text-[#F0A06A] px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider mb-2">
+              Featured Listing • Most Clicked This Week
+            </span>
+            <p class="text-xs text-zinc-400 max-w-md">Post a listing with a photo—the top clicked listings of the week fill this spotlight banner automatically!</p>
+            <button onclick="openPostModal()" class="mt-3.5 bg-[#1BF40B] text-zinc-950 font-bold px-4 py-2 rounded-lg text-xs shadow">
               + Post with Photo
             </button>
           </div>
@@ -918,87 +1025,108 @@
       const singleCoverPhotoUrl = currentItem.image_urls[0];
       const meta = CATEGORY_META[currentItem.category_id] || { label: currentItem.category_id };
       const subLabel = getSubcategoryLabel(currentItem.category_id, currentItem.subcategory_id);
-      const priceStr = currentItem.price !== null ? `$${Number(currentItem.price).toLocaleString()}` : 'View Listing';
+      const priceOrAgeStr = formatPriceOrAge(currentItem, 'View Listing');
       const clicks = Number(currentItem.views_count || 0);
 
-      viewsBadge.textContent = `#${featuredSlideIndex + 1} This Week • 🔥 ${clicks} ${clicks === 1 ? 'click' : 'clicks'}`;
-      viewsBadge.classList.remove('hidden');
-
       container.innerHTML = `
-        <div class="relative rounded-xl overflow-hidden border border-zinc-200 bg-zinc-900 group">
+        <div class="relative h-64 sm:h-88 md:h-96 w-full overflow-hidden bg-zinc-950 group select-none">
+          <!-- Clickable Full-Bleed Cover Photo (Fills 100% of Container with Zero White Borders) -->
           <div
             onclick="openFeaturedListingModal('${currentItem.id}')"
-            class="cursor-pointer relative h-60 sm:h-80 w-full overflow-hidden flex items-center justify-center"
+            class="cursor-pointer w-full h-full relative"
             title="Click to view ${escapeHtml(currentItem.title)}"
           >
-            <img src="${singleCoverPhotoUrl}" alt="" class="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-110 pointer-events-none" />
             <img
               src="${singleCoverPhotoUrl}"
               alt="${escapeHtml(currentItem.title)}"
-              class="carousel-fade relative z-10 max-h-full max-w-full object-contain group-hover:scale-[1.02] transition-transform duration-300"
+              class="carousel-fade w-full h-full object-cover object-center group-hover:scale-[1.03] transition-transform duration-500"
             />
-            <div class="absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-black/85 via-black/45 to-transparent p-4 sm:p-5 flex flex-wrap items-end justify-between gap-3">
+
+            <!-- Top Floating Overlay Bar (Featured Title + Weekly Window + Clicks) -->
+            <div class="
+              absolute inset-x-0 top-0 z-20
+              bg-gradient-to-b from-black/80 via-black/35 to-transparent
+              p-4 sm:p-5 flex flex-wrap items-center justify-between gap-2
+            ">
+              <div class="flex items-center gap-2">
+                <span class="inline-flex items-center gap-1.5 bg-[#F0A06A] text-zinc-950 px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider shadow">
+                  <svg class="w-3 h-3" viewBox="0 0 36 36" fill="currentColor">
+                    <path d="M18 1.5 C21.2 8.2, 23 11.8, 22.8 13.2 C24.2 13, 27.8 14.8, 34.5 18 C27.8 21.2, 24.2 23, 22.8 22.8 C23 24.2, 21.2 27.8, 18 34.5 C14.8 27.8, 13 24.2, 13.2 22.8 C11.8 23, 8.2 21.2, 1.5 18 C8.2 14.8, 11.8 13, 13.2 13.2 C13 11.8, 14.8 8.2, 18 1.5 Z"/>
+                  </svg>
+                  Featured Listing
+                </span>
+                <span class="text-xs font-bold text-white uppercase tracking-wider drop-shadow">
+                  Most Clicked This Week
+                </span>
+              </div>
+              <div class="flex items-center gap-2 text-[11px]">
+                <span class="hidden sm:inline text-zinc-200 bg-black/45 backdrop-blur-xs px-2.5 py-1 rounded-full">${weekInfo.label}</span>
+                <span class="bg-[#1348FB] text-white font-bold px-2.5 py-1 rounded-full shadow">
+                  #${featuredSlideIndex + 1} • 🔥 ${clicks} ${clicks === 1 ? 'click' : 'clicks'}
+                </span>
+              </div>
+            </div>
+
+            <!-- Bottom Floating Overlay Bar (Listing Info + Overlaid Top-3 Switcher Pills) -->
+            <div class="
+              absolute inset-x-0 bottom-0 z-20
+              bg-gradient-to-t from-black/90 via-black/55 to-transparent
+              p-4 sm:p-5 flex flex-wrap items-end justify-between gap-4
+            ">
               <div class="space-y-1 max-w-xl">
-                <div class="flex items-center gap-2">
-                  <span class="bg-[#F0A06A] text-zinc-950 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded">
-                    #${featuredSlideIndex + 1} Most Clicked
-                  </span>
+                <div class="flex items-center flex-wrap gap-2">
                   <span class="bg-[#1348FB] text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded">
                     ${meta.label}
                   </span>
                   ${subLabel ? `<span class="subcat-regular text-xs text-zinc-200">${escapeHtml(subLabel)}</span>` : ''}
                   <span class="text-xs text-zinc-300">• ${escapeHtml(currentItem.neighborhood || currentItem.region)}</span>
                 </div>
-                <h4 class="text-base sm:text-xl font-bold text-white group-hover:text-[#F0A06A] transition-colors line-clamp-1">
+                <h4 class="text-lg sm:text-2xl font-bold text-white group-hover:text-[#F0A06A] transition-colors line-clamp-1 drop-shadow">
                   ${escapeHtml(currentItem.title)}
                 </h4>
               </div>
-              <div class="flex items-center gap-2.5">
-                <span class="bg-white/95 text-zinc-950 font-bold text-xs sm:text-sm px-3 py-1.5 rounded-lg shadow">
-                  ${priceStr} →
+
+              <div class="flex items-center gap-2.5 ml-auto">
+                <!-- Overlaid Top-3 Thumb Switchers (Zero White Space) -->
+                ${featuredListings.length > 1 ? `
+                  <div class="hidden md:flex items-center gap-1.5 bg-black/50 backdrop-blur-xs p-1 rounded-xl border border-white/15" onclick="event.stopPropagation()">
+                    ${featuredListings.map((item, idx) => `
+                      <button
+                        type="button"
+                        onclick="goToFeaturedSlide(${idx}, event)"
+                        class="relative h-9 w-12 rounded-lg overflow-hidden border transition ${idx === featuredSlideIndex ? 'border-[#F0A06A] ring-2 ring-[#F0A06A]/60 scale-105' : 'border-white/20 opacity-60 hover:opacity-100'}"
+                        title="#${idx + 1}: ${escapeHtml(item.title)}"
+                      >
+                        <img src="${item.image_urls[0]}" class="w-full h-full object-cover" />
+                        <span class="absolute bottom-0.5 right-0.5 bg-black/75 text-white text-[9px] font-bold px-1 rounded">#${idx + 1}</span>
+                      </button>
+                    `).join('')}
+                  </div>
+                ` : ''}
+
+                <span class="bg-[#1BF40B] text-zinc-950 font-bold text-xs sm:text-sm px-3.5 py-2 rounded-xl shadow-lg">
+                  ${priceOrAgeStr} →
                 </span>
               </div>
             </div>
           </div>
 
+          <!-- Prev / Next Arrows Overlaid Directly on Image -->
           ${featuredListings.length > 1 ? `
             <button
               type="button"
               onclick="stepFeaturedSlide(-1, event)"
-              class="absolute left-3 top-1/2 -translate-y-1/2 z-30 w-9 h-9 rounded-full bg-white/90 hover:bg-white text-zinc-900 font-bold shadow-md flex items-center justify-center transition"
+              class="absolute left-3 top-1/2 -translate-y-1/2 z-30 w-9 h-9 rounded-full bg-black/55 hover:bg-black/80 text-white border border-white/20 font-bold shadow-lg flex items-center justify-center transition"
               title="Previous featured listing"
             >‹</button>
             <button
               type="button"
               onclick="stepFeaturedSlide(1, event)"
-              class="absolute right-3 top-1/2 -translate-y-1/2 z-30 w-9 h-9 rounded-full bg-white/90 hover:bg-white text-zinc-900 font-bold shadow-md flex items-center justify-center transition"
+              class="absolute right-3 top-1/2 -translate-y-1/2 z-30 w-9 h-9 rounded-full bg-black/55 hover:bg-black/80 text-white border border-white/20 font-bold shadow-lg flex items-center justify-center transition"
               title="Next featured listing"
             >›</button>
           ` : ''}
         </div>
-
-        ${featuredListings.length > 1 ? `
-          <div class="flex items-center justify-between gap-2 mt-3">
-            <div class="flex items-center gap-2 overflow-x-auto py-0.5">
-              ${featuredListings.map((item, idx) => `
-                <button
-                  type="button"
-                  onclick="goToFeaturedSlide(${idx}, event)"
-                  class="flex items-center gap-2 pr-3 pl-1 py-1 rounded-lg border transition shrink-0 text-left ${idx === featuredSlideIndex ? 'border-[#1348FB] bg-[#1348FB]/5 shadow-xs' : 'border-zinc-200 bg-white opacity-70 hover:opacity-100'}"
-                >
-                  <img src="${item.image_urls[0]}" class="h-9 w-12 rounded object-cover shrink-0" />
-                  <div class="max-w-[130px]">
-                    <div class="text-[10px] font-bold text-[#1348FB] uppercase">#${idx + 1} • ${Number(item.views_count || 0)} clicks</div>
-                    <div class="text-xs font-medium text-zinc-800 truncate">${escapeHtml(item.title)}</div>
-                  </div>
-                </button>
-              `).join('')}
-            </div>
-            <span class="text-[11px] text-zinc-400 font-medium shrink-0 hidden sm:inline">
-              Featured ${featuredSlideIndex + 1} of ${featuredListings.length}
-            </span>
-          </div>
-        ` : ''}
       `;
     }
 
@@ -1572,7 +1700,7 @@
                   class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs"
                   title="Clear flags and restore to public feed"
                 >
-                  ✓ Approve & Clear Flags
+                  ✓ Approve &amp; Clear Flags
                 </button>
                 <button
                   onclick="adminDeletePost('${item.id}')"
@@ -1926,7 +2054,7 @@
           const thumb = (item.image_urls && item.image_urls.length > 0)
             ? `<img src="${item.image_urls[0]}" class="h-44 w-full object-cover border-b border-zinc-100 ${isSold ? 'opacity-60 grayscale' : ''}" />`
             : `<div class="h-44 w-full bg-zinc-100 flex items-center justify-center text-xs text-zinc-400 border-b border-zinc-100">No Photo</div>`;
-          const priceStr = item.price !== null ? `$${Number(item.price).toLocaleString()}` : '';
+          const priceStr = formatPriceOrAge(item);
           return `
             <div onclick="openDetailModal('${item.id}')" class="relative border border-zinc-200 rounded-xl overflow-hidden hover:border-[#1348FB] transition cursor-pointer bg-white flex flex-col">
               <button
@@ -1969,7 +2097,7 @@
         const soldBadge = isSold ? `<span class="bg-amber-100 text-amber-800 border border-amber-300 text-[10px] font-bold uppercase px-2 py-0.5 rounded mr-2">SOLD</span>` : '';
         const isMine = currentUser && item.seller_id === currentUser.id;
         const mineBadge = isMine ? `<span class="bg-zinc-100 text-zinc-600 text-[10px] font-semibold px-2 py-0.5 rounded ml-2">Yours</span>` : '';
-        const priceBadge = item.price !== null ? `<span class="font-bold text-zinc-900 ml-2">$${Number(item.price).toLocaleString()}</span>` : '';
+        const priceBadge = item.price !== null ? `<span class="font-bold text-zinc-900 ml-2">${formatPriceOrAge(item)}</span>` : '';
         const hood = item.neighborhood ? `<span class="text-zinc-400 text-xs ml-2">(${escapeHtml(item.neighborhood)})</span>` : '';
         const picBadge = item.has_image ? `<span class="text-[#1348FB] text-[11px] ml-2 font-semibold">📷 photo</span>` : '';
         return `
@@ -2050,7 +2178,9 @@
         statusBadge.classList.add('hidden');
       }
 
-      document.getElementById('detailTitle').textContent = item.price !== null ? `${item.title} — $${Number(item.price).toLocaleString()}` : item.title;
+      document.getElementById('detailTitle').textContent = item.price !== null
+        ? `${item.title} — ${formatPriceOrAge(item)}`
+        : item.title;
       document.getElementById('detailDesc').textContent = item.description;
       document.getElementById('detailRelay').textContent = item.relay_email || 'reply@simplylists.org';
 
@@ -2110,9 +2240,24 @@
     function toggleEditForm() {
       if (!selectedListing) return;
       const form = document.getElementById('editListingForm');
+      const editPriceInput = document.getElementById('editPrice');
+      const editPriceLabel = document.getElementById('editPriceLabel');
+
       if (form.classList.contains('hidden')) {
         document.getElementById('editTitle').value = selectedListing.title;
-        document.getElementById('editPrice').value = selectedListing.price !== null ? selectedListing.price : '';
+        if (selectedListing.category_id === 'personal') {
+          editPriceLabel.textContent = 'Age (18+, Optional)';
+          editPriceInput.min = '18';
+          editPriceInput.step = '1';
+          editPriceInput.placeholder = '18+';
+          editPriceInput.value = selectedListing.price !== null ? Math.round(Number(selectedListing.price)) : '';
+        } else {
+          editPriceLabel.textContent = 'Price / Rate ($)';
+          editPriceInput.min = '0';
+          editPriceInput.step = '0.01';
+          editPriceInput.placeholder = 'Optional';
+          editPriceInput.value = selectedListing.price !== null ? selectedListing.price : '';
+        }
         document.getElementById('editNeighborhood').value = selectedListing.neighborhood || '';
         document.getElementById('editDesc').value = selectedListing.description;
         form.classList.remove('hidden');
@@ -2129,9 +2274,13 @@
       saveBtn.textContent = 'Saving...';
 
       const priceVal = document.getElementById('editPrice').value;
+      const parsedPrice = priceVal === ''
+        ? null
+        : (selectedListing.category_id === 'personal' ? Math.max(18, parseInt(priceVal, 10)) : parseFloat(priceVal));
+
       const updates = {
         title: document.getElementById('editTitle').value.trim(),
-        price: priceVal === '' ? null : parseFloat(priceVal),
+        price: parsedPrice,
         neighborhood: document.getElementById('editNeighborhood').value.trim() || null,
         description: document.getElementById('editDesc').value.trim(),
         updated_at: new Date().toISOString()
@@ -2402,7 +2551,7 @@
     }
 
     // ============================================================================
-    // POSTING MODAL & STORAGE UPLOAD (WITH EXPIRATION DATE)
+    // POSTING MODAL & STORAGE UPLOAD (WITH 18+ WHOLE NUMBER AGE FOR PERSONAL)
     // ============================================================================
     function handlePostCategoryChange() {
       const cat = document.getElementById('postCategory').value;
@@ -2414,14 +2563,23 @@
       subSelect.innerHTML = subs.map(s => `<option value="${s.id}" class="subcat-regular">${s.label}</option>`).join('');
 
       if (cat === 'personal') {
-        priceLabel.textContent = 'Age / Optional #';
-        priceInput.placeholder = 'Optional';
+        priceLabel.textContent = 'Age (18+, Optional)';
+        priceInput.placeholder = '18+';
+        priceInput.min = '18';
+        priceInput.step = '1';
+        if (priceInput.value) {
+          priceInput.value = Math.max(18, Math.round(Number(priceInput.value)));
+        }
       } else if (cat === 'services') {
         priceLabel.textContent = 'Rate ($)';
         priceInput.placeholder = 'Starting rate';
+        priceInput.min = '0';
+        priceInput.step = '0.01';
       } else {
         priceLabel.textContent = 'Price ($)';
         priceInput.placeholder = 'Optional / Free';
+        priceInput.min = '0';
+        priceInput.step = '0.01';
       }
     }
 
@@ -2465,16 +2623,21 @@
           uploadedUrls.push(publicUrlData.publicUrl);
         }
 
+        const catVal = document.getElementById('postCategory').value;
         const priceVal = document.getElementById('postPrice').value;
+        const parsedPrice = priceVal === ''
+          ? null
+          : (catVal === 'personal' ? Math.max(18, parseInt(priceVal, 10)) : parseFloat(priceVal));
+
         const durationDays = parseInt(document.getElementById('postDurationDays').value || '30', 10);
         const expiresAtIso = new Date(Date.now() + durationDays * 86400000).toISOString();
 
         const payload = {
           seller_id: currentUser.id,
           title: document.getElementById('postTitle').value.trim(),
-          category_id: document.getElementById('postCategory').value,
+          category_id: catVal,
           subcategory_id: document.getElementById('postSubcategory').value || null,
-          price: priceVal === '' ? null : parseFloat(priceVal),
+          price: parsedPrice,
           region: document.getElementById('postRegion').value,
           neighborhood: document.getElementById('postNeighborhood').value.trim() || null,
           image_urls: uploadedUrls,
@@ -2502,7 +2665,7 @@
     }
 
     // ============================================================================
-    // COMMUNITY FEEDBACK STUDIO HANDLERS
+    // COMMUNITY FEEDBACK STUDIO HANDLERS (WITH ERROR VERIFICATION)
     // ============================================================================
     function setFeedbackRating(stars) {
       feedbackRating = stars;
@@ -2537,21 +2700,31 @@
 
       btn.disabled = true;
       btn.textContent = 'Sending...';
+      statusEl.classList.add('hidden');
 
       if (supabaseClient) {
-        await supabaseClient.from('feedback').insert([{
+        const { error } = await supabaseClient.from('feedback').insert([{
           user_id: currentUser?.id || null,
           email: emailInput.value.trim() || currentUser?.email || null,
           rating: feedbackRating,
           category: feedbackTopic,
           message
         }]);
+
+        btn.disabled = false;
+        btn.textContent = 'Send Feedback';
+
+        if (error) {
+          statusEl.textContent = `⚠️ Error saving feedback: ${error.message}`;
+          statusEl.className = 'text-xs font-semibold text-red-600';
+          statusEl.classList.remove('hidden');
+          return;
+        }
       }
 
-      btn.disabled = false;
-      btn.textContent = 'Send Feedback';
       msgInput.value = '';
       statusEl.textContent = '✦ Thank you! Your feedback has been recorded for simplylists.';
+      statusEl.className = 'text-xs font-semibold text-emerald-700';
       statusEl.classList.remove('hidden');
       setTimeout(() => statusEl.classList.add('hidden'), 5000);
     }
