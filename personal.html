@@ -48,17 +48,39 @@
         <a href="index.html" class="bg-transparent border-[1.5px] border-zinc-300 hover:border-[#1348FB] px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-700 transition">
           ← All Categories
         </a>
-        <button onclick="openPostModal()" class="bg-[#1BF40B] hover:brightness-95 transition-all text-zinc-950 font-bold px-3.5 sm:px-4 py-2 rounded-lg text-xs tracking-wide shadow-sm">
+        <button type="button" onclick="openPostModal()" class="bg-[#1BF40B] hover:brightness-95 transition-all text-zinc-950 font-bold px-3.5 sm:px-4 py-2 rounded-lg text-xs tracking-wide shadow-sm">
           + Post Personal
         </button>
+
+        <!-- LIVE REALTIME INBOX BUTTON (VISIBLE WHEN LOGGED IN) -->
+        <button type="button" id="inboxNavBtn" onclick="openInboxModal()" class="hidden relative bg-transparent border-[1.5px] border-zinc-300 hover:border-[#1348FB] px-3.5 py-1.5 rounded-lg text-xs font-semibold text-zinc-800 items-center gap-1.5 transition">
+          <span id="realtimeDot" class="w-2 h-2 rounded-full bg-zinc-300" title="Realtime status"></span>
+          <span>💬 Inbox</span>
+          <span id="unreadBadge" class="hidden bg-[#1348FB] text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">0</span>
+        </button>
+
         <div id="authArea" class="flex items-center gap-2">
-          <button onclick="openAuthModal()" class="bg-transparent border-[1.5px] border-[#1348FB] text-[#1348FB] hover:bg-[#1348FB]/5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition">
+          <button type="button" onclick="openAuthModal()" class="bg-transparent border-[1.5px] border-[#1348FB] text-[#1348FB] hover:bg-[#1348FB]/5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition">
             Sign In
           </button>
         </div>
       </div>
     </div>
   </header>
+
+  <!-- CONNECTION BANNER -->
+  <div id="setupBanner" class="hidden bg-amber-50 border-b border-amber-200 px-4 py-2.5 text-amber-900 text-xs text-center">
+    ⚠️ <strong>Supabase Keys Not Configured Yet:</strong> Paste your <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> near the bottom of <code>personal.html</code> to activate Sign In, Posting, and Search.
+  </div>
+
+  <!-- LIVE TOAST NOTIFICATION FOR INCOMING MESSAGES -->
+  <div id="liveToast" onclick="openInboxModal()" class="hidden fixed bottom-5 right-5 z-50 bg-zinc-900 text-white px-4 py-3 rounded-xl shadow-2xl border border-zinc-700 cursor-pointer flex items-center gap-3 max-w-xs transition-all">
+    <span class="w-2.5 h-2.5 rounded-full bg-[#1BF40B] shrink-0 animate-ping"></span>
+    <div class="text-xs min-w-0">
+      <div class="font-bold text-[#F0A06A]">New Live Message</div>
+      <div id="liveToastText" class="text-zinc-300 truncate mt-0.5"></div>
+    </div>
+  </div>
 
   <!-- MAIN PERSONAL LANDING PAGE CONTENT -->
   <main id="personalMainContent" class="max-w-6xl w-full mx-auto px-4 py-6 sm:py-8 flex-1">
@@ -77,10 +99,10 @@
           </div>
           <h1 class="text-2xl sm:text-3xl font-bold text-[#1348FB] tracking-tight">Personal Connections</h1>
           <p class="text-xs sm:text-sm text-zinc-600 leading-relaxed">
-            Browse local personal ads by section or age range. Every listing opens on its own private page with direct messaging.
+            Browse local personal ads by section or age range.
           </p>
         </div>
-        <button onclick="openPostModal()" class="bg-[#1BF40B] hover:brightness-95 text-zinc-950 font-bold px-4 py-2.5 rounded-xl text-xs shadow-sm shrink-0">
+        <button type="button" onclick="openPostModal()" class="bg-[#1BF40B] hover:brightness-95 text-zinc-950 font-bold px-4 py-2.5 rounded-xl text-xs shadow-sm shrink-0">
           + Post in Personal
         </button>
       </div>
@@ -123,7 +145,7 @@
         <input id="hasPicFilter" type="checkbox" onchange="loadPersonalListings()" class="rounded border-zinc-300" />
         Has Photo
       </label>
-      <button onclick="loadPersonalListings()" class="bg-[#1348FB] hover:opacity-90 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider">
+      <button type="button" onclick="loadPersonalListings()" class="bg-[#1348FB] hover:opacity-90 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider">
         Search
       </button>
     </section>
@@ -136,8 +158,8 @@
           <span id="listingCount" class="text-[11px] sm:text-xs bg-[#1348FB]/10 text-[#1348FB] px-2 py-0.5 rounded-full font-bold shrink-0">Loading...</span>
         </div>
         <div class="flex items-center gap-1 bg-zinc-200/70 p-0.5 rounded-lg text-[11px] sm:text-xs shrink-0">
-          <button id="btnViewList" onclick="setViewMode('list')" class="px-2.5 py-1 rounded-md bg-white font-semibold shadow-sm">List</button>
-          <button id="btnViewGrid" onclick="setViewMode('grid')" class="px-2.5 py-1 rounded-md text-zinc-600 font-medium">Gallery</button>
+          <button type="button" id="btnViewList" onclick="setViewMode('list')" class="px-2.5 py-1 rounded-md bg-white font-semibold shadow-sm">List</button>
+          <button type="button" id="btnViewGrid" onclick="setViewMode('grid')" class="px-2.5 py-1 rounded-md text-zinc-600 font-medium">Gallery</button>
         </div>
       </div>
 
@@ -152,6 +174,50 @@
   <footer class="border-t border-zinc-200 bg-white py-4 px-4 text-center text-xs text-zinc-400">
     <a href="index.html" class="font-bold text-[#F0A06A] tracking-tight hover:underline">simplylists</a> — Personal (18+) • No full nudity permitted
   </footer>
+
+  <!-- IN-WEBSITE INBOX & REALTIME CHAT MODAL -->
+  <div id="inboxModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-zinc-200 max-w-4xl w-full h-[80vh] flex flex-col overflow-hidden shadow-2xl">
+      <div class="px-6 py-4 border-b border-zinc-200 flex items-center justify-between bg-zinc-50">
+        <div class="flex items-center gap-2.5">
+          <h3 class="font-bold text-lg text-[#1348FB]">Messages &amp; Inbox</h3>
+          <span class="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Live Realtime
+          </span>
+        </div>
+        <button type="button" onclick="closeInboxModal()" class="w-8 h-8 rounded-full bg-zinc-200/70 hover:bg-zinc-300 flex items-center justify-center text-zinc-700 font-bold">&times;</button>
+      </div>
+
+      <div class="flex-1 grid grid-cols-1 md:grid-cols-3 min-h-0">
+        <div id="threadsList" class="border-r border-zinc-200 overflow-y-auto divide-y divide-zinc-100 bg-zinc-50/50">
+          <div class="p-6 text-center text-xs text-zinc-400">Loading conversations...</div>
+        </div>
+
+        <div class="md:col-span-2 flex flex-col min-h-0 bg-white">
+          <div id="chatHeader" class="px-5 py-3 border-b border-zinc-100 text-xs font-semibold text-zinc-700 bg-white">
+            Select a conversation on the left to view messages
+          </div>
+
+          <div id="chatMessagesContainer" class="flex-1 overflow-y-auto p-5 space-y-3 bg-[#F8F7F4]/60">
+            <div class="text-center text-xs text-zinc-400 mt-12">No conversation selected.</div>
+          </div>
+
+          <form id="chatReplyForm" onsubmit="sendInboxReply(event)" class="hidden p-3 border-t border-zinc-200 bg-white flex gap-2 items-center">
+            <input
+              id="chatReplyInput"
+              type="text"
+              required
+              placeholder="Write a message..."
+              class="flex-1 border border-zinc-300 rounded-lg px-3.5 py-2 text-sm focus:outline-none focus:border-[#1348FB]"
+            />
+            <button type="submit" id="chatReplyBtn" class="bg-[#1BF40B] hover:brightness-95 text-zinc-950 font-bold px-4 py-2 rounded-lg text-xs shrink-0">
+              Send
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- 18+ PERSONAL AGE-GATE MODAL -->
   <div id="ageGateModal" class="hidden fixed inset-0 bg-black/75 backdrop-blur-xs z-50 flex items-center justify-center p-4">
@@ -194,7 +260,7 @@
     <div class="bg-white rounded-2xl border border-zinc-200 max-w-lg w-full max-h-[92vh] overflow-y-auto p-6 shadow-2xl">
       <div class="flex justify-between items-center border-b border-zinc-100 pb-3 mb-4">
         <h3 class="font-bold text-xl text-zinc-900">Post to <span class="text-[#1348FB]">Personal</span></h3>
-        <button onclick="closePostModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
+        <button type="button" onclick="closePostModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
       </div>
       <form onsubmit="submitPersonalListing(event)" class="space-y-3.5 text-sm">
         <div>
@@ -279,7 +345,7 @@
     <div class="bg-white rounded-2xl border border-zinc-200 max-w-sm w-full p-6 shadow-2xl">
       <div class="flex justify-between items-center border-b border-zinc-100 pb-3 mb-4">
         <h3 class="font-bold text-lg">Sign In to <span class="text-[#F0A06A]">simplylists</span></h3>
-        <button onclick="closeAuthModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
+        <button type="button" onclick="closeAuthModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
       </div>
       <div class="space-y-3 text-sm">
         <div>
@@ -287,15 +353,18 @@
           <input id="authEmail" type="email" required class="w-full border border-zinc-300 rounded-lg px-3.5 py-2" placeholder="you@example.com" />
         </div>
         <div>
-          <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Password</label>
-          <input id="authPassword" type="password" required minlength="6" class="w-full border border-zinc-300 rounded-lg px-3.5 py-2" placeholder="••••••••" />
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600">Password</label>
+            <button type="button" onclick="handleForgotPassword()" class="text-[11px] font-semibold text-[#1348FB] hover:underline">Forgot password?</button>
+          </div>
+          <input id="authPassword" type="password" required minlength="6" onkeydown="if(event.key === 'Enter') handleSignIn()" class="w-full border border-zinc-300 rounded-lg px-3.5 py-2" placeholder="••••••••" />
         </div>
         <div id="authMsg" class="text-xs text-[#1348FB] bg-[#1348FB]/10 p-2.5 rounded-lg hidden"></div>
         <div class="flex gap-2.5 pt-2">
-          <button onclick="handleSignIn()" class="flex-1 bg-transparent border-[1.5px] border-[#1348FB] text-[#1348FB] hover:bg-[#1348FB]/5 font-bold py-2 rounded-lg text-xs transition">
+          <button type="button" onclick="handleSignIn()" class="flex-1 bg-transparent border-[1.5px] border-[#1348FB] text-[#1348FB] hover:bg-[#1348FB]/5 font-bold py-2 rounded-lg text-xs transition">
             Sign In
           </button>
-          <button onclick="handleSignUp()" class="flex-1 bg-transparent border-[1.5px] border-[#F0A06A] text-[#F0A06A] hover:bg-[#F0A06A]/10 font-bold py-2 rounded-lg text-xs transition">
+          <button type="button" onclick="handleSignUp()" class="flex-1 bg-transparent border-[1.5px] border-[#F0A06A] text-[#F0A06A] hover:bg-[#F0A06A]/10 font-bold py-2 rounded-lg text-xs transition">
             Create Account
           </button>
         </div>
@@ -305,9 +374,9 @@
 
   <script>
     // ============================================================================
-    // PASTE YOUR SUPABASE CREDENTIALS RIGHT HERE:
+    // PASTE YOUR SUPABASE CREDENTIALS BETWEEN THE SINGLE QUOTES RIGHT HERE:
     // ============================================================================
-    const SUPABASE_URL = https://xqpinjcstaqdbtczgykp.supabase.co';
+    const SUPABASE_URL = 'https://xqpinjcstaqdbtczgykp.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_Vq3EYb717vMAHomU5U0k3A_ibTfyNAb';
 
     const PERSONAL_SUBCATEGORIES = [
@@ -328,11 +397,16 @@
     let viewMode = 'list';
     let favoriteIds = new Set(JSON.parse(localStorage.getItem('simplylists_favs') || '[]'));
 
-    // Populate subcategory dropdown in post modal
+    // Realtime Inbox State
+    let inboxMessages = [];
+    let conversationMap = {};
+    let activeThreadKey = null;
+    let realtimeChannel = null;
+    let toastTimeout = null;
+
     document.getElementById('postSubcategory').innerHTML = PERSONAL_SUBCATEGORIES
       .map(s => `<option value="${s.id}" class="subcat-regular">${s.label}</option>`).join('');
 
-    // Read initial ?subcategory= param if user clicked a specific subcategory from Home
     const urlParams = new URLSearchParams(window.location.search);
     const initialSub = urlParams.get('subcategory');
     if (initialSub && PERSONAL_SUBCATEGORIES.some(s => s.id === initialSub)) {
@@ -341,7 +415,6 @@
 
     renderSubcategoryBar();
 
-    // Enforce 18+ Age Gate immediately on page arrival
     function isAgeVerified() {
       return sessionStorage.getItem('simplylists_age_verified') === 'true';
     }
@@ -362,43 +435,309 @@
         document.getElementById('ageGateModal').classList.remove('hidden');
       }
     } else {
+      document.getElementById('setupBanner').classList.remove('hidden');
+      document.getElementById('listingCount').textContent = '0';
       document.getElementById('listingsContainer').innerHTML = `
         <div class="p-10 text-center text-zinc-500 text-sm">
-          Paste your <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> in <code>personal.html</code> to load listings.
+          Paste your <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> near the bottom of <code>personal.html</code> to load personal listings.
         </div>`;
     }
 
+    // ============================================================================
+    // AUTHENTICATION & REALTIME INBOX INIT
+    // ============================================================================
     async function initAuth() {
       const { data: { session } } = await supabaseClient.auth.getSession();
       currentUser = session?.user || null;
       renderAuthUI();
       loadFavorites();
+      if (currentUser) {
+        refreshUnreadCount();
+        setupRealtimeMessages();
+      }
 
       supabaseClient.auth.onAuthStateChange((_event, session) => {
         currentUser = session?.user || null;
         renderAuthUI();
         loadFavorites();
+        if (currentUser) {
+          refreshUnreadCount();
+          setupRealtimeMessages();
+        } else {
+          teardownRealtimeMessages();
+        }
       });
     }
 
     function renderAuthUI() {
       const authArea = document.getElementById('authArea');
+      const inboxBtn = document.getElementById('inboxNavBtn');
+
       if (currentUser) {
+        inboxBtn.classList.remove('hidden');
+        inboxBtn.classList.add('inline-flex');
         authArea.innerHTML = `
           <span class="text-xs text-zinc-500 mr-1 hidden lg:inline">${escapeHtml(currentUser.email)}</span>
-          <button onclick="handleSignOut()" class="bg-transparent border-[1.5px] border-zinc-400 text-zinc-700 hover:border-zinc-900 px-3 py-1.5 rounded-lg text-xs font-semibold transition">
+          <button type="button" onclick="handleSignOut()" class="bg-transparent border-[1.5px] border-zinc-400 text-zinc-700 hover:border-zinc-900 px-3 py-1.5 rounded-lg text-xs font-semibold transition">
             Sign Out
           </button>
         `;
       } else {
+        inboxBtn.classList.add('hidden');
+        inboxBtn.classList.remove('inline-flex');
         authArea.innerHTML = `
-          <button onclick="openAuthModal()" class="bg-transparent border-[1.5px] border-[#1348FB] text-[#1348FB] hover:bg-[#1348FB]/5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition">
+          <button type="button" onclick="openAuthModal()" class="bg-transparent border-[1.5px] border-[#1348FB] text-[#1348FB] hover:bg-[#1348FB]/5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition">
             Sign In
           </button>
         `;
       }
     }
 
+    // ============================================================================
+    // LIVE REALTIME INBOX & WEBSOCKET CHAT
+    // ============================================================================
+    function setupRealtimeMessages() {
+      if (!supabaseClient || !currentUser) return;
+      teardownRealtimeMessages();
+
+      const dot = document.getElementById('realtimeDot');
+
+      realtimeChannel = supabaseClient
+        .channel('simplylists-personal-live-messages')
+        .on(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'messages' },
+          async (payload) => {
+            const newMsg = payload.new;
+            if (!newMsg) return;
+
+            if (newMsg.receiver_id !== currentUser.id && newMsg.sender_id !== currentUser.id) {
+              return;
+            }
+
+            const inboxOpen = !document.getElementById('inboxModal').classList.contains('hidden');
+
+            if (inboxOpen) {
+              const otherId = newMsg.sender_id === currentUser.id ? newMsg.receiver_id : newMsg.sender_id;
+              const incomingKey = `${newMsg.listing_id}_${otherId}`;
+              if (newMsg.receiver_id === currentUser.id && activeThreadKey === incomingKey) {
+                await supabaseClient.from('messages').update({ is_read: true }).eq('id', newMsg.id);
+              }
+              await loadInbox();
+            } else if (newMsg.receiver_id === currentUser.id) {
+              showLiveToast(newMsg.body);
+            }
+
+            refreshUnreadCount();
+          }
+        )
+        .subscribe((status) => {
+          if (dot) {
+            dot.className = status === 'SUBSCRIBED'
+              ? 'w-2 h-2 rounded-full bg-[#1BF40B]'
+              : 'w-2 h-2 rounded-full bg-amber-400';
+          }
+        });
+    }
+
+    function teardownRealtimeMessages() {
+      if (realtimeChannel && supabaseClient) {
+        supabaseClient.removeChannel(realtimeChannel);
+        realtimeChannel = null;
+      }
+    }
+
+    function showLiveToast(previewText) {
+      const toast = document.getElementById('liveToast');
+      const textEl = document.getElementById('liveToastText');
+      textEl.textContent = previewText;
+      toast.classList.remove('hidden');
+
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 5000);
+    }
+
+    async function refreshUnreadCount() {
+      if (!supabaseClient || !currentUser) return;
+      const { count } = await supabaseClient
+        .from('messages')
+        .select('*', { count: 'exact', head: true })
+        .eq('receiver_id', currentUser.id)
+        .eq('is_read', false);
+
+      const badge = document.getElementById('unreadBadge');
+      if (count && count > 0) {
+        badge.textContent = count;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+
+    function openInboxModal() {
+      if (!supabaseClient) {
+        alert('Please paste your SUPABASE_URL and SUPABASE_ANON_KEY into personal.html first.');
+        return;
+      }
+      if (!currentUser) {
+        openAuthModal('Please sign in to access your inbox.');
+        return;
+      }
+      document.getElementById('liveToast').classList.add('hidden');
+      document.getElementById('inboxModal').classList.remove('hidden');
+      loadInbox();
+    }
+
+    function closeInboxModal() {
+      document.getElementById('inboxModal').classList.add('hidden');
+      refreshUnreadCount();
+    }
+
+    async function loadInbox() {
+      if (!supabaseClient || !currentUser) return;
+      const threadsList = document.getElementById('threadsList');
+
+      const { data: msgs, error } = await supabaseClient
+        .from('messages')
+        .select('*, listings(title), sender:profiles!messages_sender_id_fkey(email, display_name), receiver:profiles!messages_receiver_id_fkey(email, display_name)')
+        .or(`sender_id.eq.${currentUser.id},receiver_id.eq.${currentUser.id}`)
+        .order('created_at', { ascending: true });
+
+      if (error) {
+        threadsList.innerHTML = `<div class="p-4 text-xs text-red-600">${escapeHtml(error.message)}</div>`;
+        return;
+      }
+
+      inboxMessages = msgs || [];
+      conversationMap = {};
+
+      inboxMessages.forEach(m => {
+        const otherId = m.sender_id === currentUser.id ? m.receiver_id : m.sender_id;
+        const otherProfile = m.sender_id === currentUser.id ? m.receiver : m.sender;
+        const otherName = otherProfile?.display_name || otherProfile?.email || 'User';
+        const listingTitle = m.listings?.title || 'Listing';
+        const key = `${m.listing_id}_${otherId}`;
+
+        if (!conversationMap[key]) {
+          conversationMap[key] = {
+            key,
+            listing_id: m.listing_id,
+            listing_title: listingTitle,
+            other_id: otherId,
+            other_name: otherName,
+            messages: [],
+            unread: 0
+          };
+        }
+        conversationMap[key].messages.push(m);
+        if (m.receiver_id === currentUser.id && !m.is_read) {
+          conversationMap[key].unread += 1;
+        }
+      });
+
+      const threads = Object.values(conversationMap).sort((a, b) => {
+        const lastA = a.messages[a.messages.length - 1]?.created_at || '';
+        const lastB = b.messages[b.messages.length - 1]?.created_at || '';
+        return lastB.localeCompare(lastA);
+      });
+
+      if (threads.length === 0) {
+        threadsList.innerHTML = `<div class="p-8 text-center text-xs text-zinc-400">No messages yet. Open any listing to message a poster!</div>`;
+        return;
+      }
+
+      threadsList.innerHTML = threads.map(t => {
+        const lastMsg = t.messages[t.messages.length - 1];
+        const isActive = activeThreadKey === t.key;
+        return `
+          <div onclick="selectConversation('${t.key}')" class="p-3.5 cursor-pointer hover:bg-white transition ${isActive ? 'bg-white border-l-4 border-l-[#1348FB]' : ''}">
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-bold text-xs text-zinc-900 truncate">${escapeHtml(t.listing_title)}</span>
+              ${t.unread > 0 ? `<span class="bg-[#1348FB] text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">${t.unread}</span>` : ''}
+            </div>
+            <div class="text-[11px] text-[#1348FB] font-medium mt-0.5">with ${escapeHtml(t.other_name)}</div>
+            <p class="text-xs text-zinc-500 truncate mt-1">${escapeHtml(lastMsg.body)}</p>
+          </div>
+        `;
+      }).join('');
+
+      if (activeThreadKey && conversationMap[activeThreadKey]) {
+        renderActiveThread(activeThreadKey);
+      }
+    }
+
+    async function selectConversation(key) {
+      activeThreadKey = key;
+      const thread = conversationMap[key];
+      if (!thread) return;
+
+      const unreadIds = thread.messages
+        .filter(m => m.receiver_id === currentUser.id && !m.is_read)
+        .map(m => m.id);
+
+      if (unreadIds.length > 0) {
+        await supabaseClient
+          .from('messages')
+          .update({ is_read: true })
+          .in('id', unreadIds);
+        thread.unread = 0;
+        refreshUnreadCount();
+      }
+
+      renderActiveThread(key);
+      loadInbox();
+    }
+
+    function renderActiveThread(key) {
+      const thread = conversationMap[key];
+      if (!thread) return;
+
+      document.getElementById('chatHeader').innerHTML = `
+        <span class="text-[#1348FB] font-bold">${escapeHtml(thread.listing_title)}</span>
+        <span class="text-zinc-400 mx-1.5">•</span>
+        <span class="text-zinc-600">Chatting with ${escapeHtml(thread.other_name)}</span>
+      `;
+
+      const container = document.getElementById('chatMessagesContainer');
+      container.innerHTML = thread.messages.map(m => {
+        const isMine = m.sender_id === currentUser.id;
+        const timeStr = new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        return `
+          <div class="flex ${isMine ? 'justify-end' : 'justify-start'}">
+            <div class="max-w-[78%] rounded-2xl px-3.5 py-2 text-xs ${isMine ? 'bg-[#1348FB] text-white' : 'bg-white border border-zinc-200 text-zinc-900'}">
+              <div class="whitespace-pre-line leading-relaxed">${escapeHtml(m.body)}</div>
+              <div class="text-[10px] mt-1 ${isMine ? 'text-white/70 text-right' : 'text-zinc-400'}">${timeStr}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      container.scrollTop = container.scrollHeight;
+      document.getElementById('chatReplyForm').classList.remove('hidden');
+    }
+
+    async function sendInboxReply(e) {
+      e.preventDefault();
+      if (!activeThreadKey || !conversationMap[activeThreadKey]) return;
+      const thread = conversationMap[activeThreadKey];
+      const input = document.getElementById('chatReplyInput');
+      const body = input.value.trim();
+      if (!body) return;
+
+      input.value = '';
+      await supabaseClient.from('messages').insert([{
+        listing_id: thread.listing_id,
+        sender_id: currentUser.id,
+        receiver_id: thread.other_id,
+        body
+      }]);
+    }
+
+    // ============================================================================
+    // FAVORITES, SUBCATEGORIES & PERSONAL FEED
+    // ============================================================================
     async function loadFavorites() {
       if (supabaseClient && currentUser) {
         const { data } = await supabaseClient.from('favorites').select('listing_id').eq('user_id', currentUser.id);
@@ -434,9 +773,9 @@
     function renderSubcategoryBar() {
       const bar = document.getElementById('subcategoryBar');
       bar.innerHTML = [
-        `<button onclick="selectSubcategory('all')" class="px-3 py-1.5 rounded-full text-xs font-bold border transition ${activeSubcategory === 'all' ? 'bg-[#1348FB] text-white border-[#1348FB]' : 'bg-white text-[#1348FB] border-[#1348FB]/30 hover:border-[#1348FB]'}">All Personal</button>`,
+        `<button type="button" onclick="selectSubcategory('all')" class="px-3 py-1.5 rounded-full text-xs font-bold border transition ${activeSubcategory === 'all' ? 'bg-[#1348FB] text-white border-[#1348FB]' : 'bg-white text-[#1348FB] border-[#1348FB]/30 hover:border-[#1348FB]'}">All Personal</button>`,
         ...PERSONAL_SUBCATEGORIES.map(s => `
-          <button onclick="selectSubcategory('${s.id}')" class="subcat-regular px-3 py-1.5 rounded-full text-xs border transition ${activeSubcategory === s.id ? 'bg-[#1348FB] text-white border-[#1348FB]' : 'bg-white text-zinc-800 border-zinc-200 hover:border-[#1348FB]'}">${s.label}</button>
+          <button type="button" onclick="selectSubcategory('${s.id}')" class="subcat-regular px-3 py-1.5 rounded-full text-xs border transition ${activeSubcategory === s.id ? 'bg-[#1348FB] text-white border-[#1348FB]' : 'bg-white text-zinc-800 border-zinc-200 hover:border-[#1348FB]'}">${s.label}</button>
         `)
       ].join('');
     }
@@ -481,7 +820,15 @@
     }
 
     async function loadPersonalListings() {
-      if (!supabaseClient) return;
+      if (!supabaseClient) {
+        document.getElementById('setupBanner').classList.remove('hidden');
+        document.getElementById('listingsContainer').innerHTML = `
+          <div class="p-8 text-center text-amber-800 bg-amber-50 text-xs">
+            ⚠️ Search requires your Supabase keys. Paste <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> near the bottom of <code>personal.html</code>.
+          </div>`;
+        return;
+      }
+
       const region = document.getElementById('regionSelect').value;
       const search = document.getElementById('searchInput').value.trim();
       const minAge = document.getElementById('minAgeInput').value;
@@ -540,6 +887,7 @@
           return `
             <a href="${listingUrl}" class="relative border border-zinc-200 rounded-xl overflow-hidden hover:border-[#1348FB] transition bg-white flex flex-col">
               <button
+                type="button"
                 onclick="toggleFavorite('${item.id}', event)"
                 class="absolute top-2.5 right-2.5 z-10 w-8 h-8 rounded-full bg-white/90 hover:bg-white shadow flex items-center justify-center text-base transition ${isFav ? 'text-[#F0A06A]' : 'text-zinc-400 hover:text-[#F0A06A]'}"
                 title="${isFav ? 'Remove from Saved' : 'Save listing'}"
@@ -564,7 +912,6 @@
         return;
       }
 
-      // SMARTPHONE-OPTIMIZED LIST VIEW (EVERY ROW IS A DEDICATED LINK TO personal-listing.html?id=...)
       container.className = 'divide-y divide-zinc-100';
       container.innerHTML = cachedListings.map(item => {
         const listingUrl = `personal-listing.html?id=${encodeURIComponent(item.id)}`;
@@ -580,6 +927,7 @@
           <a href="${listingUrl}" class="px-4 sm:px-5 py-3.5 hover:bg-zinc-50 flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4 text-sm transition">
             <div class="flex items-start sm:items-center gap-2.5 min-w-0 flex-1">
               <button
+                type="button"
                 onclick="toggleFavorite('${item.id}', event)"
                 class="text-base leading-none mt-0.5 sm:mt-0 shrink-0 transition ${isFav ? 'text-[#F0A06A]' : 'text-zinc-300 hover:text-[#F0A06A]'}"
                 title="${isFav ? 'Remove from Saved' : 'Save listing'}"
@@ -607,7 +955,9 @@
       }).join('');
     }
 
+    // ============================================================================
     // POSTING MODAL & PHOTO UPLOAD
+    // ============================================================================
     function handleFileSelection(event) {
       const incoming = Array.from(event.target.files || []);
       selectedUploadFiles = [...selectedUploadFiles, ...incoming].slice(0, 4);
@@ -638,6 +988,10 @@
     }
 
     function openPostModal() {
+      if (!supabaseClient) {
+        openAuthModal('Supabase keys are not configured in personal.html yet.');
+        return;
+      }
       if (!currentUser) {
         openAuthModal('Please sign in or create an account to post in Personal.');
         return;
@@ -655,6 +1009,13 @@
       const statusMsg = document.getElementById('postStatusMsg');
       const submitBtn = document.getElementById('submitPostBtn');
       statusMsg.classList.add('hidden');
+
+      if (!supabaseClient) {
+        statusMsg.textContent = 'Supabase keys are missing in personal.html.';
+        statusMsg.classList.remove('hidden');
+        return;
+      }
+
       submitBtn.disabled = true;
       submitBtn.textContent = 'Publishing...';
 
@@ -695,7 +1056,6 @@
 
         if (insertError) throw insertError;
 
-        // Direct immediately to the newly published Personal listing's standalone page
         if (inserted?.id) {
           window.location.href = `personal-listing.html?id=${encodeURIComponent(inserted.id)}`;
           return;
@@ -715,7 +1075,9 @@
       }
     }
 
+    // ============================================================================
     // AUTH HELPERS
+    // ============================================================================
     function openAuthModal(msg) {
       const msgEl = document.getElementById('authMsg');
       if (msg) { msgEl.textContent = msg; msgEl.classList.remove('hidden'); }
@@ -724,12 +1086,33 @@
     }
     function closeAuthModal() { document.getElementById('authModal').classList.add('hidden'); }
 
+    async function handleForgotPassword() {
+      const msgEl = document.getElementById('authMsg');
+      msgEl.classList.remove('hidden');
+      if (!supabaseClient) {
+        msgEl.textContent = 'Supabase keys are not configured in personal.html yet.';
+        return;
+      }
+      const email = document.getElementById('authEmail').value.trim();
+      if (!email) {
+        msgEl.textContent = 'Enter your email address above first, then click Forgot password.';
+        return;
+      }
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
+      msgEl.textContent = error ? error.message : '✓ Password reset link sent! Check your email inbox.';
+    }
+
     async function handleSignIn() {
+      const msgEl = document.getElementById('authMsg');
+      if (!supabaseClient) {
+        msgEl.textContent = 'Supabase keys are not configured in personal.html yet.';
+        msgEl.classList.remove('hidden');
+        return;
+      }
       const email = document.getElementById('authEmail').value.trim();
       const password = document.getElementById('authPassword').value;
       const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
       if (error) {
-        const msgEl = document.getElementById('authMsg');
         msgEl.textContent = error.message;
         msgEl.classList.remove('hidden');
       } else {
@@ -738,16 +1121,21 @@
     }
 
     async function handleSignUp() {
+      const msgEl = document.getElementById('authMsg');
+      if (!supabaseClient) {
+        msgEl.textContent = 'Supabase keys are not configured in personal.html yet.';
+        msgEl.classList.remove('hidden');
+        return;
+      }
       const email = document.getElementById('authEmail').value.trim();
       const password = document.getElementById('authPassword').value;
-      const msgEl = document.getElementById('authMsg');
       const { error } = await supabaseClient.auth.signUp({ email, password });
       msgEl.classList.remove('hidden');
       msgEl.textContent = error ? error.message : 'Check your email inbox to confirm your simplylists account!';
     }
 
     async function handleSignOut() {
-      await supabaseClient.auth.signOut();
+      if (supabaseClient) await supabaseClient.auth.signOut();
     }
 
     function escapeHtml(str) {
