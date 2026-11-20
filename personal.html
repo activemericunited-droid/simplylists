@@ -151,7 +151,7 @@
     </section>
 
     <!-- FEED HEADER + LISTINGS -->
-    <div class="bg-white border border-zinc-200 rounded-xl shadow-sm overflow-hidden mb-10">
+    <div class="bg-white border border-zinc-200 rounded-xl shadow-sm overflow-hidden mb-8">
       <div class="border-b border-zinc-200 px-4 sm:px-5 py-3 flex items-center justify-between gap-2 bg-zinc-50/70">
         <div class="flex items-center gap-2 min-w-0">
           <h2 id="feedTitle" class="font-bold text-[11px] sm:text-xs uppercase tracking-wider text-[#1348FB] truncate">All Personal Listings</h2>
@@ -168,12 +168,141 @@
       </div>
     </div>
 
+    <!-- BOTTOM POLICY, SUPPORT & FEEDBACK BAR -->
+    <nav aria-label="Platform policies and support" class="mt-4 pt-2 flex flex-wrap items-center justify-center gap-x-5 sm:gap-x-6 gap-y-2 text-xs text-zinc-500">
+      <button type="button" onclick="openInfoModal('terms')" class="hover:text-[#1348FB] font-medium transition underline-offset-4 hover:underline">
+        Terms of Use
+      </button>
+      <span class="text-zinc-300">•</span>
+      <button type="button" onclick="openInfoModal('privacy')" class="hover:text-[#1348FB] font-medium transition underline-offset-4 hover:underline">
+        Privacy
+      </button>
+      <span class="text-zinc-300">•</span>
+      <button type="button" onclick="openContactModal()" class="hover:text-[#1348FB] font-medium transition underline-offset-4 hover:underline">
+        Contact
+      </button>
+      <span class="text-zinc-300">•</span>
+      <button type="button" onclick="openInfoModal('scam')" class="hover:text-[#1348FB] font-medium transition underline-offset-4 hover:underline">
+        Scam &amp; Fraud
+      </button>
+      <span class="text-zinc-300">•</span>
+      <button type="button" onclick="openFeedbackModal()" class="hover:text-[#1348FB] font-medium transition underline-offset-4 hover:underline">
+        Feedback
+      </button>
+    </nav>
+
   </main>
 
   <!-- FOOTER -->
   <footer class="border-t border-zinc-200 bg-white py-4 px-4 text-center text-xs text-zinc-400">
     <a href="index.html" class="font-bold text-[#F0A06A] tracking-tight hover:underline">simplylists</a> — Personal (18+) • No full nudity permitted
   </footer>
+
+  <!-- FEEDBACK MODAL -->
+  <div id="feedbackModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-zinc-200 max-w-lg w-full p-6 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-zinc-100 pb-3 mb-4">
+        <div class="flex items-center gap-2">
+          <span class="bg-[#F0A06A]/15 text-[#F0A06A] text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded">Feedback</span>
+          <h3 class="font-bold text-lg text-zinc-900">Share Feedback on <span class="text-[#F0A06A]">simplylists</span></h3>
+        </div>
+        <button type="button" onclick="closeFeedbackModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
+      </div>
+
+      <form onsubmit="submitFeedback(event)" class="space-y-4 text-sm">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <span class="block text-[11px] font-bold uppercase tracking-wider text-zinc-500 mb-1">Your Experience</span>
+            <div id="starRatingContainer" class="flex items-center gap-1 text-xl">
+              <button type="button" onclick="setFeedbackRating(1)" class="star-btn text-[#F0A06A] hover:scale-110 transition">★</button>
+              <button type="button" onclick="setFeedbackRating(2)" class="star-btn text-[#F0A06A] hover:scale-110 transition">★</button>
+              <button type="button" onclick="setFeedbackRating(3)" class="star-btn text-[#F0A06A] hover:scale-110 transition">★</button>
+              <button type="button" onclick="setFeedbackRating(4)" class="star-btn text-[#F0A06A] hover:scale-110 transition">★</button>
+              <button type="button" onclick="setFeedbackRating(5)" class="star-btn text-[#F0A06A] hover:scale-110 transition">★</button>
+            </div>
+          </div>
+
+          <div>
+            <span class="block text-[11px] font-bold uppercase tracking-wider text-zinc-500 mb-1">Topic</span>
+            <div class="flex flex-wrap gap-1.5" id="feedbackTopicPills">
+              <button type="button" onclick="setFeedbackTopic('feature-idea')" data-topic="feature-idea" class="fb-topic-btn px-2.5 py-1 rounded-full text-xs font-bold bg-[#1348FB] text-white border border-[#1348FB]">Feature Idea</button>
+              <button type="button" onclick="setFeedbackTopic('design-vibe')" data-topic="design-vibe" class="fb-topic-btn px-2.5 py-1 rounded-full text-xs font-medium bg-white text-zinc-600 border border-zinc-200 hover:border-[#1348FB]">Design &amp; Vibe</button>
+              <button type="button" onclick="setFeedbackTopic('bug-report')" data-topic="bug-report" class="fb-topic-btn px-2.5 py-1 rounded-full text-xs font-medium bg-white text-zinc-600 border border-zinc-200 hover:border-[#1348FB]">Bug Report</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Email (optional)</label>
+          <input id="feedbackEmail" type="email" placeholder="you@example.com" class="w-full bg-zinc-50 border border-zinc-200 rounded-lg px-3.5 py-2 text-sm focus:outline-none focus:bg-white focus:border-[#1348FB]" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Feedback *</label>
+          <textarea id="feedbackMessage" required rows="3" placeholder="Share a feature request, idea, or note..." class="w-full bg-zinc-50 border border-zinc-200 rounded-lg px-3.5 py-2 text-sm focus:outline-none focus:bg-white focus:border-[#1348FB]"></textarea>
+        </div>
+
+        <div id="feedbackStatus" class="hidden text-xs font-semibold text-emerald-700"></div>
+
+        <div class="flex justify-end gap-2 pt-1">
+          <button type="button" onclick="closeFeedbackModal()" class="px-4 py-2 border border-zinc-300 rounded-lg text-xs font-medium">Close</button>
+          <button id="feedbackSubmitBtn" type="submit" class="bg-transparent border-[1.5px] border-[#1348FB] text-[#1348FB] hover:bg-[#1348FB] hover:text-white font-bold py-2 px-5 rounded-lg text-xs transition">
+            Send Feedback
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- CONTACT MODAL -->
+  <div id="contactModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-zinc-200 max-w-md w-full p-6 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-zinc-100 pb-3 mb-4">
+        <div class="flex items-center gap-2">
+          <span class="bg-[#1348FB]/10 text-[#1348FB] text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded">Support</span>
+          <h3 class="font-bold text-lg text-zinc-900">Contact <span class="text-[#F0A06A]">simplylists</span></h3>
+        </div>
+        <button type="button" onclick="closeContactModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
+      </div>
+
+      <form onsubmit="submitContactForm(event)" class="space-y-3.5 text-sm">
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Your Email *</label>
+          <input id="contactEmail" type="email" required placeholder="you@example.com" class="w-full bg-zinc-50 border border-zinc-200 rounded-lg px-3.5 py-2 text-sm focus:outline-none focus:bg-white focus:border-[#1348FB]" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Message *</label>
+          <textarea id="contactMessage" required minlength="2" rows="4" placeholder="How can we help you?" class="w-full bg-zinc-50 border border-zinc-200 rounded-lg px-3.5 py-2 text-sm focus:outline-none focus:bg-white focus:border-[#1348FB]"></textarea>
+        </div>
+        <div id="contactStatus" class="hidden text-xs font-semibold"></div>
+        <div class="flex justify-end gap-2 pt-1">
+          <button type="button" onclick="closeContactModal()" class="px-4 py-2 border border-zinc-300 rounded-lg text-xs font-medium">Cancel</button>
+          <button id="contactSubmitBtn" type="submit" class="bg-[#1348FB] hover:opacity-95 text-white font-bold py-2 px-5 rounded-lg text-xs transition disabled:opacity-50">
+            Send Message
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- INFO & POLICY MODAL (TERMS OF USE, PRIVACY, SCAM & FRAUD) -->
+  <div id="infoModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-zinc-200 max-w-xl w-full max-h-[85vh] overflow-y-auto p-6 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-zinc-100 pb-3 mb-4">
+        <div class="flex items-center gap-2">
+          <span id="infoModalBadge" class="bg-[#1348FB]/10 text-[#1348FB] text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded">Policy</span>
+          <h3 id="infoModalTitle" class="font-bold text-lg text-zinc-900"></h3>
+        </div>
+        <button type="button" onclick="closeInfoModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
+      </div>
+      <div id="infoModalBody" class="text-xs sm:text-sm text-zinc-600 space-y-3 leading-relaxed"></div>
+      <div class="mt-6 pt-3 border-t border-zinc-100 flex justify-end">
+        <button type="button" onclick="closeInfoModal()" class="bg-transparent border-[1.5px] border-[#1348FB] text-[#1348FB] hover:bg-[#1348FB] hover:text-white font-bold px-4 py-1.5 rounded-lg text-xs transition">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- IN-WEBSITE INBOX & REALTIME CHAT MODAL -->
   <div id="inboxModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
@@ -203,13 +332,7 @@
           </div>
 
           <form id="chatReplyForm" onsubmit="sendInboxReply(event)" class="hidden p-3 border-t border-zinc-200 bg-white flex gap-2 items-center">
-            <input
-              id="chatReplyInput"
-              type="text"
-              required
-              placeholder="Write a message..."
-              class="flex-1 border border-zinc-300 rounded-lg px-3.5 py-2 text-sm focus:outline-none focus:border-[#1348FB]"
-            />
+            <input id="chatReplyInput" type="text" required placeholder="Write a message..." class="flex-1 border border-zinc-300 rounded-lg px-3.5 py-2 text-sm focus:outline-none focus:border-[#1348FB]" />
             <button type="submit" id="chatReplyBtn" class="bg-[#1BF40B] hover:brightness-95 text-zinc-950 font-bold px-4 py-2 rounded-lg text-xs shrink-0">
               Send
             </button>
@@ -376,8 +499,8 @@
     // ============================================================================
     // PASTE YOUR SUPABASE CREDENTIALS BETWEEN THE SINGLE QUOTES RIGHT HERE:
     // ============================================================================
-    const SUPABASE_URL = 'https://xqpinjcstaqdbtczgykp.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_Vq3EYb717vMAHomU5U0k3A_ibTfyNAb';
+    const SUPABASE_URL = 'https://xqpinjcstaqdbtczgykp.supabase.co'.trim();
+    const SUPABASE_ANON_KEY = 'sb_publishable_Vq3EYb717vMAHomU5U0k3A_ibTfyNAb'.trim();
 
     const PERSONAL_SUBCATEGORIES = [
       { id: 'strictly-platonic',  label: 'strictly platonic' },
@@ -389,6 +512,47 @@
       { id: 'casual-encounters',  label: 'casual encounters' }
     ];
 
+    const INFO_MODAL_CONTENT = {
+      terms: {
+        badge: 'Legal',
+        title: 'Terms of Use',
+        body: `
+          <p>Welcome to <strong>simplylists</strong> (<code>simplylists.org</code>). By accessing or posting on this platform, you agree to these Terms of Use:</p>
+          <ul class="list-disc pl-5 space-y-1.5">
+            <li><strong>Eligibility &amp; Personal Category (18+):</strong> You must be at least 18 years old to use simplylists. All listings and interactions in the Personal category are strictly restricted to adults 18 and older.</li>
+            <li><strong>Photo Rules (No Full Nudity):</strong> Full nudity, sexually explicit imagery, graphic violence, hate symbols, and photos of minors in the Personal category are strictly prohibited. Only upload real photos you own or have permission to share.</li>
+            <li><strong>User Responsibility:</strong> All listings, photos, and messages are the sole responsibility of the user who posted them.</li>
+            <li><strong>Prohibited Content:</strong> Illegal goods, spam, duplicate flooding, commercial escorting, and harassment are strictly prohibited. Listings flagged 3 times by the community are automatically quarantined.</li>
+          </ul>
+        `
+      },
+      privacy: {
+        badge: 'Privacy',
+        title: 'Privacy Policy',
+        body: `
+          <p><strong>simplylists</strong> is designed to protect your privacy while connecting you locally:</p>
+          <ul class="list-disc pl-5 space-y-1.5">
+            <li><strong>Minimal Data Collection:</strong> We only store your account email, encrypted authentication credentials via Supabase Auth, and the listings, photos, and messages you explicitly choose to publish.</li>
+            <li><strong>Private In-Website Chat &amp; Relay:</strong> Your personal email address is never exposed publicly on your listings.</li>
+            <li><strong>No Third-Party Data Selling:</strong> We never sell, rent, or trade your personal information or browsing activity to advertisers or third parties.</li>
+          </ul>
+        `
+      },
+      scam: {
+        badge: 'Safety Guide',
+        title: 'Avoiding Scams & Fraud',
+        body: `
+          <p class="font-semibold text-zinc-900">Follow these golden rules to stay 100% safe when connecting locally:</p>
+          <ul class="list-disc pl-5 space-y-1.5">
+            <li><strong>Meet in Public Places:</strong> Always choose a well-lit public location and tell a friend where you are going.</li>
+            <li><strong>Never Send Money or Gift Cards:</strong> Never wire money or send Zelle, Venmo, CashApp, or gift cards to someone you have not met in person.</li>
+            <li><strong>Keep Conversations on simplylists:</strong> Use our built-in <strong>💬 Inbox</strong> chat until you trust the other person.</li>
+            <li><strong>Report Suspicious Posts:</strong> Click <strong>🚩 Report</strong> on any listing to flag suspicious posts. Three community flags automatically hide a listing.</li>
+          </ul>
+        `
+      }
+    };
+
     let supabaseClient = null;
     let currentUser = null;
     let cachedListings = [];
@@ -396,6 +560,10 @@
     let activeSubcategory = 'all';
     let viewMode = 'list';
     let favoriteIds = new Set(JSON.parse(localStorage.getItem('simplylists_favs') || '[]'));
+
+    // Feedback form state
+    let feedbackRating = 5;
+    let feedbackTopic = 'feature-idea';
 
     // Realtime Inbox State
     let inboxMessages = [];
@@ -425,14 +593,20 @@
       loadPersonalListings();
     }
 
-    const isConfigured = SUPABASE_URL.startsWith('http') && !SUPABASE_URL.includes('PASTE_YOUR');
-    if (isConfigured) {
-      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      initAuth();
-      if (isAgeVerified()) {
-        loadPersonalListings();
-      } else {
-        document.getElementById('ageGateModal').classList.remove('hidden');
+    const isConfigured = SUPABASE_URL.startsWith('http') && !SUPABASE_URL.includes('PASTE_YOUR') && SUPABASE_ANON_KEY.length > 20;
+
+    if (isConfigured && window.supabase && typeof window.supabase.createClient === 'function') {
+      try {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        initAuth();
+        if (isAgeVerified()) {
+          loadPersonalListings();
+        } else {
+          document.getElementById('ageGateModal').classList.remove('hidden');
+        }
+      } catch (err) {
+        document.getElementById('setupBanner').classList.remove('hidden');
+        document.getElementById('listingsContainer').innerHTML = `<div class="p-8 text-center text-red-600 text-xs">Supabase initialization error: ${escapeHtml(err.message)}</div>`;
       }
     } else {
       document.getElementById('setupBanner').classList.remove('hidden');
@@ -441,6 +615,130 @@
         <div class="p-10 text-center text-zinc-500 text-sm">
           Paste your <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> near the bottom of <code>personal.html</code> to load personal listings.
         </div>`;
+    }
+
+    // ============================================================================
+    // POLICY, CONTACT & FEEDBACK MODALS
+    // ============================================================================
+    function openInfoModal(key) {
+      const info = INFO_MODAL_CONTENT[key];
+      if (!info) return;
+      document.getElementById('infoModalBadge').textContent = info.badge;
+      document.getElementById('infoModalTitle').textContent = info.title;
+      document.getElementById('infoModalBody').innerHTML = info.body;
+      document.getElementById('infoModal').classList.remove('hidden');
+    }
+    function closeInfoModal() { document.getElementById('infoModal').classList.add('hidden'); }
+
+    function openContactModal() {
+      const emailInput = document.getElementById('contactEmail');
+      if (currentUser?.email && !emailInput.value) emailInput.value = currentUser.email;
+      document.getElementById('contactStatus').classList.add('hidden');
+      document.getElementById('contactModal').classList.remove('hidden');
+    }
+    function closeContactModal() { document.getElementById('contactModal').classList.add('hidden'); }
+
+    async function submitContactForm(e) {
+      e.preventDefault();
+      const email = document.getElementById('contactEmail').value.trim();
+      const message = document.getElementById('contactMessage').value.trim();
+      const statusEl = document.getElementById('contactStatus');
+      const btn = document.getElementById('contactSubmitBtn');
+      if (!email || !message) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+      statusEl.classList.add('hidden');
+
+      if (supabaseClient) {
+        const { error } = await supabaseClient.from('contact_messages').insert([{
+          user_id: currentUser?.id || null,
+          email,
+          message
+        }]);
+        btn.disabled = false;
+        btn.textContent = 'Send Message';
+        if (error) {
+          statusEl.textContent = `⚠️ Error sending message: ${error.message}`;
+          statusEl.className = 'text-xs font-semibold text-red-600';
+          statusEl.classList.remove('hidden');
+          return;
+        }
+      } else {
+        btn.disabled = false;
+        btn.textContent = 'Send Message';
+      }
+
+      document.getElementById('contactMessage').value = '';
+      statusEl.textContent = '✓ Message received! Our team will review it shortly.';
+      statusEl.className = 'text-xs font-semibold text-emerald-700';
+      statusEl.classList.remove('hidden');
+    }
+
+    function openFeedbackModal() {
+      const emailInput = document.getElementById('feedbackEmail');
+      if (currentUser?.email && !emailInput.value) emailInput.value = currentUser.email;
+      document.getElementById('feedbackStatus').classList.add('hidden');
+      document.getElementById('feedbackModal').classList.remove('hidden');
+    }
+    function closeFeedbackModal() { document.getElementById('feedbackModal').classList.add('hidden'); }
+
+    function setFeedbackRating(stars) {
+      feedbackRating = stars;
+      document.querySelectorAll('#starRatingContainer .star-btn').forEach((btn, idx) => {
+        btn.className = idx < stars
+          ? 'star-btn text-[#F0A06A] hover:scale-110 transition'
+          : 'star-btn text-zinc-300 hover:scale-110 transition';
+      });
+    }
+
+    function setFeedbackTopic(topic) {
+      feedbackTopic = topic;
+      document.querySelectorAll('.fb-topic-btn').forEach(btn => {
+        btn.className = btn.dataset.topic === topic
+          ? 'fb-topic-btn px-2.5 py-1 rounded-full text-xs font-bold bg-[#1348FB] text-white border border-[#1348FB]'
+          : 'fb-topic-btn px-2.5 py-1 rounded-full text-xs font-medium bg-white text-zinc-600 border border-zinc-200 hover:border-[#1348FB]';
+      });
+    }
+
+    async function submitFeedback(e) {
+      e.preventDefault();
+      const msgInput = document.getElementById('feedbackMessage');
+      const emailInput = document.getElementById('feedbackEmail');
+      const statusEl = document.getElementById('feedbackStatus');
+      const btn = document.getElementById('feedbackSubmitBtn');
+      const message = msgInput.value.trim();
+      if (!message) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+      statusEl.classList.add('hidden');
+
+      if (supabaseClient) {
+        const { error } = await supabaseClient.from('feedback').insert([{
+          user_id: currentUser?.id || null,
+          email: emailInput.value.trim() || currentUser?.email || null,
+          rating: feedbackRating,
+          category: feedbackTopic,
+          message
+        }]);
+        btn.disabled = false;
+        btn.textContent = 'Send Feedback';
+        if (error) {
+          statusEl.textContent = `⚠️ Error saving feedback: ${error.message}`;
+          statusEl.className = 'text-xs font-semibold text-red-600';
+          statusEl.classList.remove('hidden');
+          return;
+        }
+      } else {
+        btn.disabled = false;
+        btn.textContent = 'Send Feedback';
+      }
+
+      msgInput.value = '';
+      statusEl.textContent = '✦ Thank you! Your feedback has been recorded for simplylists.';
+      statusEl.className = 'text-xs font-semibold text-emerald-700';
+      statusEl.classList.remove('hidden');
     }
 
     // ============================================================================
@@ -511,12 +809,9 @@
             const newMsg = payload.new;
             if (!newMsg) return;
 
-            if (newMsg.receiver_id !== currentUser.id && newMsg.sender_id !== currentUser.id) {
-              return;
-            }
+            if (newMsg.receiver_id !== currentUser.id && newMsg.sender_id !== currentUser.id) return;
 
             const inboxOpen = !document.getElementById('inboxModal').classList.contains('hidden');
-
             if (inboxOpen) {
               const otherId = newMsg.sender_id === currentUser.id ? newMsg.receiver_id : newMsg.sender_id;
               const incomingKey = `${newMsg.listing_id}_${otherId}`;
@@ -527,7 +822,6 @@
             } else if (newMsg.receiver_id === currentUser.id) {
               showLiveToast(newMsg.body);
             }
-
             refreshUnreadCount();
           }
         )
@@ -549,14 +843,10 @@
 
     function showLiveToast(previewText) {
       const toast = document.getElementById('liveToast');
-      const textEl = document.getElementById('liveToastText');
-      textEl.textContent = previewText;
+      document.getElementById('liveToastText').textContent = previewText;
       toast.classList.remove('hidden');
-
       if (toastTimeout) clearTimeout(toastTimeout);
-      toastTimeout = setTimeout(() => {
-        toast.classList.add('hidden');
-      }, 5000);
+      toastTimeout = setTimeout(() => { toast.classList.add('hidden'); }, 5000);
     }
 
     async function refreshUnreadCount() {
@@ -632,9 +922,7 @@
           };
         }
         conversationMap[key].messages.push(m);
-        if (m.receiver_id === currentUser.id && !m.is_read) {
-          conversationMap[key].unread += 1;
-        }
+        if (m.receiver_id === currentUser.id && !m.is_read) conversationMap[key].unread += 1;
       });
 
       const threads = Object.values(conversationMap).sort((a, b) => {
@@ -673,19 +961,12 @@
       const thread = conversationMap[key];
       if (!thread) return;
 
-      const unreadIds = thread.messages
-        .filter(m => m.receiver_id === currentUser.id && !m.is_read)
-        .map(m => m.id);
-
+      const unreadIds = thread.messages.filter(m => m.receiver_id === currentUser.id && !m.is_read).map(m => m.id);
       if (unreadIds.length > 0) {
-        await supabaseClient
-          .from('messages')
-          .update({ is_read: true })
-          .in('id', unreadIds);
+        await supabaseClient.from('messages').update({ is_read: true }).in('id', unreadIds);
         thread.unread = 0;
         refreshUnreadCount();
       }
-
       renderActiveThread(key);
       loadInbox();
     }
@@ -811,12 +1092,18 @@
       return `Age ${Math.round(Number(priceVal))}`;
     }
 
-    function formatExpirationShort(expiresAtIso, createdAtIso) {
-      const expDate = expiresAtIso ? new Date(expiresAtIso) : new Date(new Date(createdAtIso).getTime() + 30 * 86400000);
-      const dateStr = expDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      const daysLeft = Math.ceil((expDate.getTime() - Date.now()) / 86400000);
-      if (daysLeft <= 3) return { short: `Expires ${dateStr} (${Math.max(0, daysLeft)}d left)`, urgent: true };
-      return { short: `Expires ${dateStr}`, urgent: false };
+    // REPLACES "EXPIRES" TAG WITH HOW MANY HOURS AGO IT WAS POSTED
+    function formatPostedHoursAgo(createdAtIso) {
+      const diffMs = Math.max(0, Date.now() - new Date(createdAtIso).getTime());
+      const totalMinutes = Math.floor(diffMs / 60000);
+      if (totalMinutes < 1) return 'Just now';
+      if (totalMinutes < 60) return `${totalMinutes}m ago`;
+      const totalHours = Math.floor(totalMinutes / 60);
+      if (totalHours === 1) return '1 hr ago';
+      if (totalHours < 24) return `${totalHours} hrs ago`;
+      const totalDays = Math.floor(totalHours / 24);
+      if (totalDays === 1) return '1 day ago';
+      return `${totalDays} days ago`;
     }
 
     async function loadPersonalListings() {
@@ -877,7 +1164,7 @@
         container.innerHTML = cachedListings.map(item => {
           const listingUrl = `personal-listing.html?id=${encodeURIComponent(item.id)}`;
           const subLabel = getSubcategoryLabel(item.subcategory_id);
-          const expInfo = formatExpirationShort(item.expires_at, item.created_at);
+          const postedAgo = formatPostedHoursAgo(item.created_at);
           const isFav = favoriteIds.has(item.id);
           const ageStr = formatAge(item.price);
           const thumb = (item.image_urls && item.image_urls.length > 0)
@@ -903,7 +1190,7 @@
                 </div>
                 <div class="text-[11px] text-zinc-400 mt-2.5 pt-2 border-t border-zinc-100 flex justify-between items-center gap-2">
                   <span class="truncate">${escapeHtml(item.neighborhood || item.region)}</span>
-                  <span class="shrink-0 ${expInfo.urgent ? 'text-amber-700 font-medium' : 'text-zinc-400'}">${expInfo.short}</span>
+                  <span class="shrink-0 text-zinc-500 font-medium">${postedAgo}</span>
                 </div>
               </div>
             </a>
@@ -917,7 +1204,7 @@
         const listingUrl = `personal-listing.html?id=${encodeURIComponent(item.id)}`;
         const subLabel = getSubcategoryLabel(item.subcategory_id);
         const dateStr = new Date(item.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        const expInfo = formatExpirationShort(item.expires_at, item.created_at);
+        const postedAgo = formatPostedHoursAgo(item.created_at);
         const isFav = favoriteIds.has(item.id);
         const ageStr = formatAge(item.price);
         const hood = item.neighborhood ? `<span class="text-zinc-400 text-[11px] sm:text-xs">(${escapeHtml(item.neighborhood)})</span>` : '';
@@ -945,8 +1232,8 @@
                 </div>
               </div>
             </div>
-            <div class="flex items-center justify-between sm:justify-end gap-2 pl-6 sm:pl-0 shrink-0">
-              <span class="text-[11px] ${expInfo.urgent ? 'text-amber-700 font-medium' : 'text-zinc-400'} sm:hidden md:inline">${expInfo.short}</span>
+            <div class="flex items-center justify-between sm:justify-end gap-2.5 pl-6 sm:pl-0 shrink-0">
+              <span class="text-[11px] text-zinc-500 font-medium">${postedAgo}</span>
               ${subLabel ? `<span class="subcat-regular text-xs text-zinc-600 hidden sm:inline">${escapeHtml(subLabel)}</span>` : ''}
               <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider px-2 sm:px-2.5 py-0.5 rounded bg-[#1348FB]/10 text-[#1348FB] border border-[#1348FB]/25">View →</span>
             </div>
