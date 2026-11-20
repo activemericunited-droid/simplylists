@@ -181,7 +181,7 @@
   <!-- MAIN CONTAINER -->
   <main class="max-w-6xl w-full mx-auto px-4 py-6 sm:py-8 flex-1">
 
-    <!-- 3-PILLAR HERO DIRECTORY (Removed 01/Marketplace & 02/Directory; Replaced 03/Connections with New Listings) -->
+    <!-- 3-PILLAR HERO DIRECTORY -->
     <section class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
       <!-- FOR SALE -->
       <div onclick="filterByCategory('for-sale')" class="cat-card cursor-pointer text-left bg-white border border-zinc-200 rounded-xl p-5 shadow-sm group">
@@ -256,9 +256,7 @@
       </div>
     </section>
 
-    <!-- ====================================================================== -->
-    <!-- FULL-BLEED FEATURED LISTING CAROUSEL (ZERO WHITE BORDERS OR PADDING)   -->
-    <!-- ====================================================================== -->
+    <!-- FULL-BLEED FEATURED LISTING CAROUSEL (ZERO WHITE BORDERS OR PADDING) -->
     <section
       id="featuredCarouselSection"
       onmouseenter="pauseFeaturedCarousel()"
@@ -272,7 +270,7 @@
       </div>
     </section>
 
-    <!-- SEARCH & FILTER TOOLBAR -->
+    <!-- SEARCH & FILTER TOOLBAR (WITH PERSONAL MIN/MAX AGE FILTER) -->
     <section class="bg-white border border-zinc-200 rounded-xl p-3 mb-4 flex flex-wrap gap-2.5 items-center shadow-sm">
       <input
         id="searchInput"
@@ -287,7 +285,40 @@
         <option value="services">Services</option>
         <option value="personal">Personal (18+)</option>
       </select>
-      <input id="maxPriceInput" type="number" placeholder="Max $" class="w-24 bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-2 text-sm" />
+
+      <!-- MAX PRICE FILTER (SHOWN FOR ALL / FOR SALE / SERVICES) -->
+      <input
+        id="maxPriceInput"
+        type="number"
+        min="0"
+        placeholder="Max $"
+        onkeydown="if(event.key === 'Enter') loadListings()"
+        class="w-24 bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:bg-white focus:border-[#1348FB]"
+      />
+
+      <!-- MIN & MAX AGE FILTER (SHOWN ONLY WHEN SEARCHING IN PERSONAL) -->
+      <div id="ageFilterGroup" class="hidden items-center gap-1.5">
+        <input
+          id="minAgeInput"
+          type="number"
+          min="18"
+          step="1"
+          placeholder="Min Age"
+          onkeydown="if(event.key === 'Enter') loadListings()"
+          class="w-24 bg-zinc-50 border border-zinc-200 rounded-lg px-2.5 py-2 text-sm focus:outline-none focus:bg-white focus:border-[#1348FB]"
+        />
+        <span class="text-xs text-zinc-400">–</span>
+        <input
+          id="maxAgeInput"
+          type="number"
+          min="18"
+          step="1"
+          placeholder="Max Age"
+          onkeydown="if(event.key === 'Enter') loadListings()"
+          class="w-24 bg-zinc-50 border border-zinc-200 rounded-lg px-2.5 py-2 text-sm focus:outline-none focus:bg-white focus:border-[#1348FB]"
+        />
+      </div>
+
       <label class="flex items-center gap-1.5 text-xs font-medium text-zinc-700 px-2 select-none cursor-pointer">
         <input id="hasPicFilter" type="checkbox" onchange="loadListings()" class="rounded border-zinc-300" />
         Has Photo
@@ -319,7 +350,7 @@
     <div id="subcategoryBar" class="hidden flex-wrap gap-1.5 mb-5"></div>
 
     <!-- FEED HEADER + VIEW SWITCHER (MOBILE OPTIMIZED) -->
-    <div class="bg-white border border-zinc-200 rounded-xl shadow-sm overflow-hidden mb-12">
+    <div class="bg-white border border-zinc-200 rounded-xl shadow-sm overflow-hidden mb-8">
       <div class="border-b border-zinc-200 px-4 sm:px-5 py-3 flex items-center justify-between gap-2 bg-zinc-50/70">
         <div class="flex items-center gap-2 min-w-0">
           <h3 id="feedTitle" class="font-bold text-[11px] sm:text-xs uppercase tracking-wider text-[#1348FB] truncate">All Listings</h3>
@@ -337,88 +368,8 @@
       </div>
     </div>
 
-    <!-- AESTHETIC COMMUNITY FEEDBACK SECTION -->
-    <section class="relative overflow-hidden rounded-2xl bg-white border border-zinc-200/90 shadow-sm p-6 sm:p-8">
-      <div class="pointer-events-none absolute -top-20 -right-20 w-64 h-64 rounded-full bg-[#F0A06A]/15 blur-3xl"></div>
-      <div class="pointer-events-none absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-[#1348FB]/10 blur-3xl"></div>
-
-      <div class="relative grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-        <div class="lg:col-span-5 space-y-3">
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F0A06A]/15 text-[#F0A06A] text-xs font-bold tracking-wider uppercase">
-            <svg class="w-3.5 h-3.5" viewBox="0 0 36 36" fill="currentColor">
-              <path d="M18 1.5 C21.2 8.2, 23 11.8, 22.8 13.2 C24.2 13, 27.8 14.8, 34.5 18 C27.8 21.2, 24.2 23, 22.8 22.8 C23 24.2, 21.2 27.8, 18 34.5 C14.8 27.8, 13 24.2, 13.2 22.8 C11.8 23, 8.2 21.2, 1.5 18 C8.2 14.8, 11.8 13, 13.2 13.2 C13 11.8, 14.8 8.2, 18 1.5 Z"/>
-            </svg>
-            Shape the Platform
-          </div>
-          <h3 class="text-2xl font-bold text-zinc-900 tracking-tight">
-            Help us curate <span class="text-[#F0A06A]">simplylists</span>
-          </h3>
-          <p class="text-xs sm:text-sm text-zinc-500 leading-relaxed">
-            Built for clean, fast local connections. Tell us what features, categories, or visual touches you want to see next.
-          </p>
-          <div class="pt-1 flex items-center gap-4 text-xs text-zinc-400">
-            <span>✦ Zero clutter</span>
-            <span>✦ Direct local chat</span>
-            <span>✦ Community driven</span>
-          </div>
-        </div>
-
-        <form onsubmit="submitFeedback(event)" class="lg:col-span-7 bg-[#F8F7F4]/80 border border-zinc-200/80 rounded-xl p-5 space-y-4">
-          <div class="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <span class="block text-[11px] font-bold uppercase tracking-wider text-zinc-500 mb-1">Your Experience</span>
-              <div id="starRatingContainer" class="flex items-center gap-1 text-xl">
-                <button type="button" onclick="setFeedbackRating(1)" class="star-btn text-[#F0A06A] hover:scale-110 transition">★</button>
-                <button type="button" onclick="setFeedbackRating(2)" class="star-btn text-[#F0A06A] hover:scale-110 transition">★</button>
-                <button type="button" onclick="setFeedbackRating(3)" class="star-btn text-[#F0A06A] hover:scale-110 transition">★</button>
-                <button type="button" onclick="setFeedbackRating(4)" class="star-btn text-[#F0A06A] hover:scale-110 transition">★</button>
-                <button type="button" onclick="setFeedbackRating(5)" class="star-btn text-[#F0A06A] hover:scale-110 transition">★</button>
-              </div>
-            </div>
-
-            <div>
-              <span class="block text-[11px] font-bold uppercase tracking-wider text-zinc-500 mb-1">Topic</span>
-              <div class="flex flex-wrap gap-1.5" id="feedbackTopicPills">
-                <button type="button" onclick="setFeedbackTopic('feature-idea')" data-topic="feature-idea" class="fb-topic-btn px-2.5 py-1 rounded-full text-xs font-bold bg-[#1348FB] text-white border border-[#1348FB]">Feature Idea</button>
-                <button type="button" onclick="setFeedbackTopic('design-vibe')" data-topic="design-vibe" class="fb-topic-btn px-2.5 py-1 rounded-full text-xs font-medium bg-white text-zinc-600 border border-zinc-200 hover:border-[#1348FB]">Design &amp; Vibe</button>
-                <button type="button" onclick="setFeedbackTopic('bug-report')" data-topic="bug-report" class="fb-topic-btn px-2.5 py-1 rounded-full text-xs font-medium bg-white text-zinc-600 border border-zinc-200 hover:border-[#1348FB]">Bug Report</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div class="sm:col-span-2">
-              <textarea
-                id="feedbackMessage"
-                required
-                rows="2"
-                placeholder="Share a feature request, idea, or note..."
-                class="w-full bg-white border border-zinc-200 rounded-lg px-3.5 py-2 text-xs sm:text-sm focus:outline-none focus:border-[#1348FB]"
-              ></textarea>
-            </div>
-            <div class="flex flex-col justify-between gap-2">
-              <input
-                id="feedbackEmail"
-                type="email"
-                placeholder="Email (optional)"
-                class="w-full bg-white border border-zinc-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-[#1348FB]"
-              />
-              <button
-                id="feedbackSubmitBtn"
-                type="submit"
-                class="w-full bg-transparent border-[1.5px] border-[#1348FB] text-[#1348FB] hover:bg-[#1348FB] hover:text-white font-bold py-2 px-4 rounded-lg text-xs transition"
-              >
-                Send Feedback
-              </button>
-            </div>
-          </div>
-          <div id="feedbackStatus" class="hidden text-xs font-semibold text-emerald-700"></div>
-        </form>
-      </div>
-    </section>
-
-    <!-- LEGAL, PRIVACY, CONTACT & SAFETY LINKS (UNDER FEEDBACK BOX) -->
-    <nav aria-label="Platform policies and support" class="mt-6 pt-2 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-zinc-500">
+    <!-- LEGAL, PRIVACY, CONTACT, SCAM & FRAUD + FEEDBACK LINKS -->
+    <nav aria-label="Platform policies and support" class="mt-4 pt-2 flex flex-wrap items-center justify-center gap-x-5 sm:gap-x-6 gap-y-2 text-xs text-zinc-500">
       <button type="button" onclick="openInfoModal('terms')" class="hover:text-[#1348FB] font-medium transition underline-offset-4 hover:underline">
         Terms of Use
       </button>
@@ -427,12 +378,16 @@
         Privacy
       </button>
       <span class="text-zinc-300">•</span>
-      <button type="button" onclick="openInfoModal('contact')" class="hover:text-[#1348FB] font-medium transition underline-offset-4 hover:underline">
+      <button type="button" onclick="openContactModal()" class="hover:text-[#1348FB] font-medium transition underline-offset-4 hover:underline">
         Contact
       </button>
       <span class="text-zinc-300">•</span>
       <button type="button" onclick="openInfoModal('scam')" class="hover:text-[#1348FB] font-medium transition underline-offset-4 hover:underline">
         Scam &amp; Fraud
+      </button>
+      <span class="text-zinc-300">•</span>
+      <button type="button" onclick="openFeedbackModal()" class="hover:text-[#1348FB] font-medium transition underline-offset-4 hover:underline">
+        Feedback
       </button>
     </nav>
 
@@ -444,8 +399,132 @@
   </footer>
 
   <!-- ====================================================================== -->
-  <!-- 18+ PERSONAL CATEGORY AGE-GATE & PHOTO RULES MODAL                     -->
+  <!-- FEEDBACK MODAL (OPENED FROM BOTTOM NAV NEXT TO SCAM & FRAUD)           -->
   <!-- ====================================================================== -->
+  <div id="feedbackModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-zinc-200 max-w-lg w-full p-6 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-zinc-100 pb-3 mb-4">
+        <div class="flex items-center gap-2">
+          <span class="bg-[#F0A06A]/15 text-[#F0A06A] text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded">Feedback</span>
+          <h3 class="font-bold text-lg text-zinc-900">Share Feedback on <span class="text-[#F0A06A]">simplylists</span></h3>
+        </div>
+        <button onclick="closeFeedbackModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
+      </div>
+
+      <form onsubmit="submitFeedback(event)" class="space-y-4 text-sm">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <span class="block text-[11px] font-bold uppercase tracking-wider text-zinc-500 mb-1">Your Experience</span>
+            <div id="starRatingContainer" class="flex items-center gap-1 text-xl">
+              <button type="button" onclick="setFeedbackRating(1)" class="star-btn text-[#F0A06A] hover:scale-110 transition">★</button>
+              <button type="button" onclick="setFeedbackRating(2)" class="star-btn text-[#F0A06A] hover:scale-110 transition">★</button>
+              <button type="button" onclick="setFeedbackRating(3)" class="star-btn text-[#F0A06A] hover:scale-110 transition">★</button>
+              <button type="button" onclick="setFeedbackRating(4)" class="star-btn text-[#F0A06A] hover:scale-110 transition">★</button>
+              <button type="button" onclick="setFeedbackRating(5)" class="star-btn text-[#F0A06A] hover:scale-110 transition">★</button>
+            </div>
+          </div>
+
+          <div>
+            <span class="block text-[11px] font-bold uppercase tracking-wider text-zinc-500 mb-1">Topic</span>
+            <div class="flex flex-wrap gap-1.5" id="feedbackTopicPills">
+              <button type="button" onclick="setFeedbackTopic('feature-idea')" data-topic="feature-idea" class="fb-topic-btn px-2.5 py-1 rounded-full text-xs font-bold bg-[#1348FB] text-white border border-[#1348FB]">Feature Idea</button>
+              <button type="button" onclick="setFeedbackTopic('design-vibe')" data-topic="design-vibe" class="fb-topic-btn px-2.5 py-1 rounded-full text-xs font-medium bg-white text-zinc-600 border border-zinc-200 hover:border-[#1348FB]">Design &amp; Vibe</button>
+              <button type="button" onclick="setFeedbackTopic('bug-report')" data-topic="bug-report" class="fb-topic-btn px-2.5 py-1 rounded-full text-xs font-medium bg-white text-zinc-600 border border-zinc-200 hover:border-[#1348FB]">Bug Report</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Email (optional)</label>
+          <input
+            id="feedbackEmail"
+            type="email"
+            placeholder="you@example.com"
+            class="w-full bg-zinc-50 border border-zinc-200 rounded-lg px-3.5 py-2 text-sm focus:outline-none focus:bg-white focus:border-[#1348FB]"
+          />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Feedback *</label>
+          <textarea
+            id="feedbackMessage"
+            required
+            rows="3"
+            placeholder="Share a feature request, idea, or note..."
+            class="w-full bg-zinc-50 border border-zinc-200 rounded-lg px-3.5 py-2 text-sm focus:outline-none focus:bg-white focus:border-[#1348FB]"
+          ></textarea>
+        </div>
+
+        <div id="feedbackStatus" class="hidden text-xs font-semibold text-emerald-700"></div>
+
+        <div class="flex justify-end gap-2 pt-1">
+          <button type="button" onclick="closeFeedbackModal()" class="px-4 py-2 border border-zinc-300 rounded-lg text-xs font-medium">Close</button>
+          <button
+            id="feedbackSubmitBtn"
+            type="submit"
+            class="bg-transparent border-[1.5px] border-[#1348FB] text-[#1348FB] hover:bg-[#1348FB] hover:text-white font-bold py-2 px-5 rounded-lg text-xs transition"
+          >
+            Send Feedback
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ====================================================================== -->
+  <!-- CONTACT MODAL (EMAIL & MESSAGE FORM -> ADMIN MODERATION CENTER)        -->
+  <!-- ====================================================================== -->
+  <div id="contactModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-zinc-200 max-w-md w-full p-6 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-zinc-100 pb-3 mb-4">
+        <div class="flex items-center gap-2">
+          <span class="bg-[#1348FB]/10 text-[#1348FB] text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded">Support</span>
+          <h3 class="font-bold text-lg text-zinc-900">Contact <span class="text-[#F0A06A]">simplylists</span></h3>
+        </div>
+        <button onclick="closeContactModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
+      </div>
+
+      <form onsubmit="submitContactForm(event)" class="space-y-3.5 text-sm">
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Your Email *</label>
+          <input
+            id="contactEmail"
+            type="email"
+            required
+            placeholder="you@example.com"
+            class="w-full bg-zinc-50 border border-zinc-200 rounded-lg px-3.5 py-2 text-sm focus:outline-none focus:bg-white focus:border-[#1348FB]"
+          />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Message *</label>
+          <textarea
+            id="contactMessage"
+            required
+            minlength="2"
+            rows="4"
+            placeholder="How can we help you?"
+            class="w-full bg-zinc-50 border border-zinc-200 rounded-lg px-3.5 py-2 text-sm focus:outline-none focus:bg-white focus:border-[#1348FB]"
+          ></textarea>
+        </div>
+
+        <div id="contactStatus" class="hidden text-xs font-semibold"></div>
+
+        <div class="flex justify-end gap-2 pt-1">
+          <button type="button" onclick="closeContactModal()" class="px-4 py-2 border border-zinc-300 rounded-lg text-xs font-medium">Cancel</button>
+          <button
+            id="contactSubmitBtn"
+            type="submit"
+            class="bg-[#1348FB] hover:opacity-95 text-white font-bold py-2 px-5 rounded-lg text-xs transition disabled:opacity-50"
+          >
+            Send Message
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 18+ PERSONAL CATEGORY AGE-GATE & PHOTO RULES MODAL -->
   <div id="ageGateModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl border border-zinc-200 max-w-md w-full p-6 shadow-2xl">
       <div class="flex items-center gap-2.5 mb-3">
@@ -489,7 +568,7 @@
     </div>
   </div>
 
-  <!-- INFO & POLICY MODAL (TERMS OF USE, PRIVACY, CONTACT, SCAM & FRAUD) -->
+  <!-- INFO & POLICY MODAL (TERMS OF USE, PRIVACY, SCAM & FRAUD) -->
   <div id="infoModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl border border-zinc-200 max-w-xl w-full max-h-[85vh] overflow-y-auto p-6 shadow-2xl">
       <div class="flex items-center justify-between border-b border-zinc-100 pb-3 mb-4">
@@ -550,7 +629,8 @@
           <span id="detailSellerBadge" class="text-xs text-zinc-500"></span>
         </div>
         <div id="dmFormContainer">
-          <div class="flex flex-wrap gap-1.5 mb-2">
+          <!-- QUICK-REPLY PILLS (AUTOMATICALLY HIDDEN FOR PERSONAL LISTINGS) -->
+          <div id="dmQuickReplies" class="flex flex-wrap gap-1.5 mb-2">
             <button type="button" onclick="fillQuickReply('Hi! Is this still available?')" class="text-[11px] bg-white border border-zinc-200 hover:border-[#1348FB] text-zinc-700 px-2.5 py-1 rounded-full transition">👋 Is this available?</button>
             <button type="button" onclick="fillQuickReply('Hi! When and where can I pick this up?')" class="text-[11px] bg-white border border-zinc-200 hover:border-[#1348FB] text-zinc-700 px-2.5 py-1 rounded-full transition">📍 Pickup details?</button>
             <button type="button" onclick="fillQuickReply('Hi! Would you be open to an offer on this?')" class="text-[11px] bg-white border border-zinc-200 hover:border-[#1348FB] text-zinc-700 px-2.5 py-1 rounded-full transition">🏷️ Open to offers?</button>
@@ -844,7 +924,7 @@
     </div>
   </div>
 
-  <!-- PRIVATE ADMIN MODERATION MODAL (5 TABS INCL. USER FEEDBACK & USER MESSAGES) -->
+  <!-- PRIVATE ADMIN MODERATION MODAL (6 TABS INCL. CONTACT INQUIRIES) -->
   <div id="adminModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl border border-zinc-200 max-w-5xl w-full max-h-[88vh] flex flex-col overflow-hidden shadow-2xl">
       <div class="px-6 py-4 border-b border-zinc-200 flex flex-wrap items-center justify-between gap-3 bg-zinc-900 text-white">
@@ -852,7 +932,7 @@
           <span class="text-lg">🛡️</span>
           <div>
             <h3 class="font-bold text-base tracking-tight">simplylists Admin Moderation Center</h3>
-            <p class="text-[11px] text-zinc-400">Review flagged posts, approve clean listings, ban repeat offenders, read feedback, and inspect user messages</p>
+            <p class="text-[11px] text-zinc-400">Review flagged posts, approve clean listings, ban repeat offenders, read feedback, messages, and contact inquiries</p>
           </div>
         </div>
         <div class="flex flex-wrap items-center gap-2">
@@ -870,6 +950,9 @@
           </button>
           <button onclick="setAdminFilter('messages')" id="adminTabMessages" class="px-3 py-1 rounded-lg text-xs font-semibold bg-zinc-800 text-zinc-300 hover:text-white">
             💬 User Messages
+          </button>
+          <button onclick="setAdminFilter('contact')" id="adminTabContact" class="px-3 py-1 rounded-lg text-xs font-semibold bg-zinc-800 text-zinc-300 hover:text-white">
+            ✉️ Contact
           </button>
           <button onclick="closeAdminModal()" class="ml-2 w-8 h-8 rounded-full bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center text-zinc-300 font-bold">&times;</button>
         </div>
@@ -991,18 +1074,6 @@
           </ul>
         `
       },
-      contact: {
-        badge: 'Support',
-        title: 'Contact simplylists',
-        body: `
-          <p>Need help with your account, a listing, or a moderation inquiry? Reach out to our team:</p>
-          <div class="bg-[#F8F7F4] border border-zinc-200 rounded-xl p-4 space-y-2 text-xs">
-            <div><strong class="text-zinc-900">General Support:</strong> <span class="text-[#1348FB] font-mono select-all">support@simplylists.org</span></div>
-            <div><strong class="text-zinc-900">Trust &amp; Safety / Abuse Reports:</strong> <span class="text-[#1348FB] font-mono select-all">safety@simplylists.org</span></div>
-          </div>
-          <p class="text-xs text-zinc-500">You can also use the <strong>Shape the Platform</strong> feedback studio right on the homepage to send feature requests, design notes, or bug reports directly to our Admin team.</p>
-        `
-      },
       scam: {
         badge: 'Safety Guide',
         title: 'Avoiding Scams & Fraud',
@@ -1019,6 +1090,25 @@
     };
 
     const isConfigured = SUPABASE_URL.startsWith('http') && !SUPABASE_URL.includes('PASTE_YOUR');
+
+    // ============================================================================
+    // SEARCH TOOLBAR FILTER TOGGLE (MAX $ VS. PERSONAL MIN/MAX AGE)
+    // ============================================================================
+    function updateSearchFilterUI() {
+      const cat = document.getElementById('categoryFilter').value;
+      const maxPriceEl = document.getElementById('maxPriceInput');
+      const ageGroupEl = document.getElementById('ageFilterGroup');
+
+      if (cat === 'personal') {
+        maxPriceEl.classList.add('hidden');
+        ageGroupEl.classList.remove('hidden');
+        ageGroupEl.classList.add('flex');
+      } else {
+        maxPriceEl.classList.remove('hidden');
+        ageGroupEl.classList.add('hidden');
+        ageGroupEl.classList.remove('flex');
+      }
+    }
 
     // ============================================================================
     // 18+ PERSONAL AGE-GATE LOGIC
@@ -1048,6 +1138,7 @@
       pendingAgeGateAction = null;
       document.getElementById('ageGateModal').classList.add('hidden');
       document.getElementById('categoryFilter').value = lastApprovedCategory;
+      updateSearchFilterUI();
       renderSubcategoryBar();
       syncUrlQueryParams();
     }
@@ -1069,6 +1160,7 @@
       }
     }
 
+    updateSearchFilterUI();
     handlePostCategoryChange();
     updateSavedNavBadge();
 
@@ -1090,6 +1182,7 @@
         document.getElementById('categoryFilter').value = 'personal';
         lastApprovedCategory = 'personal';
         activeSubcategory = initialSubcategory || 'all';
+        updateSearchFilterUI();
         renderSubcategoryBar();
         syncUrlQueryParams();
         loadListings();
@@ -1127,7 +1220,7 @@
     }
 
     // ============================================================================
-    // POLICY & SAFETY MODAL HANDLERS
+    // POLICY, FEEDBACK & CONTACT MODAL HANDLERS
     // ============================================================================
     function openInfoModal(key) {
       const info = INFO_MODAL_CONTENT[key];
@@ -1140,6 +1233,74 @@
 
     function closeInfoModal() {
       document.getElementById('infoModal').classList.add('hidden');
+    }
+
+    function openFeedbackModal() {
+      const emailInput = document.getElementById('feedbackEmail');
+      if (currentUser?.email && !emailInput.value) {
+        emailInput.value = currentUser.email;
+      }
+      document.getElementById('feedbackStatus').classList.add('hidden');
+      document.getElementById('feedbackModal').classList.remove('hidden');
+    }
+
+    function closeFeedbackModal() {
+      document.getElementById('feedbackModal').classList.add('hidden');
+    }
+
+    function openContactModal() {
+      const emailInput = document.getElementById('contactEmail');
+      if (currentUser?.email && !emailInput.value) {
+        emailInput.value = currentUser.email;
+      }
+      document.getElementById('contactStatus').classList.add('hidden');
+      document.getElementById('contactModal').classList.remove('hidden');
+    }
+
+    function closeContactModal() {
+      document.getElementById('contactModal').classList.add('hidden');
+    }
+
+    async function submitContactForm(e) {
+      e.preventDefault();
+      const emailInput = document.getElementById('contactEmail');
+      const msgInput = document.getElementById('contactMessage');
+      const statusEl = document.getElementById('contactStatus');
+      const btn = document.getElementById('contactSubmitBtn');
+
+      const email = emailInput.value.trim();
+      const message = msgInput.value.trim();
+      if (!email || !message) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+      statusEl.classList.add('hidden');
+
+      if (supabaseClient) {
+        const { error } = await supabaseClient.from('contact_messages').insert([{
+          user_id: currentUser?.id || null,
+          email,
+          message
+        }]);
+
+        btn.disabled = false;
+        btn.textContent = 'Send Message';
+
+        if (error) {
+          statusEl.textContent = `⚠️ Error sending message: ${error.message}`;
+          statusEl.className = 'text-xs font-semibold text-red-600';
+          statusEl.classList.remove('hidden');
+          return;
+        }
+      } else {
+        btn.disabled = false;
+        btn.textContent = 'Send Message';
+      }
+
+      msgInput.value = '';
+      statusEl.textContent = '✓ Message received! Our team will review it shortly.';
+      statusEl.className = 'text-xs font-semibold text-emerald-700';
+      statusEl.classList.remove('hidden');
     }
 
     // ============================================================================
@@ -1237,7 +1398,7 @@
 
       container.innerHTML = `
         <div class="relative h-64 sm:h-88 md:h-96 w-full overflow-hidden bg-zinc-950 group select-none">
-          <!-- Clickable Full-Bleed Cover Photo (Fills 100% of Container with Zero White Borders) -->
+          <!-- Clickable Full-Bleed Cover Photo -->
           <div
             onclick="openFeaturedListingModal('${currentItem.id}')"
             class="cursor-pointer w-full h-full relative"
@@ -1625,7 +1786,7 @@
     }
 
     // ============================================================================
-    // PRIVATE ADMIN MODERATION CENTER (5 TABS) & COMMUNITY REPORTING
+    // PRIVATE ADMIN MODERATION CENTER (6 TABS) & COMMUNITY REPORTING
     // ============================================================================
     async function checkAdminStatus() {
       const adminBtn = document.getElementById('adminNavBtn');
@@ -1744,6 +1905,9 @@
       document.getElementById('adminTabMessages').className = mode === 'messages'
         ? 'px-3 py-1 rounded-lg text-xs font-bold bg-[#1BF40B] text-zinc-950'
         : 'px-3 py-1 rounded-lg text-xs font-semibold bg-zinc-800 text-zinc-300 hover:text-white';
+      document.getElementById('adminTabContact').className = mode === 'contact'
+        ? 'px-3 py-1 rounded-lg text-xs font-bold bg-white text-zinc-950'
+        : 'px-3 py-1 rounded-lg text-xs font-semibold bg-zinc-800 text-zinc-300 hover:text-white';
       loadAdminQueue();
     }
 
@@ -1751,6 +1915,63 @@
       if (!supabaseClient || !isAdminUser) return;
       const container = document.getElementById('adminQueueContainer');
       container.innerHTML = `<div class="p-8 text-center text-xs text-zinc-400">Loading...</div>`;
+
+      // Tab 6: Contact Form Inquiries
+      if (adminFilterMode === 'contact') {
+        const { data: contactRows, error } = await supabaseClient
+          .from('contact_messages')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(100);
+
+        if (error) {
+          container.innerHTML = `<div class="p-4 text-xs text-red-600">${error.message}</div>`;
+          return;
+        }
+        if (!contactRows || contactRows.length === 0) {
+          container.innerHTML = `<div class="p-12 text-center text-xs text-zinc-400">No contact inquiries submitted yet.</div>`;
+          return;
+        }
+
+        container.innerHTML = contactRows.map(c => {
+          const dateTimeStr = new Date(c.created_at).toLocaleString('en-US', {
+            month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit'
+          });
+
+          return `
+            <div class="bg-white rounded-xl border border-zinc-200 p-4 mb-2.5 flex flex-wrap items-start justify-between gap-4">
+              <div class="space-y-1.5 max-w-2xl">
+                <div class="flex items-center flex-wrap gap-2 text-xs">
+                  <span class="bg-[#1348FB]/10 text-[#1348FB] border border-[#1348FB]/25 text-[10px] font-bold uppercase px-2 py-0.5 rounded">
+                    ✉️ Contact Inquiry
+                  </span>
+                  <span class="text-zinc-800 font-bold">${escapeHtml(c.email)}</span>
+                  <span class="text-zinc-400">• ${dateTimeStr}</span>
+                </div>
+                <div class="bg-[#F8F7F4] border border-zinc-200/80 rounded-lg px-3.5 py-2 text-xs sm:text-sm text-zinc-900 whitespace-pre-line leading-relaxed">
+                  ${escapeHtml(c.message)}
+                </div>
+              </div>
+              <div class="flex flex-wrap items-center gap-2 shrink-0">
+                <a
+                  href="mailto:${encodeURIComponent(c.email)}?subject=${encodeURIComponent('Re: Your simplylists inquiry')}"
+                  class="bg-[#1348FB] hover:opacity-90 text-white font-bold px-3 py-1.5 rounded-lg text-xs transition"
+                >
+                  ↩ Reply
+                </a>
+                <button
+                  onclick="adminDeleteContact('${c.id}')"
+                  class="bg-zinc-100 hover:bg-red-50 text-zinc-500 hover:text-red-600 border border-zinc-200 hover:border-red-200 font-semibold px-3 py-1.5 rounded-lg text-xs transition"
+                  title="Dismiss inquiry"
+                >
+                  🗑 Dismiss
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+        return;
+      }
 
       // Tab 5: User-to-User Messages Log
       if (adminFilterMode === 'messages') {
@@ -2060,6 +2281,16 @@
       loadAdminQueue();
     }
 
+    async function adminDeleteContact(contactId) {
+      if (!confirm('Dismiss and delete this contact inquiry?')) return;
+      const { error } = await supabaseClient.from('contact_messages').delete().eq('id', contactId);
+      if (error) {
+        alert(`Error deleting contact inquiry: ${error.message}`);
+        return;
+      }
+      loadAdminQueue();
+    }
+
     // ============================================================================
     // SUPABASE REALTIME WEBSOCKET SUBSCRIPTION FOR INSTANT CHAT
     // ============================================================================
@@ -2198,7 +2429,7 @@
     }
 
     // ============================================================================
-    // DIRECTORY, FILTERING & LISTINGS (SMARTPHONE-OPTIMIZED HEADINGS + 18+ GATE)
+    // DIRECTORY, FILTERING & LISTINGS (MIN/MAX AGE FILTER FOR PERSONAL)
     // ============================================================================
     function setViewMode(mode) {
       viewMode = mode;
@@ -2240,6 +2471,7 @@
         document.getElementById('categoryFilter').value = catId;
         lastApprovedCategory = catId;
         activeSubcategory = subId;
+        updateSearchFilterUI();
         renderSubcategoryBar();
         syncUrlQueryParams();
         loadListings();
@@ -2264,6 +2496,7 @@
       const applyChange = () => {
         lastApprovedCategory = selectedCat;
         activeSubcategory = 'all';
+        updateSearchFilterUI();
         renderSubcategoryBar();
         syncUrlQueryParams();
         loadListings();
@@ -2283,6 +2516,8 @@
       const category = document.getElementById('categoryFilter').value;
       const search = document.getElementById('searchInput').value.trim();
       const maxPrice = document.getElementById('maxPriceInput').value;
+      const minAge = document.getElementById('minAgeInput').value;
+      const maxAge = document.getElementById('maxAgeInput').value;
       const hasPic = document.getElementById('hasPicFilter').checked;
 
       if (onlySavedListings) {
@@ -2319,7 +2554,15 @@
 
       if (category !== 'all') query = query.eq('category_id', category);
       if (activeSubcategory !== 'all') query = query.eq('subcategory_id', activeSubcategory);
-      if (maxPrice !== '') query = query.lte('price', parseFloat(maxPrice));
+
+      // Apply Min/Max Age filter when searching Personal; otherwise apply Max Price
+      if (category === 'personal') {
+        if (minAge !== '') query = query.gte('price', Math.max(18, parseInt(minAge, 10)));
+        if (maxAge !== '') query = query.lte('price', Math.max(18, parseInt(maxAge, 10)));
+      } else {
+        if (maxPrice !== '') query = query.lte('price', parseFloat(maxPrice));
+      }
+
       if (hasPic) query = query.eq('has_image', true);
       if (search !== '') query = query.ilike('title', `%${search}%`);
 
@@ -2532,9 +2775,21 @@
       const ownerSection = document.getElementById('ownerManageSection');
       const editForm = document.getElementById('editListingForm');
       const dmFeedback = document.getElementById('dmFeedback');
-      document.getElementById('dmInput').value = '';
+      const quickRepliesEl = document.getElementById('dmQuickReplies');
+      const dmInputEl = document.getElementById('dmInput');
+
+      dmInputEl.value = '';
       dmFeedback.classList.add('hidden');
       editForm.classList.add('hidden');
+
+      // Hide quick-reply sales pills for Personal listings ONLY; keep for For Sale & Services
+      if (item.category_id === 'personal') {
+        quickRepliesEl.classList.add('hidden');
+        dmInputEl.placeholder = 'Write your message here...';
+      } else {
+        quickRepliesEl.classList.remove('hidden');
+        dmInputEl.placeholder = 'Hi! Is this still available? Write your message here...';
+      }
 
       if (currentUser && currentUser.id === item.seller_id) {
         dmSection.classList.add('hidden');
@@ -2991,7 +3246,7 @@
     }
 
     // ============================================================================
-    // COMMUNITY FEEDBACK STUDIO HANDLERS (WITH ERROR VERIFICATION)
+    // COMMUNITY FEEDBACK MODAL HANDLERS (WITH ERROR VERIFICATION)
     // ============================================================================
     function setFeedbackRating(stars) {
       feedbackRating = stars;
@@ -3046,13 +3301,15 @@
           statusEl.classList.remove('hidden');
           return;
         }
+      } else {
+        btn.disabled = false;
+        btn.textContent = 'Send Feedback';
       }
 
       msgInput.value = '';
       statusEl.textContent = '✦ Thank you! Your feedback has been recorded for simplylists.';
       statusEl.className = 'text-xs font-semibold text-emerald-700';
       statusEl.classList.remove('hidden');
-      setTimeout(() => statusEl.classList.add('hidden'), 5000);
     }
 
     // ============================================================================
@@ -3110,6 +3367,7 @@
         document.getElementById('categoryFilter').value = cat;
         lastApprovedCategory = cat;
         activeSubcategory = 'all';
+        updateSearchFilterUI();
         renderSubcategoryBar();
         syncUrlQueryParams();
         loadListings();
@@ -3135,9 +3393,12 @@
       document.getElementById('categoryFilter').value = 'all';
       lastApprovedCategory = 'all';
       activeSubcategory = 'all';
+      updateSearchFilterUI();
       renderSubcategoryBar();
       document.getElementById('searchInput').value = '';
       document.getElementById('maxPriceInput').value = '';
+      document.getElementById('minAgeInput').value = '';
+      document.getElementById('maxAgeInput').value = '';
       document.getElementById('hasPicFilter').checked = false;
       syncUrlQueryParams();
       loadListings();
