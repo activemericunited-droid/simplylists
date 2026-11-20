@@ -47,7 +47,7 @@
             "position": 3,
             "name": "Personal Connections",
             "description": "Strictly platonic, women seek women, women seeking men, men seeking women, men seeking men, misc romance, and casual encounters.",
-            "url": "https://simplylists.org/?category=personal"
+            "url": "https://simplylists.org/personal.html"
           }
         ]
       }
@@ -89,7 +89,7 @@
     <nav aria-label="Main Categories" class="sr-only">
       <a href="https://simplylists.org/?category=for-sale">For Sale Marketplace</a>
       <a href="https://simplylists.org/?category=services">Local Services Directory</a>
-      <a href="https://simplylists.org/?category=personal">Personal Connections</a>
+      <a href="https://simplylists.org/personal.html">Personal Connections</a>
     </nav>
 
     <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
@@ -172,7 +172,7 @@
   <!-- LIVE TOAST NOTIFICATION FOR INCOMING MESSAGES -->
   <div id="liveToast" onclick="openInboxModal()" class="hidden fixed bottom-5 right-5 z-50 bg-zinc-900 text-white px-4 py-3 rounded-xl shadow-2xl border border-zinc-700 cursor-pointer flex items-center gap-3 max-w-xs transition-all">
     <span class="w-2.5 h-2.5 rounded-full bg-[#1BF40B] shrink-0 animate-ping"></span>
-    <div class="text-xs">
+    <div class="text-xs min-w-0">
       <div class="font-bold text-[#F0A06A]">New Live Message</div>
       <div id="liveToastText" class="text-zinc-300 truncate mt-0.5"></div>
     </div>
@@ -225,12 +225,12 @@
         </div>
       </div>
 
-      <!-- PERSONAL (NEW LISTINGS BADGE + 18+ GATE) -->
+      <!-- PERSONAL (REDIRECTS TO DEDICATED personal.html LANDING PAGE) -->
       <div onclick="filterByCategory('personal')" class="cat-card cursor-pointer text-left bg-white border border-zinc-200 rounded-xl p-5 shadow-sm group">
         <div class="flex items-center justify-between gap-2 mb-1">
           <div class="flex items-center flex-wrap gap-2">
             <h2 class="text-xl font-bold text-[#1348FB]">
-              <a href="?category=personal" onclick="event.preventDefault()">Personal</a>
+              <a href="personal.html" onclick="event.stopPropagation()">Personal</a>
             </h2>
             <span class="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-[#1348FB] bg-[#1348FB]/10 px-2 py-0.5 rounded-md">
               New Listings
@@ -270,7 +270,7 @@
       </div>
     </section>
 
-    <!-- SEARCH & FILTER TOOLBAR (WITH PERSONAL MIN/MAX AGE FILTER) -->
+    <!-- SEARCH & FILTER TOOLBAR -->
     <section class="bg-white border border-zinc-200 rounded-xl p-3 mb-4 flex flex-wrap gap-2.5 items-center shadow-sm">
       <input
         id="searchInput"
@@ -285,8 +285,6 @@
         <option value="services">Services</option>
         <option value="personal">Personal (18+)</option>
       </select>
-
-      <!-- MAX PRICE FILTER (SHOWN FOR ALL / FOR SALE / SERVICES) -->
       <input
         id="maxPriceInput"
         type="number"
@@ -295,30 +293,6 @@
         onkeydown="if(event.key === 'Enter') loadListings()"
         class="w-24 bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:bg-white focus:border-[#1348FB]"
       />
-
-      <!-- MIN & MAX AGE FILTER (SHOWN ONLY WHEN SEARCHING IN PERSONAL) -->
-      <div id="ageFilterGroup" class="hidden items-center gap-1.5">
-        <input
-          id="minAgeInput"
-          type="number"
-          min="18"
-          step="1"
-          placeholder="Min Age"
-          onkeydown="if(event.key === 'Enter') loadListings()"
-          class="w-24 bg-zinc-50 border border-zinc-200 rounded-lg px-2.5 py-2 text-sm focus:outline-none focus:bg-white focus:border-[#1348FB]"
-        />
-        <span class="text-xs text-zinc-400">–</span>
-        <input
-          id="maxAgeInput"
-          type="number"
-          min="18"
-          step="1"
-          placeholder="Max Age"
-          onkeydown="if(event.key === 'Enter') loadListings()"
-          class="w-24 bg-zinc-50 border border-zinc-200 rounded-lg px-2.5 py-2 text-sm focus:outline-none focus:bg-white focus:border-[#1348FB]"
-        />
-      </div>
-
       <label class="flex items-center gap-1.5 text-xs font-medium text-zinc-700 px-2 select-none cursor-pointer">
         <input id="hasPicFilter" type="checkbox" onchange="loadListings()" class="rounded border-zinc-300" />
         Has Photo
@@ -398,9 +372,7 @@
     <span class="font-bold text-[#F0A06A] tracking-tight">simplylists</span> — simple local classifieds for sale, services &amp; personal connections
   </footer>
 
-  <!-- ====================================================================== -->
-  <!-- FEEDBACK MODAL (OPENED FROM BOTTOM NAV NEXT TO SCAM & FRAUD)           -->
-  <!-- ====================================================================== -->
+  <!-- FEEDBACK MODAL (OPENED FROM BOTTOM NAV NEXT TO SCAM & FRAUD) -->
   <div id="feedbackModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl border border-zinc-200 max-w-lg w-full p-6 shadow-2xl">
       <div class="flex items-center justify-between border-b border-zinc-100 pb-3 mb-4">
@@ -471,9 +443,7 @@
     </div>
   </div>
 
-  <!-- ====================================================================== -->
-  <!-- CONTACT MODAL (EMAIL & MESSAGE FORM -> ADMIN MODERATION CENTER)        -->
-  <!-- ====================================================================== -->
+  <!-- CONTACT MODAL (EMAIL & MESSAGE FORM -> ADMIN MODERATION CENTER) -->
   <div id="contactModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl border border-zinc-200 max-w-md w-full p-6 shadow-2xl">
       <div class="flex items-center justify-between border-b border-zinc-100 pb-3 mb-4">
@@ -524,50 +494,6 @@
     </div>
   </div>
 
-  <!-- 18+ PERSONAL CATEGORY AGE-GATE & PHOTO RULES MODAL -->
-  <div id="ageGateModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl border border-zinc-200 max-w-md w-full p-6 shadow-2xl">
-      <div class="flex items-center gap-2.5 mb-3">
-        <span class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-[#1348FB]/10 text-[#1348FB] font-bold text-sm border border-[#1348FB]/25">18+</span>
-        <div>
-          <h3 class="font-bold text-lg text-zinc-900 leading-tight">Adults Only (18+)</h3>
-          <p class="text-xs text-zinc-500">Personal section on simplylists</p>
-        </div>
-      </div>
-
-      <p class="text-xs sm:text-sm text-zinc-600 leading-relaxed mb-4">
-        The <strong>Personal</strong> section is intended strictly for consenting adults aged <strong>18 or older</strong>. By continuing, you confirm that you are at least 18 years old and agree to follow our community and photo rules:
-      </p>
-
-      <div class="bg-[#F8F7F4] border border-zinc-200 rounded-xl p-3.5 mb-5 text-xs text-zinc-700 space-y-1.5">
-        <div class="font-bold uppercase tracking-wider text-[11px] text-[#1348FB] mb-1">Photo &amp; Posting Rules</div>
-        <ul class="list-disc pl-4 space-y-1">
-          <li><strong>No full nudity</strong> or sexually explicit imagery.</li>
-          <li>All people shown in uploaded photos must be <strong>18 or older</strong>.</li>
-          <li>Only post photos of yourself or content you have permission to share.</li>
-          <li>No commercial escorting, illegal solicitation, or harassment.</li>
-        </ul>
-      </div>
-
-      <div class="flex flex-col sm:flex-row gap-2.5">
-        <button
-          type="button"
-          onclick="cancelAgeGate()"
-          class="flex-1 bg-transparent border-[1.5px] border-zinc-300 text-zinc-700 hover:bg-zinc-50 font-semibold py-2.5 px-4 rounded-xl text-xs transition"
-        >
-          Go Back
-        </button>
-        <button
-          type="button"
-          onclick="confirmAgeGate()"
-          class="flex-1 bg-[#1348FB] hover:opacity-95 text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow-sm transition"
-        >
-          I am 18 or older — Continue
-        </button>
-      </div>
-    </div>
-  </div>
-
   <!-- INFO & POLICY MODAL (TERMS OF USE, PRIVACY, SCAM & FRAUD) -->
   <div id="infoModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl border border-zinc-200 max-w-xl w-full max-h-[85vh] overflow-y-auto p-6 shadow-2xl">
@@ -587,7 +513,7 @@
     </div>
   </div>
 
-  <!-- LISTING DETAIL, REPORT BUTTON, OWNER MANAGEMENT & IN-APP MESSAGE MODAL -->
+  <!-- LISTING DETAIL MODAL (FOR SALE & SERVICES; PERSONAL LISTINGS REDIRECT TO personal-listing.html) -->
   <div id="detailModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-4">
     <div class="bg-white rounded-2xl border border-zinc-200 max-w-2xl w-full max-h-[92vh] overflow-y-auto p-4 sm:p-6 shadow-2xl">
       <div class="flex justify-between items-start gap-3 border-b border-zinc-100 pb-4 mb-4">
@@ -629,7 +555,6 @@
           <span id="detailSellerBadge" class="text-xs text-zinc-500"></span>
         </div>
         <div id="dmFormContainer">
-          <!-- QUICK-REPLY PILLS (AUTOMATICALLY HIDDEN FOR PERSONAL LISTINGS) -->
           <div id="dmQuickReplies" class="flex flex-wrap gap-1.5 mb-2">
             <button type="button" onclick="fillQuickReply('Hi! Is this still available?')" class="text-[11px] bg-white border border-zinc-200 hover:border-[#1348FB] text-zinc-700 px-2.5 py-1 rounded-full transition">👋 Is this available?</button>
             <button type="button" onclick="fillQuickReply('Hi! When and where can I pick this up?')" class="text-[11px] bg-white border border-zinc-200 hover:border-[#1348FB] text-zinc-700 px-2.5 py-1 rounded-full transition">📍 Pickup details?</button>
@@ -977,8 +902,6 @@
     let selectedListing = null;
     let selectedUploadFiles = [];
     let activeSubcategory = 'all';
-    let lastApprovedCategory = 'all';
-    let pendingAgeGateAction = null;
     let viewMode = 'list';
     let onlyMyListings = false;
     let onlySavedListings = false;
@@ -1091,76 +1014,21 @@
 
     const isConfigured = SUPABASE_URL.startsWith('http') && !SUPABASE_URL.includes('PASTE_YOUR');
 
-    // ============================================================================
-    // SEARCH TOOLBAR FILTER TOGGLE (MAX $ VS. PERSONAL MIN/MAX AGE)
-    // ============================================================================
-    function updateSearchFilterUI() {
-      const cat = document.getElementById('categoryFilter').value;
-      const maxPriceEl = document.getElementById('maxPriceInput');
-      const ageGroupEl = document.getElementById('ageFilterGroup');
-
-      if (cat === 'personal') {
-        maxPriceEl.classList.add('hidden');
-        ageGroupEl.classList.remove('hidden');
-        ageGroupEl.classList.add('flex');
-      } else {
-        maxPriceEl.classList.remove('hidden');
-        ageGroupEl.classList.add('hidden');
-        ageGroupEl.classList.remove('flex');
-      }
-    }
-
-    // ============================================================================
-    // 18+ PERSONAL AGE-GATE LOGIC
-    // ============================================================================
-    function isAgeVerified() {
-      return sessionStorage.getItem('simplylists_age_verified') === 'true';
-    }
-
-    function requirePersonalAgeGate(onApproved) {
-      if (isAgeVerified()) {
-        onApproved();
-        return;
-      }
-      pendingAgeGateAction = onApproved;
-      document.getElementById('ageGateModal').classList.remove('hidden');
-    }
-
-    function confirmAgeGate() {
-      sessionStorage.setItem('simplylists_age_verified', 'true');
-      document.getElementById('ageGateModal').classList.add('hidden');
-      const action = pendingAgeGateAction;
-      pendingAgeGateAction = null;
-      if (typeof action === 'function') action();
-    }
-
-    function cancelAgeGate() {
-      pendingAgeGateAction = null;
-      document.getElementById('ageGateModal').classList.add('hidden');
-      document.getElementById('categoryFilter').value = lastApprovedCategory;
-      updateSearchFilterUI();
-      renderSubcategoryBar();
-      syncUrlQueryParams();
-    }
-
     // Automatically read ?category= or ?subcategory= from Google Search Sitelinks or shared URLs
     const urlParams = new URLSearchParams(window.location.search);
     const initialCategory = urlParams.get('category');
     const initialSubcategory = urlParams.get('subcategory');
-    let deferredPersonalFromUrl = false;
 
-    if (initialCategory && CATEGORY_META[initialCategory]) {
-      if (initialCategory === 'personal' && !isAgeVerified()) {
-        deferredPersonalFromUrl = true;
-      } else {
-        document.getElementById('categoryFilter').value = initialCategory;
-        lastApprovedCategory = initialCategory;
-        if (initialSubcategory) activeSubcategory = initialSubcategory;
-        renderSubcategoryBar();
-      }
+    // Forward any ?category=personal links straight to the dedicated Personal landing page
+    if (initialCategory === 'personal') {
+      const subParam = initialSubcategory ? `?subcategory=${encodeURIComponent(initialSubcategory)}` : '';
+      window.location.replace(`personal.html${subParam}`);
+    } else if (initialCategory && CATEGORY_META[initialCategory]) {
+      document.getElementById('categoryFilter').value = initialCategory;
+      if (initialSubcategory) activeSubcategory = initialSubcategory;
+      renderSubcategoryBar();
     }
 
-    updateSearchFilterUI();
     handlePostCategoryChange();
     updateSavedNavBadge();
 
@@ -1177,22 +1045,10 @@
         </div>`;
     }
 
-    if (deferredPersonalFromUrl) {
-      requirePersonalAgeGate(() => {
-        document.getElementById('categoryFilter').value = 'personal';
-        lastApprovedCategory = 'personal';
-        activeSubcategory = initialSubcategory || 'all';
-        updateSearchFilterUI();
-        renderSubcategoryBar();
-        syncUrlQueryParams();
-        loadListings();
-      });
-    }
-
     function syncUrlQueryParams() {
       const cat = document.getElementById('categoryFilter').value;
       const url = new URL(window.location.href);
-      if (cat && cat !== 'all' && !onlyMyListings && !onlySavedListings) {
+      if (cat && cat !== 'all' && cat !== 'personal' && !onlyMyListings && !onlySavedListings) {
         url.searchParams.set('category', cat);
         if (activeSubcategory && activeSubcategory !== 'all') {
           url.searchParams.set('subcategory', activeSubcategory);
@@ -1526,6 +1382,10 @@
     function openFeaturedListingModal(listingId) {
       const target = featuredListings.find(x => x.id === listingId);
       if (!target) return;
+      if (target.category_id === 'personal') {
+        window.location.href = `personal-listing.html?id=${encodeURIComponent(target.id)}`;
+        return;
+      }
       if (!cachedListings.find(x => x.id === target.id)) {
         cachedListings.unshift(target);
       }
@@ -1717,7 +1577,7 @@
         updateMyListingsNavStyle();
 
         authArea.innerHTML = `
-          <span class="text-xs text-zinc-500 mr-1 hidden lg:inline">${currentUser.email}</span>
+          <span class="text-xs text-zinc-500 mr-1 hidden lg:inline">${escapeHtml(currentUser.email)}</span>
           <button onclick="handleSignOut()" class="bg-transparent border-[1.5px] border-zinc-400 text-zinc-700 hover:border-zinc-900 hover:text-zinc-900 px-3 py-1.5 rounded-lg text-xs font-semibold transition">
             Sign Out
           </button>
@@ -1925,7 +1785,7 @@
           .limit(100);
 
         if (error) {
-          container.innerHTML = `<div class="p-4 text-xs text-red-600">${error.message}</div>`;
+          container.innerHTML = `<div class="p-4 text-xs text-red-600">${escapeHtml(error.message)}</div>`;
           return;
         }
         if (!contactRows || contactRows.length === 0) {
@@ -1982,7 +1842,7 @@
           .limit(100);
 
         if (error) {
-          container.innerHTML = `<div class="p-4 text-xs text-red-600">${error.message}</div>`;
+          container.innerHTML = `<div class="p-4 text-xs text-red-600">${escapeHtml(error.message)}</div>`;
           return;
         }
         if (!msgRows || msgRows.length === 0) {
@@ -2052,7 +1912,7 @@
           .limit(100);
 
         if (error) {
-          container.innerHTML = `<div class="p-4 text-xs text-red-600">${error.message}</div>`;
+          container.innerHTML = `<div class="p-4 text-xs text-red-600">${escapeHtml(error.message)}</div>`;
           return;
         }
         if (!feedbackRows || feedbackRows.length === 0) {
@@ -2120,7 +1980,7 @@
           .order('updated_at', { ascending: false });
 
         if (error) {
-          container.innerHTML = `<div class="p-4 text-xs text-red-600">${error.message}</div>`;
+          container.innerHTML = `<div class="p-4 text-xs text-red-600">${escapeHtml(error.message)}</div>`;
           return;
         }
         if (!bannedUsers || bannedUsers.length === 0) {
@@ -2160,7 +2020,7 @@
 
       const { data: rows, error } = await query;
       if (error) {
-        container.innerHTML = `<div class="p-4 text-xs text-red-600">${error.message}</div>`;
+        container.innerHTML = `<div class="p-4 text-xs text-red-600">${escapeHtml(error.message)}</div>`;
         return;
       }
 
@@ -2429,7 +2289,7 @@
     }
 
     // ============================================================================
-    // DIRECTORY, FILTERING & LISTINGS (MIN/MAX AGE FILTER FOR PERSONAL)
+    // DIRECTORY, FILTERING & LISTINGS (PERSONAL REDIRECTS TO personal.html)
     // ============================================================================
     function setViewMode(mode) {
       viewMode = mode;
@@ -2463,25 +2323,19 @@
     }
 
     function jumpToSubcategory(catId, subId) {
-      const applyJump = () => {
-        onlyMyListings = false;
-        onlySavedListings = false;
-        updateMyListingsNavStyle();
-        updateSavedNavBadge();
-        document.getElementById('categoryFilter').value = catId;
-        lastApprovedCategory = catId;
-        activeSubcategory = subId;
-        updateSearchFilterUI();
-        renderSubcategoryBar();
-        syncUrlQueryParams();
-        loadListings();
-      };
-
       if (catId === 'personal') {
-        requirePersonalAgeGate(applyJump);
-      } else {
-        applyJump();
+        window.location.href = `personal.html?subcategory=${encodeURIComponent(subId)}`;
+        return;
       }
+      onlyMyListings = false;
+      onlySavedListings = false;
+      updateMyListingsNavStyle();
+      updateSavedNavBadge();
+      document.getElementById('categoryFilter').value = catId;
+      activeSubcategory = subId;
+      renderSubcategoryBar();
+      syncUrlQueryParams();
+      loadListings();
     }
 
     function selectSubcategory(subId) {
@@ -2493,20 +2347,14 @@
 
     function handleCategoryDropdownChange() {
       const selectedCat = document.getElementById('categoryFilter').value;
-      const applyChange = () => {
-        lastApprovedCategory = selectedCat;
-        activeSubcategory = 'all';
-        updateSearchFilterUI();
-        renderSubcategoryBar();
-        syncUrlQueryParams();
-        loadListings();
-      };
-
       if (selectedCat === 'personal') {
-        requirePersonalAgeGate(applyChange);
-      } else {
-        applyChange();
+        window.location.href = 'personal.html';
+        return;
       }
+      activeSubcategory = 'all';
+      renderSubcategoryBar();
+      syncUrlQueryParams();
+      loadListings();
     }
 
     async function loadListings() {
@@ -2516,8 +2364,6 @@
       const category = document.getElementById('categoryFilter').value;
       const search = document.getElementById('searchInput').value.trim();
       const maxPrice = document.getElementById('maxPriceInput').value;
-      const minAge = document.getElementById('minAgeInput').value;
-      const maxAge = document.getElementById('maxAgeInput').value;
       const hasPic = document.getElementById('hasPicFilter').checked;
 
       if (onlySavedListings) {
@@ -2554,21 +2400,13 @@
 
       if (category !== 'all') query = query.eq('category_id', category);
       if (activeSubcategory !== 'all') query = query.eq('subcategory_id', activeSubcategory);
-
-      // Apply Min/Max Age filter when searching Personal; otherwise apply Max Price
-      if (category === 'personal') {
-        if (minAge !== '') query = query.gte('price', Math.max(18, parseInt(minAge, 10)));
-        if (maxAge !== '') query = query.lte('price', Math.max(18, parseInt(maxAge, 10)));
-      } else {
-        if (maxPrice !== '') query = query.lte('price', parseFloat(maxPrice));
-      }
-
+      if (maxPrice !== '') query = query.lte('price', parseFloat(maxPrice));
       if (hasPic) query = query.eq('has_image', true);
       if (search !== '') query = query.ilike('title', `%${search}%`);
 
       const { data, error } = await query;
       if (error) {
-        container.innerHTML = `<div class="p-6 text-red-600 text-sm">Error loading listings: ${error.message}</div>`;
+        container.innerHTML = `<div class="p-6 text-red-600 text-sm">Error loading listings: ${escapeHtml(error.message)}</div>`;
         return;
       }
 
@@ -2690,7 +2528,7 @@
     }
 
     // ============================================================================
-    // LISTING DETAIL, CLICK COUNTER & SELLER MANAGEMENT
+    // LISTING DETAIL (PERSONAL POSTS REDIRECT TO personal-listing.html)
     // ============================================================================
     async function recordListingClick(item) {
       if (!item || !supabaseClient) return;
@@ -2713,9 +2551,9 @@
       const item = cachedListings.find(x => x.id === id) || featuredListings.find(x => x.id === id);
       if (!item) return;
 
-      // Require 18+ confirmation if opening a Personal listing from "All Listings" or Featured Carousel
-      if (item.category_id === 'personal' && !isAgeVerified()) {
-        requirePersonalAgeGate(() => openDetailModal(id));
+      // Redirect any Personal listing to its own standalone landing page
+      if (item.category_id === 'personal') {
+        window.location.href = `personal-listing.html?id=${encodeURIComponent(item.id)}`;
         return;
       }
 
@@ -2775,21 +2613,11 @@
       const ownerSection = document.getElementById('ownerManageSection');
       const editForm = document.getElementById('editListingForm');
       const dmFeedback = document.getElementById('dmFeedback');
-      const quickRepliesEl = document.getElementById('dmQuickReplies');
       const dmInputEl = document.getElementById('dmInput');
 
       dmInputEl.value = '';
       dmFeedback.classList.add('hidden');
       editForm.classList.add('hidden');
-
-      // Hide quick-reply sales pills for Personal listings ONLY; keep for For Sale & Services
-      if (item.category_id === 'personal') {
-        quickRepliesEl.classList.add('hidden');
-        dmInputEl.placeholder = 'Write your message here...';
-      } else {
-        quickRepliesEl.classList.remove('hidden');
-        dmInputEl.placeholder = 'Hi! Is this still available? Write your message here...';
-      }
 
       if (currentUser && currentUser.id === item.seller_id) {
         dmSection.classList.add('hidden');
@@ -2826,19 +2654,11 @@
 
       if (form.classList.contains('hidden')) {
         document.getElementById('editTitle').value = selectedListing.title;
-        if (selectedListing.category_id === 'personal') {
-          editPriceLabel.textContent = 'Age (18+, Optional)';
-          editPriceInput.min = '18';
-          editPriceInput.step = '1';
-          editPriceInput.placeholder = '18+';
-          editPriceInput.value = selectedListing.price !== null ? Math.round(Number(selectedListing.price)) : '';
-        } else {
-          editPriceLabel.textContent = 'Price / Rate ($)';
-          editPriceInput.min = '0';
-          editPriceInput.step = '0.01';
-          editPriceInput.placeholder = 'Optional';
-          editPriceInput.value = selectedListing.price !== null ? selectedListing.price : '';
-        }
+        editPriceLabel.textContent = 'Price / Rate ($)';
+        editPriceInput.min = '0';
+        editPriceInput.step = '0.01';
+        editPriceInput.placeholder = 'Optional';
+        editPriceInput.value = selectedListing.price !== null ? selectedListing.price : '';
         document.getElementById('editNeighborhood').value = selectedListing.neighborhood || '';
         document.getElementById('editDesc').value = selectedListing.description;
         form.classList.remove('hidden');
@@ -2855,13 +2675,9 @@
       saveBtn.textContent = 'Saving...';
 
       const priceVal = document.getElementById('editPrice').value;
-      const parsedPrice = priceVal === ''
-        ? null
-        : (selectedListing.category_id === 'personal' ? Math.max(18, parseInt(priceVal, 10)) : parseFloat(priceVal));
-
       const updates = {
         title: document.getElementById('editTitle').value.trim(),
-        price: parsedPrice,
+        price: priceVal === '' ? null : parseFloat(priceVal),
         neighborhood: document.getElementById('editNeighborhood').value.trim() || null,
         description: document.getElementById('editDesc').value.trim(),
         updated_at: new Date().toISOString()
@@ -3002,7 +2818,7 @@
         .order('created_at', { ascending: true });
 
       if (error) {
-        threadsList.innerHTML = `<div class="p-4 text-xs text-red-600">${error.message}</div>`;
+        threadsList.innerHTML = `<div class="p-4 text-xs text-red-600">${escapeHtml(error.message)}</div>`;
         return;
       }
 
@@ -3226,8 +3042,19 @@
           expires_at: expiresAtIso
         };
 
-        const { error: insertError } = await supabaseClient.from('listings').insert([payload]);
+        const { data: inserted, error: insertError } = await supabaseClient
+          .from('listings')
+          .insert([payload])
+          .select('id')
+          .single();
+
         if (insertError) throw insertError;
+
+        // If the user created a Personal listing from the homepage, take them to its standalone page
+        if (catVal === 'personal' && inserted?.id) {
+          window.location.href = `personal-listing.html?id=${encodeURIComponent(inserted.id)}`;
+          return;
+        }
 
         e.target.reset();
         selectedUploadFiles = [];
@@ -3359,25 +3186,19 @@
     }
 
     function filterByCategory(cat) {
-      const applyFilter = () => {
-        onlyMyListings = false;
-        onlySavedListings = false;
-        updateMyListingsNavStyle();
-        updateSavedNavBadge();
-        document.getElementById('categoryFilter').value = cat;
-        lastApprovedCategory = cat;
-        activeSubcategory = 'all';
-        updateSearchFilterUI();
-        renderSubcategoryBar();
-        syncUrlQueryParams();
-        loadListings();
-      };
-
       if (cat === 'personal') {
-        requirePersonalAgeGate(applyFilter);
-      } else {
-        applyFilter();
+        window.location.href = 'personal.html';
+        return;
       }
+      onlyMyListings = false;
+      onlySavedListings = false;
+      updateMyListingsNavStyle();
+      updateSavedNavBadge();
+      document.getElementById('categoryFilter').value = cat;
+      activeSubcategory = 'all';
+      renderSubcategoryBar();
+      syncUrlQueryParams();
+      loadListings();
     }
 
     function handleRegionChange() {
@@ -3391,14 +3212,10 @@
       updateMyListingsNavStyle();
       updateSavedNavBadge();
       document.getElementById('categoryFilter').value = 'all';
-      lastApprovedCategory = 'all';
       activeSubcategory = 'all';
-      updateSearchFilterUI();
       renderSubcategoryBar();
       document.getElementById('searchInput').value = '';
       document.getElementById('maxPriceInput').value = '';
-      document.getElementById('minAgeInput').value = '';
-      document.getElementById('maxAgeInput').value = '';
       document.getElementById('hasPicFilter').checked = false;
       syncUrlQueryParams();
       loadListings();
