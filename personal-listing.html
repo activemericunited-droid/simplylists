@@ -1,1 +1,642 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Personal Listing — simplylists</title>
+
+  <!-- TAB FAVICON -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36' fill='none'%3E%3Cpath d='M18 1.5 C21.2 8.2, 23 11.8, 22.8 13.2 C24.2 13, 27.8 14.8, 34.5 18 C27.8 21.2, 24.2 23, 22.8 22.8 C23 24.2, 21.2 27.8, 18 34.5 C14.8 27.8, 13 24.2, 13.2 22.8 C11.8 23, 8.2 21.2, 1.5 18 C8.2 14.8, 11.8 13, 13.2 13.2 C13 11.8, 14.8 8.2, 18 1.5 Z' fill='%23F0A06A'/%3E%3Cpath d='M18 10.5 Q19.2 16.8 25.5 18 Q19.2 19.2 18 25.5 Q16.8 19.2 10.5 18 Q16.8 16.8 18 10.5 Z' fill='%23FFFFFF'/%3E%3Ccircle cx='18' cy='18' r='1.8' fill='%23F0A06A'/%3E%3C/svg%3E" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+    .subcat-regular { font-family: 'Inter', sans-serif; font-weight: 400; }
+  </style>
+</head>
+<body class="bg-[#F8F7F4] text-zinc-900 min-h-screen flex flex-col">
+
+  <!-- TOP NAVIGATION BAR -->
+  <header class="bg-white/95 backdrop-blur border-b border-zinc-200 px-4 py-3 sticky top-0 z-30">
+    <div class="max-w-4xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="text-xl sm:text-2xl font-bold text-[#F0A06A] flex items-center gap-2 hover:opacity-90 transition-opacity">
+          <svg class="w-7 h-7 sm:w-8 sm:h-8 shrink-0 text-[#F0A06A]" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M18 1.5 C21.2 8.2, 23 11.8, 22.8 13.2 C24.2 13, 27.8 14.8, 34.5 18 C27.8 21.2, 24.2 23, 22.8 22.8 C23 24.2, 21.2 27.8, 18 34.5 C14.8 27.8, 13 24.2, 13.2 22.8 C11.8 23, 8.2 21.2, 1.5 18 C8.2 14.8, 11.8 13, 13.2 13.2 C13 11.8, 14.8 8.2, 18 1.5 Z" fill="currentColor" />
+            <path d="M18 10.5 Q19.2 16.8 25.5 18 Q19.2 19.2 18 25.5 Q16.8 19.2 10.5 18 Q16.8 16.8 18 10.5 Z" fill="#FFFFFF" />
+            <circle cx="18" cy="18" r="1.8" fill="currentColor" />
+          </svg>
+          <span class="tracking-tight">simplylists</span>
+        </a>
+      </div>
+
+      <div class="flex items-center gap-2 text-xs">
+        <a href="personal.html" class="bg-transparent border-[1.5px] border-zinc-300 hover:border-[#1348FB] px-3 py-1.5 rounded-lg font-semibold text-zinc-700 transition">
+          ← Back to Personal
+        </a>
+        <div id="authArea" class="flex items-center gap-2">
+          <button onclick="openAuthModal()" class="bg-transparent border-[1.5px] border-[#1348FB] text-[#1348FB] hover:bg-[#1348FB]/5 px-3.5 py-1.5 rounded-lg font-bold transition">
+            Sign In
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- STANDALONE PERSONAL LISTING CONTAINER -->
+  <main class="max-w-4xl w-full mx-auto px-4 py-6 sm:py-8 flex-1">
+    <div id="loadingState" class="bg-white border border-zinc-200 rounded-2xl p-10 text-center text-sm text-zinc-400 shadow-sm">
+      Loading listing...
+    </div>
+
+    <div id="errorState" class="hidden bg-white border border-zinc-200 rounded-2xl p-10 text-center space-y-3 shadow-sm">
+      <div class="text-base font-bold text-zinc-900">Listing Not Found</div>
+      <p class="text-xs text-zinc-500">This personal listing may have expired, been removed, or the link is invalid.</p>
+      <a href="personal.html" class="inline-block bg-[#1348FB] text-white font-bold px-4 py-2 rounded-lg text-xs">
+        ← Browse Personal Listings
+      </a>
+    </div>
+
+    <!-- LISTING CARD -->
+    <article id="listingArticle" class="hidden bg-white border border-zinc-200 rounded-2xl p-5 sm:p-8 shadow-sm">
+      <!-- Top Meta & Action Buttons -->
+      <div class="flex justify-between items-start gap-3 border-b border-zinc-100 pb-4 mb-5">
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center flex-wrap gap-1.5 sm:gap-2 mb-2">
+            <a id="breadcrumbSubcat" href="personal.html" class="inline-block text-[10px] sm:text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-[#1348FB]/10 text-[#1348FB] border border-[#1348FB]/25 hover:bg-[#1348FB]/20 transition">
+              Personal
+            </a>
+            <span id="detailStatusBadge" class="hidden text-[10px] sm:text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 border border-amber-300">CLOSED</span>
+            <span id="detailLocationBadge" class="subcat-regular text-xs text-zinc-600"></span>
+            <span id="detailExpiresBadge" class="text-[10px] sm:text-[11px] font-medium px-2 py-0.5 rounded bg-zinc-100 text-zinc-600"></span>
+            <span id="detailViewsCounter" class="text-[10px] sm:text-[11px] font-medium px-2 py-0.5 rounded bg-[#F0A06A]/15 text-[#F0A06A]"></span>
+          </div>
+          <h1 id="detailTitle" class="text-xl sm:text-3xl font-bold text-zinc-900 leading-snug break-words"></h1>
+        </div>
+
+        <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          <button onclick="copyListingLink()" id="shareBtn" class="px-2.5 h-8 rounded-full border border-zinc-200 hover:border-[#1348FB] text-zinc-600 hover:text-[#1348FB] flex items-center justify-center text-xs font-semibold gap-1 transition" title="Copy direct link">
+            <span>🔗</span>
+            <span class="hidden sm:inline">Copy Link</span>
+          </button>
+          <button onclick="reportCurrentListing()" class="px-2.5 h-8 rounded-full border border-zinc-200 hover:border-red-500 text-zinc-500 hover:text-red-600 flex items-center justify-center text-xs font-semibold gap-1 transition" title="Report spam or abusive post">
+            <span>🚩</span>
+            <span class="hidden sm:inline">Report</span>
+          </button>
+          <button id="detailFavoriteBtn" onclick="toggleFavorite()" class="w-8 h-8 rounded-full border border-zinc-200 hover:border-[#F0A06A] flex items-center justify-center text-lg transition" title="Save listing">
+            ♡
+          </button>
+        </div>
+      </div>
+
+      <!-- Photo Gallery -->
+      <div id="detailImageWrapper" class="mb-6 hidden space-y-2.5">
+        <img id="detailMainImage" src="" alt="Personal listing photo" class="w-full max-h-[520px] object-contain bg-zinc-950 rounded-xl border border-zinc-200" />
+        <div id="detailThumbnails" class="flex gap-2 overflow-x-auto py-1"></div>
+      </div>
+
+      <!-- Description -->
+      <div id="detailDesc" class="text-sm sm:text-base text-zinc-700 whitespace-pre-line leading-relaxed mb-7 break-words"></div>
+
+      <!-- DIRECT MESSAGE BOX (NO SALES QUICK-REPLY PILLS) -->
+      <div id="directMessageSection" class="bg-zinc-50 border border-zinc-200 rounded-xl p-4 sm:p-5 mb-5">
+        <div class="flex items-center justify-between mb-2.5">
+          <h2 class="text-xs font-bold uppercase tracking-wider text-[#1348FB]">💬 Send Direct Message to Poster</h2>
+        </div>
+        <textarea
+          id="dmInput"
+          rows="4"
+          placeholder="Write your message here..."
+          class="w-full bg-white border border-zinc-300 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:border-[#1348FB] mb-2.5"
+        ></textarea>
+        <div class="flex items-center justify-between gap-2">
+          <span id="dmFeedback" class="text-xs font-medium hidden"></span>
+          <button id="sendDmBtn" onclick="sendListingMessage()" class="ml-auto bg-[#1BF40B] hover:brightness-95 text-zinc-950 font-bold px-5 py-2 rounded-lg text-xs shadow-sm disabled:opacity-50">
+            Send Message
+          </button>
+        </div>
+      </div>
+
+      <!-- OWNER MANAGEMENT PANEL -->
+      <div id="ownerManageSection" class="hidden bg-[#1348FB]/5 border border-[#1348FB]/25 rounded-xl p-4 sm:p-5 mb-5">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 class="text-xs font-bold uppercase tracking-wider text-[#1348FB]">Manage Your Personal Listing</h2>
+            <p class="text-xs text-zinc-500 mt-0.5">Edit details, close listing, or delete permanently.</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="toggleEditForm()" class="bg-white border border-zinc-300 hover:border-[#1348FB] text-zinc-800 font-semibold px-3 py-1.5 rounded-lg text-xs">
+              ✏️ Edit Details
+            </button>
+            <button id="toggleSoldBtn" onclick="toggleListingStatus()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold px-3 py-1.5 rounded-lg text-xs">
+              Close Listing
+            </button>
+            <button onclick="deleteOwnListing()" class="bg-red-600 hover:bg-red-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs">
+              🗑 Delete
+            </button>
+          </div>
+        </div>
+
+        <form id="editListingForm" onsubmit="saveListingEdits(event)" class="hidden mt-4 pt-4 border-t border-[#1348FB]/20 space-y-3 text-xs">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <div class="sm:col-span-2">
+              <label class="block font-bold uppercase text-zinc-600 mb-1">Title</label>
+              <input id="editTitle" required minlength="3" maxlength="140" class="w-full bg-white border border-zinc-300 rounded-lg px-3 py-1.5 text-sm" />
+            </div>
+            <div>
+              <label class="block font-bold uppercase text-zinc-600 mb-1">Age (18+, Optional)</label>
+              <input id="editAge" type="number" min="18" step="1" class="w-full bg-white border border-zinc-300 rounded-lg px-3 py-1.5 text-sm" placeholder="18+" />
+            </div>
+          </div>
+          <div>
+            <label class="block font-bold uppercase text-zinc-600 mb-1">City / Area</label>
+            <input id="editNeighborhood" class="w-full bg-white border border-zinc-300 rounded-lg px-3 py-1.5 text-sm" />
+          </div>
+          <div>
+            <label class="block font-bold uppercase text-zinc-600 mb-1">Description</label>
+            <textarea id="editDesc" required rows="4" class="w-full bg-white border border-zinc-300 rounded-lg px-3 py-1.5 text-sm"></textarea>
+          </div>
+          <div class="flex justify-end gap-2">
+            <button type="button" onclick="toggleEditForm()" class="px-3 py-1.5 border border-zinc-300 bg-white rounded-lg font-medium">Cancel</button>
+            <button id="saveEditBtn" type="submit" class="px-4 py-1.5 bg-[#1BF40B] text-zinc-950 font-bold rounded-lg">Save Changes</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- ANONYMIZED RELAY + POSTED DATE + EXPIRATION -->
+      <div class="bg-zinc-50 border border-zinc-200 rounded-xl p-3.5 text-xs space-y-1.5">
+        <div class="break-all">
+          <span class="font-semibold text-zinc-700">Anonymized Reply Relay:</span>
+          <code id="detailRelay" class="ml-1.5 bg-white px-2.5 py-1 rounded border border-zinc-200 select-all font-mono"></code>
+        </div>
+        <div class="flex flex-wrap items-center justify-between gap-2 text-zinc-500 pt-1 border-t border-zinc-200/70">
+          <span id="detailDate"></span>
+          <span id="detailExpirationFooter" class="font-medium text-zinc-600"></span>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-zinc-200 bg-white py-4 px-4 text-center text-xs text-zinc-400">
+    <a href="index.html" class="font-bold text-[#F0A06A] tracking-tight hover:underline">simplylists</a> — Personal (18+) • Stay safe &amp; meet in public places
+  </footer>
+
+  <!-- 18+ PERSONAL AGE-GATE MODAL -->
+  <div id="ageGateModal" class="hidden fixed inset-0 bg-black/75 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-zinc-200 max-w-md w-full p-6 shadow-2xl">
+      <div class="flex items-center gap-2.5 mb-3">
+        <span class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-[#1348FB]/10 text-[#1348FB] font-bold text-sm border border-[#1348FB]/25">18+</span>
+        <div>
+          <h3 class="font-bold text-lg text-zinc-900 leading-tight">Adults Only (18+)</h3>
+          <p class="text-xs text-zinc-500">Personal listing on simplylists</p>
+        </div>
+      </div>
+      <p class="text-xs sm:text-sm text-zinc-600 leading-relaxed mb-4">
+        This page contains a <strong>Personal</strong> listing intended strictly for adults aged <strong>18 or older</strong>.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-2.5">
+        <a href="index.html" class="flex-1 text-center bg-transparent border-[1.5px] border-zinc-300 text-zinc-700 hover:bg-zinc-50 font-semibold py-2.5 px-4 rounded-xl text-xs transition">
+          Go Back to Home
+        </a>
+        <button type="button" onclick="confirmAgeGate()" class="flex-1 bg-[#1348FB] hover:opacity-95 text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow-sm transition">
+          I am 18 or older — View Listing
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUTH MODAL -->
+  <div id="authModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-zinc-200 max-w-sm w-full p-6 shadow-2xl">
+      <div class="flex justify-between items-center border-b border-zinc-100 pb-3 mb-4">
+        <h3 class="font-bold text-lg">Sign In to <span class="text-[#F0A06A]">simplylists</span></h3>
+        <button onclick="closeAuthModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
+      </div>
+      <div class="space-y-3 text-sm">
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Email</label>
+          <input id="authEmail" type="email" required class="w-full border border-zinc-300 rounded-lg px-3.5 py-2" placeholder="you@example.com" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600 mb-1">Password</label>
+          <input id="authPassword" type="password" required minlength="6" class="w-full border border-zinc-300 rounded-lg px-3.5 py-2" placeholder="••••••••" />
+        </div>
+        <div id="authMsg" class="text-xs text-[#1348FB] bg-[#1348FB]/10 p-2.5 rounded-lg hidden"></div>
+        <div class="flex gap-2.5 pt-2">
+          <button onclick="handleSignIn()" class="flex-1 bg-transparent border-[1.5px] border-[#1348FB] text-[#1348FB] hover:bg-[#1348FB]/5 font-bold py-2 rounded-lg text-xs transition">
+            Sign In
+          </button>
+          <button onclick="handleSignUp()" class="flex-1 bg-transparent border-[1.5px] border-[#F0A06A] text-[#F0A06A] hover:bg-[#F0A06A]/10 font-bold py-2 rounded-lg text-xs transition">
+            Create Account
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============================================================================
+    // PASTE YOUR SUPABASE CREDENTIALS RIGHT HERE:
+    // ============================================================================
+    const SUPABASE_URL = 'https://xqpinjcstaqdbtczgykp.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_Vq3EYb717vMAHomU5U0k3A_ibTfyNAb';
+
+    const SUBCAT_LABELS = {
+      'strictly-platonic':  'strictly platonic',
+      'women-seek-women':   'women seek women',
+      'women-seeking-men':  'women seeking men',
+      'men-seeking-women':  'men seeking women',
+      'men-seeking-men':    'men seeking men',
+      'misc-romance':       'misc romance',
+      'casual-encounters':  'casual encounters'
+    };
+
+    let supabaseClient = null;
+    let currentUser = null;
+    let currentListing = null;
+    let favoriteIds = new Set(JSON.parse(localStorage.getItem('simplylists_favs') || '[]'));
+
+    const listingId = new URLSearchParams(window.location.search).get('id');
+
+    function isAgeVerified() {
+      return sessionStorage.getItem('simplylists_age_verified') === 'true';
+    }
+
+    function confirmAgeGate() {
+      sessionStorage.setItem('simplylists_age_verified', 'true');
+      document.getElementById('ageGateModal').classList.add('hidden');
+      loadSinglePersonalListing();
+    }
+
+    const isConfigured = SUPABASE_URL.startsWith('http') && !SUPABASE_URL.includes('PASTE_YOUR');
+    if (isConfigured) {
+      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      initAuth();
+      if (!listingId) {
+        showNotFound();
+      } else if (isAgeVerified()) {
+        loadSinglePersonalListing();
+      } else {
+        document.getElementById('ageGateModal').classList.remove('hidden');
+      }
+    } else {
+      document.getElementById('loadingState').innerHTML = 'Paste your <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> in <code>personal-listing.html</code>.';
+    }
+
+    async function initAuth() {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      currentUser = session?.user || null;
+      renderAuthUI();
+      updateOwnerOrBuyerUI();
+
+      supabaseClient.auth.onAuthStateChange((_event, session) => {
+        currentUser = session?.user || null;
+        renderAuthUI();
+        updateOwnerOrBuyerUI();
+      });
+    }
+
+    function renderAuthUI() {
+      const authArea = document.getElementById('authArea');
+      if (currentUser) {
+        authArea.innerHTML = `
+          <span class="text-xs text-zinc-500 mr-1 hidden sm:inline">${escapeHtml(currentUser.email)}</span>
+          <button onclick="handleSignOut()" class="bg-transparent border-[1.5px] border-zinc-400 text-zinc-700 hover:border-zinc-900 px-3 py-1.5 rounded-lg text-xs font-semibold transition">
+            Sign Out
+          </button>
+        `;
+      } else {
+        authArea.innerHTML = `
+          <button onclick="openAuthModal()" class="bg-transparent border-[1.5px] border-[#1348FB] text-[#1348FB] hover:bg-[#1348FB]/5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition">
+            Sign In
+          </button>
+        `;
+      }
+    }
+
+    function showNotFound() {
+      document.getElementById('loadingState').classList.add('hidden');
+      document.getElementById('listingArticle').classList.add('hidden');
+      document.getElementById('errorState').classList.remove('hidden');
+    }
+
+    async function loadSinglePersonalListing() {
+      if (!supabaseClient || !listingId) return;
+
+      const { data: item, error } = await supabaseClient
+        .from('listings')
+        .select('*')
+        .eq('id', listingId)
+        .eq('category_id', 'personal')
+        .single();
+
+      if (error || !item) {
+        showNotFound();
+        return;
+      }
+
+      currentListing = item;
+
+      // Increment click count for Weekly Featured tracking
+      item.views_count = Number(item.views_count || 0) + 1;
+      supabaseClient.rpc('increment_listing_views', { target_listing_id: item.id });
+
+      renderListingPage(item);
+    }
+
+    function renderListingPage(item) {
+      document.getElementById('loadingState').classList.add('hidden');
+      document.getElementById('errorState').classList.add('hidden');
+      document.getElementById('listingArticle').classList.remove('hidden');
+
+      const ageSuffix = item.price !== null ? ` — Age ${Math.round(Number(item.price))}` : '';
+      const fullHeading = `${item.title}${ageSuffix}`;
+      document.title = `${fullHeading} — simplylists Personal`;
+      document.getElementById('detailTitle').textContent = fullHeading;
+
+      const subLabel = SUBCAT_LABELS[item.subcategory_id] || item.subcategory_id || 'Personal';
+      const breadcrumb = document.getElementById('breadcrumbSubcat');
+      breadcrumb.textContent = subLabel;
+      breadcrumb.href = item.subcategory_id ? `personal.html?subcategory=${encodeURIComponent(item.subcategory_id)}` : 'personal.html';
+
+      document.getElementById('detailLocationBadge').textContent = item.neighborhood || item.region;
+      document.getElementById('detailViewsCounter').textContent = `👁 ${item.views_count || 1} clicks`;
+
+      const statusBadge = document.getElementById('detailStatusBadge');
+      if (item.status === 'sold') statusBadge.classList.remove('hidden');
+      else statusBadge.classList.add('hidden');
+
+      const expInfo = formatExpirationInfo(item.expires_at, item.created_at);
+      document.getElementById('detailExpiresBadge').textContent = `⏳ ${expInfo.short}`;
+      document.getElementById('detailDate').textContent = formatPostedDateAndAgo(item.created_at);
+      document.getElementById('detailExpirationFooter').textContent = expInfo.full;
+      document.getElementById('detailRelay').textContent = item.relay_email || 'reply@simplylists.org';
+      document.getElementById('detailDesc').textContent = item.description;
+
+      // Photos
+      const imgWrap = document.getElementById('detailImageWrapper');
+      const mainImg = document.getElementById('detailMainImage');
+      const thumbs = document.getElementById('detailThumbnails');
+      if (item.image_urls && item.image_urls.length > 0) {
+        mainImg.src = item.image_urls[0];
+        imgWrap.classList.remove('hidden');
+        thumbs.innerHTML = item.image_urls.length > 1
+          ? item.image_urls.map(url => `<img src="${url}" onclick="document.getElementById('detailMainImage').src='${url}'" class="h-16 w-20 object-cover rounded-lg border border-zinc-200 cursor-pointer hover:border-[#1348FB]" />`).join('')
+          : '';
+      } else {
+        imgWrap.classList.add('hidden');
+      }
+
+      renderFavoriteButton();
+      updateOwnerOrBuyerUI();
+    }
+
+    function updateOwnerOrBuyerUI() {
+      if (!currentListing) return;
+      const dmSection = document.getElementById('directMessageSection');
+      const ownerSection = document.getElementById('ownerManageSection');
+
+      if (currentUser && currentUser.id === currentListing.seller_id) {
+        dmSection.classList.add('hidden');
+        ownerSection.classList.remove('hidden');
+        const soldBtn = document.getElementById('toggleSoldBtn');
+        if (currentListing.status === 'sold') {
+          soldBtn.textContent = '↺ Reopen Listing';
+          soldBtn.className = 'bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs';
+        } else {
+          soldBtn.textContent = '✓ Close Listing';
+          soldBtn.className = 'bg-amber-500 hover:bg-amber-600 text-white font-bold px-3 py-1.5 rounded-lg text-xs';
+        }
+      } else {
+        dmSection.classList.remove('hidden');
+        ownerSection.classList.add('hidden');
+      }
+    }
+
+    function renderFavoriteButton() {
+      if (!currentListing) return;
+      const btn = document.getElementById('detailFavoriteBtn');
+      const isFav = favoriteIds.has(currentListing.id);
+      btn.innerHTML = isFav ? '♥' : '♡';
+      btn.className = isFav
+        ? 'w-8 h-8 rounded-full bg-[#F0A06A]/15 border border-[#F0A06A] text-[#F0A06A] flex items-center justify-center text-lg transition'
+        : 'w-8 h-8 rounded-full border border-zinc-200 hover:border-[#F0A06A] text-zinc-400 hover:text-[#F0A06A] flex items-center justify-center text-lg transition';
+    }
+
+    async function toggleFavorite() {
+      if (!currentListing) return;
+      const isFav = favoriteIds.has(currentListing.id);
+      if (isFav) favoriteIds.delete(currentListing.id);
+      else favoriteIds.add(currentListing.id);
+      localStorage.setItem('simplylists_favs', JSON.stringify([...favoriteIds]));
+      renderFavoriteButton();
+
+      if (supabaseClient && currentUser) {
+        if (isFav) {
+          await supabaseClient.from('favorites').delete().eq('user_id', currentUser.id).eq('listing_id', currentListing.id);
+        } else {
+          await supabaseClient.from('favorites').insert([{ user_id: currentUser.id, listing_id: currentListing.id }]);
+        }
+      }
+    }
+
+    function copyListingLink() {
+      navigator.clipboard?.writeText(window.location.href);
+      const btn = document.getElementById('shareBtn');
+      const original = btn.innerHTML;
+      btn.innerHTML = '<span>✓</span><span class="hidden sm:inline">Copied</span>';
+      setTimeout(() => { btn.innerHTML = original; }, 2000);
+    }
+
+    async function sendListingMessage() {
+      if (!currentUser) {
+        openAuthModal('Please sign in or create an account to message this poster.');
+        return;
+      }
+      if (!currentListing) return;
+
+      const body = document.getElementById('dmInput').value.trim();
+      const feedback = document.getElementById('dmFeedback');
+      const btn = document.getElementById('sendDmBtn');
+      if (!body) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+
+      const { error } = await supabaseClient.from('messages').insert([{
+        listing_id: currentListing.id,
+        sender_id: currentUser.id,
+        receiver_id: currentListing.seller_id,
+        body
+      }]);
+
+      btn.disabled = false;
+      btn.textContent = 'Send Message';
+
+      if (error) {
+        feedback.textContent = `Error: ${error.message}`;
+        feedback.className = 'text-xs font-medium text-red-600';
+      } else {
+        document.getElementById('dmInput').value = '';
+        feedback.textContent = '✓ Message sent! View replies in your simplylists Inbox.';
+        feedback.className = 'text-xs font-medium text-emerald-700';
+      }
+      feedback.classList.remove('hidden');
+    }
+
+    async function reportCurrentListing() {
+      if (!currentUser) {
+        openAuthModal('Please sign in to report a listing.');
+        return;
+      }
+      if (!currentListing) return;
+      if (currentListing.seller_id === currentUser.id) {
+        alert('You cannot report your own listing.');
+        return;
+      }
+
+      const reason = prompt('Why are you reporting this listing?\n(e.g., Spam, Scam, Nudity/Photo violation, Harassment)', 'Spam or photo rule violation');
+      if (!reason) return;
+
+      const { error } = await supabaseClient.from('listing_flags').insert([{
+        listing_id: currentListing.id,
+        reporter_id: currentUser.id,
+        reason: reason.trim()
+      }]);
+
+      if (error) {
+        alert(error.code === '23505' ? 'You have already reported this listing.' : `Error: ${error.message}`);
+        return;
+      }
+      alert('Thank you. Your report has been recorded.');
+    }
+
+    // OWNER EDIT / STATUS / DELETE
+    function toggleEditForm() {
+      const form = document.getElementById('editListingForm');
+      if (form.classList.contains('hidden')) {
+        document.getElementById('editTitle').value = currentListing.title;
+        document.getElementById('editAge').value = currentListing.price !== null ? Math.round(Number(currentListing.price)) : '';
+        document.getElementById('editNeighborhood').value = currentListing.neighborhood || '';
+        document.getElementById('editDesc').value = currentListing.description;
+        form.classList.remove('hidden');
+      } else {
+        form.classList.add('hidden');
+      }
+    }
+
+    async function saveListingEdits(e) {
+      e.preventDefault();
+      const saveBtn = document.getElementById('saveEditBtn');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving...';
+
+      const ageVal = document.getElementById('editAge').value;
+      const updates = {
+        title: document.getElementById('editTitle').value.trim(),
+        price: ageVal === '' ? null : Math.max(18, parseInt(ageVal, 10)),
+        neighborhood: document.getElementById('editNeighborhood').value.trim() || null,
+        description: document.getElementById('editDesc').value.trim(),
+        updated_at: new Date().toISOString()
+      };
+
+      const { error } = await supabaseClient.from('listings').update(updates).eq('id', currentListing.id).eq('seller_id', currentUser.id);
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Save Changes';
+
+      if (!error) {
+        Object.assign(currentListing, updates);
+        document.getElementById('editListingForm').classList.add('hidden');
+        renderListingPage(currentListing);
+      }
+    }
+
+    async function toggleListingStatus() {
+      const newStatus = currentListing.status === 'sold' ? 'active' : 'sold';
+      const { error } = await supabaseClient.from('listings').update({ status: newStatus, updated_at: new Date().toISOString() }).eq('id', currentListing.id).eq('seller_id', currentUser.id);
+      if (!error) {
+        currentListing.status = newStatus;
+        renderListingPage(currentListing);
+      }
+    }
+
+    async function deleteOwnListing() {
+      if (!confirm('Permanently delete this personal listing?')) return;
+      const { error } = await supabaseClient.from('listings').delete().eq('id', currentListing.id).eq('seller_id', currentUser.id);
+      if (!error) {
+        window.location.href = 'personal.html';
+      }
+    }
+
+    // TIME HELPERS
+    function formatPostedDateAndAgo(createdAtIso) {
+      const d = new Date(createdAtIso);
+      const datePart = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      const totalMinutes = Math.floor(Math.max(0, Date.now() - d.getTime()) / 60000);
+      let ago = 'less than a minute ago';
+      if (totalMinutes >= 1 && totalMinutes < 60) ago = `${totalMinutes} ${totalMinutes === 1 ? 'minute' : 'minutes'} ago`;
+      else if (totalMinutes >= 60 && totalMinutes < 1440) {
+        const hrs = Math.floor(totalMinutes / 60);
+        ago = `${hrs} ${hrs === 1 ? 'hour' : 'hours'} ago`;
+      } else if (totalMinutes >= 1440) {
+        const days = Math.floor(totalMinutes / 1440);
+        ago = `${days} ${days === 1 ? 'day' : 'days'} ago`;
+      }
+      return `Posted ${datePart} • ${ago}`;
+    }
+
+    function formatExpirationInfo(expiresAtIso, createdAtIso) {
+      const expDate = expiresAtIso ? new Date(expiresAtIso) : new Date(new Date(createdAtIso).getTime() + 30 * 86400000);
+      const dateStr = expDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      const daysLeft = Math.ceil((expDate.getTime() - Date.now()) / 86400000);
+      if (daysLeft <= 0) return { short: `Expired ${dateStr}`, full: `Expired on ${dateStr}` };
+      return { short: `Expires ${dateStr}`, full: `Expires ${dateStr} (${daysLeft} day${daysLeft === 1 ? '' : 's'} remaining)` };
+    }
+
+    // AUTH HELPERS
+    function openAuthModal(msg) {
+      const msgEl = document.getElementById('authMsg');
+      if (msg) { msgEl.textContent = msg; msgEl.classList.remove('hidden'); }
+      else msgEl.classList.add('hidden');
+      document.getElementById('authModal').classList.remove('hidden');
+    }
+    function closeAuthModal() { document.getElementById('authModal').classList.add('hidden'); }
+
+    async function handleSignIn() {
+      const email = document.getElementById('authEmail').value.trim();
+      const password = document.getElementById('authPassword').value;
+      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      if (error) {
+        const msgEl = document.getElementById('authMsg');
+        msgEl.textContent = error.message;
+        msgEl.classList.remove('hidden');
+      } else {
+        closeAuthModal();
+      }
+    }
+
+    async function handleSignUp() {
+      const email = document.getElementById('authEmail').value.trim();
+      const password = document.getElementById('authPassword').value;
+      const msgEl = document.getElementById('authMsg');
+      const { error } = await supabaseClient.auth.signUp({ email, password });
+      msgEl.classList.remove('hidden');
+      msgEl.textContent = error ? error.message : 'Check your email inbox to confirm your simplylists account!';
+    }
+
+    async function handleSignOut() {
+      await supabaseClient.auth.signOut();
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+    }
+  </script>
+</body>
+</html>
