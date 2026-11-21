@@ -333,7 +333,7 @@
     </div>
   </div>
 
-  <!-- IN-WEBSITE INBOX & REALTIME CHAT MODAL -->
+  <!-- IN-WEBSITE INBOX & REALTIME CHAT MODAL (WITH xxxxxx USERNAME MASKING) -->
   <div id="inboxModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl border border-zinc-200 max-w-4xl w-full h-[80vh] flex flex-col overflow-hidden shadow-2xl">
       <div class="px-6 py-4 border-b border-zinc-200 flex items-center justify-between bg-zinc-50">
@@ -511,6 +511,18 @@
       sessionStorage.setItem('simplylists_age_verified', 'true');
       document.getElementById('ageGateModal').classList.add('hidden');
       loadSinglePersonalListing();
+    }
+
+    // ============================================================================
+    // USERNAME MASKING HELPER (TURNS LAST 6 LETTERS INTO 'xxxxxx')
+    // ============================================================================
+    function maskUsername(rawName) {
+      if (!rawName) return 'xxxxxx';
+      const base = String(rawName).includes('@')
+        ? String(rawName).split('@')[0].trim()
+        : String(rawName).trim();
+      if (base.length <= 6) return 'xxxxxx';
+      return base.slice(0, base.length - 6) + 'xxxxxx';
     }
 
     const isConfigured = SUPABASE_URL.startsWith('http') && !SUPABASE_URL.includes('PASTE_YOUR') && SUPABASE_ANON_KEY.length > 20;
@@ -710,7 +722,7 @@
     }
 
     // ============================================================================
-    // LIVE REALTIME INBOX & WEBSOCKET CHAT
+    // LIVE REALTIME INBOX & WEBSOCKET CHAT (WITH xxxxxx USERNAME MASKING)
     // ============================================================================
     function setupRealtimeMessages() {
       if (!supabaseClient || !currentUser) return;
@@ -825,7 +837,8 @@
       inboxMessages.forEach(m => {
         const otherId = m.sender_id === currentUser.id ? m.receiver_id : m.sender_id;
         const otherProfile = m.sender_id === currentUser.id ? m.receiver : m.sender;
-        const otherName = otherProfile?.display_name || otherProfile?.email || 'User';
+        const rawOtherName = otherProfile?.display_name || otherProfile?.email || 'User';
+        const maskedOtherName = maskUsername(rawOtherName);
         const listingTitle = m.listings?.title || 'Listing';
         const key = `${m.listing_id}_${otherId}`;
 
@@ -835,7 +848,7 @@
             listing_id: m.listing_id,
             listing_title: listingTitle,
             other_id: otherId,
-            other_name: otherName,
+            other_name: maskedOtherName,
             messages: [],
             unread: 0
           };
@@ -894,18 +907,24 @@
       const thread = conversationMap[key];
       if (!thread) return;
 
+      const myMaskedName = maskUsername(currentUser?.email || 'You');
+
       document.getElementById('chatHeader').innerHTML = `
         <span class="text-[#1348FB] font-bold">${escapeHtml(thread.listing_title)}</span>
         <span class="text-zinc-400 mx-1.5">•</span>
-        <span class="text-zinc-600">Chatting with ${escapeHtml(thread.other_name)}</span>
+        <span class="text-zinc-600">Chatting with <strong>${escapeHtml(thread.other_name)}</strong></span>
       `;
 
       const container = document.getElementById('chatMessagesContainer');
       container.innerHTML = thread.messages.map(m => {
         const isMine = m.sender_id === currentUser.id;
+        const bubbleSender = isMine
+          ? myMaskedName
+          : maskUsername(m.sender?.display_name || m.sender?.email || thread.other_name);
         const timeStr = new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         return `
-          <div class="flex ${isMine ? 'justify-end' : 'justify-start'}">
+          <div class="flex flex-col ${isMine ? 'items-end' : 'items-start'}">
+            <span class="text-[10px] font-semibold text-zinc-400 mb-0.5 px-1">${escapeHtml(bubbleSender)}</span>
             <div class="max-w-[78%] rounded-2xl px-3.5 py-2 text-xs ${isMine ? 'bg-[#1348FB] text-white' : 'bg-white border border-zinc-200 text-zinc-900'}">
               <div class="whitespace-pre-line leading-relaxed">${escapeHtml(m.body)}</div>
               <div class="text-[10px] mt-1 ${isMine ? 'text-white/70 text-right' : 'text-zinc-400'}">${timeStr}</div>
