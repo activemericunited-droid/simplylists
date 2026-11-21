@@ -304,7 +304,7 @@
     </div>
   </div>
 
-  <!-- IN-WEBSITE INBOX & REALTIME CHAT MODAL (WITH xxxxxx USERNAME MASKING) -->
+  <!-- IN-WEBSITE INBOX & FAST REALTIME CHAT MODAL (3-LETTER xxx USERNAME MASKING) -->
   <div id="inboxModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl border border-zinc-200 max-w-4xl w-full h-[80vh] flex flex-col overflow-hidden shadow-2xl">
       <div class="px-6 py-4 border-b border-zinc-200 flex items-center justify-between bg-zinc-50">
@@ -499,8 +499,8 @@
     // ============================================================================
     // PASTE YOUR SUPABASE CREDENTIALS BETWEEN THE SINGLE QUOTES RIGHT HERE:
     // ============================================================================
-    const SUPABASE_URL = 'https://xqpinjcstaqdbtczgykp.supabase.co'.trim();
-    const SUPABASE_ANON_KEY = 'sb_publishable_Vq3EYb717vMAHomU5U0k3A_ibTfyNAb'.trim();
+    const SUPABASE_URL = 'PASTE_YOUR_SUPABASE_URL_HERE'.trim();
+    const SUPABASE_ANON_KEY = 'PASTE_YOUR_SUPABASE_ANON_KEY_HERE'.trim();
 
     const PERSONAL_SUBCATEGORIES = [
       { id: 'strictly-platonic',  label: 'strictly platonic' },
@@ -594,15 +594,15 @@
     }
 
     // ============================================================================
-    // USERNAME MASKING HELPER (TURNS LAST 6 LETTERS INTO 'xxxxxx')
+    // USERNAME MASKING HELPER (TURNS LAST 3 LETTERS INTO 'xxx')
     // ============================================================================
     function maskUsername(rawName) {
-      if (!rawName) return 'xxxxxx';
+      if (!rawName) return 'xxx';
       const base = String(rawName).includes('@')
         ? String(rawName).split('@')[0].trim()
         : String(rawName).trim();
-      if (base.length <= 6) return 'xxxxxx';
-      return base.slice(0, base.length - 6) + 'xxxxxx';
+      if (base.length <= 3) return 'xxx';
+      return base.slice(0, base.length - 3) + 'xxx';
     }
 
     const isConfigured = SUPABASE_URL.startsWith('http') && !SUPABASE_URL.includes('PASTE_YOUR') && SUPABASE_ANON_KEY.length > 20;
@@ -804,7 +804,7 @@
     }
 
     // ============================================================================
-    // LIVE REALTIME INBOX & WEBSOCKET CHAT (WITH xxxxxx USERNAME MASKING)
+    // FAST REALTIME INBOX & OPTIMISTIC CHAT (3-LETTER xxx MASKING)
     // ============================================================================
     function setupRealtimeMessages() {
       if (!supabaseClient || !currentUser) return;
@@ -813,7 +813,7 @@
       const dot = document.getElementById('realtimeDot');
 
       realtimeChannel = supabaseClient
-        .channel('simplylists-personal-live-messages')
+        .channel('simplylists-personal-live-' + currentUser.id)
         .on(
           'postgres_changes',
           { event: 'INSERT', schema: 'public', table: 'messages' },
@@ -821,20 +821,60 @@
             const newMsg = payload.new;
             if (!newMsg) return;
 
-            if (newMsg.receiver_id !== currentUser.id && newMsg.sender_id !== currentUser.id) return;
-
-            const inboxOpen = !document.getElementById('inboxModal').classList.contains('hidden');
-            if (inboxOpen) {
-              const otherId = newMsg.sender_id === currentUser.id ? newMsg.receiver_id : newMsg.sender_id;
-              const incomingKey = `${newMsg.listing_id}_${otherId}`;
-              if (newMsg.receiver_id === currentUser.id && activeThreadKey === incomingKey) {
-                await supabaseClient.from('messages').update({ is_read: true }).eq('id', newMsg.id);
-              }
-              await loadInbox();
-            } else if (newMsg.receiver_id === currentUser.id) {
-              showLiveToast(newMsg.body);
+            if (newMsg.receiver_id !== currentUser.id && newMsg.sender_id !== currentUser.id) {
+              return;
             }
-            refreshUnreadCount();
+
+            const otherId = newMsg.sender_id === currentUser.id ? newMsg.receiver_id : newMsg.sender_id;
+            const incomingKey = `${newMsg.listing_id}_${otherId}`;
+            const existingThread = conversationMap[incomingKey];
+            const inboxOpen = !document.getElementById('inboxModal').classList.contains('hidden');
+
+            // 1. Reconcile optimistic sent message or skip duplicate
+            if (existingThread) {
+              const alreadyExists = existingThread.messages.some(m => m.id === newMsg.id);
+              if (alreadyExists) return;
+
+              if (newMsg.sender_id === currentUser.id) {
+                const optimisticMatch = existingThread.messages.find(
+                  m => m._optimistic && m.body === newMsg.body
+                );
+                if (optimisticMatch) {
+                  optimisticMatch.id = newMsg.id;
+                  optimisticMatch.created_at = newMsg.created_at;
+                  optimisticMatch._optimistic = false;
+                  return;
+                }
+              }
+
+              // 2. Append incoming message directly into local state (0 extra DB queries)
+              existingThread.messages.push(newMsg);
+
+              if (inboxOpen && activeThreadKey === incomingKey) {
+                appendSingleMessageBubble(newMsg, existingThread);
+                renderThreadsSidebar();
+                if (newMsg.receiver_id === currentUser.id) {
+                  supabaseClient.from('messages').update({ is_read: true }).eq('id', newMsg.id);
+                }
+              } else {
+                if (newMsg.receiver_id === currentUser.id) {
+                  existingThread.unread += 1;
+                  updateUnreadBadgeLocally(1);
+                  if (!inboxOpen) showLiveToast(newMsg.body);
+                }
+                if (inboxOpen) renderThreadsSidebar();
+              }
+              return;
+            }
+
+            // 3. Brand-new conversation not yet in memory
+            if (newMsg.receiver_id === currentUser.id && !inboxOpen) {
+              showLiveToast(newMsg.body);
+              updateUnreadBadgeLocally(1);
+            }
+            if (inboxOpen) {
+              await loadInbox();
+            }
           }
         )
         .subscribe((status) => {
@@ -850,6 +890,19 @@
       if (realtimeChannel && supabaseClient) {
         supabaseClient.removeChannel(realtimeChannel);
         realtimeChannel = null;
+      }
+    }
+
+    function updateUnreadBadgeLocally(delta) {
+      const badge = document.getElementById('unreadBadge');
+      if (!badge) return;
+      const current = badge.classList.contains('hidden') ? 0 : (parseInt(badge.textContent, 10) || 0);
+      const next = Math.max(0, current + delta);
+      if (next > 0) {
+        badge.textContent = next;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
       }
     }
 
@@ -878,7 +931,7 @@
       }
     }
 
-    function openInboxModal() {
+    function openInboxModal(preselectThreadKey = null) {
       if (!supabaseClient) {
         alert('Please paste your SUPABASE_URL and SUPABASE_ANON_KEY into personal.html first.');
         return;
@@ -887,6 +940,7 @@
         openAuthModal('Please sign in to access your inbox.');
         return;
       }
+      if (preselectThreadKey) activeThreadKey = preselectThreadKey;
       document.getElementById('liveToast').classList.add('hidden');
       document.getElementById('inboxModal').classList.remove('hidden');
       loadInbox();
@@ -938,6 +992,17 @@
         if (m.receiver_id === currentUser.id && !m.is_read) conversationMap[key].unread += 1;
       });
 
+      renderThreadsSidebar();
+
+      if (activeThreadKey && conversationMap[activeThreadKey]) {
+        renderActiveThread(activeThreadKey);
+      }
+    }
+
+    function renderThreadsSidebar() {
+      const threadsList = document.getElementById('threadsList');
+      if (!threadsList) return;
+
       const threads = Object.values(conversationMap).sort((a, b) => {
         const lastA = a.messages[a.messages.length - 1]?.created_at || '';
         const lastB = b.messages[b.messages.length - 1]?.created_at || '';
@@ -959,36 +1024,58 @@
               ${t.unread > 0 ? `<span class="bg-[#1348FB] text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">${t.unread}</span>` : ''}
             </div>
             <div class="text-[11px] text-[#1348FB] font-medium mt-0.5">with ${escapeHtml(t.other_name)}</div>
-            <p class="text-xs text-zinc-500 truncate mt-1">${escapeHtml(lastMsg.body)}</p>
+            <p class="text-xs text-zinc-500 truncate mt-1">${escapeHtml(lastMsg?.body || '')}</p>
           </div>
         `;
       }).join('');
-
-      if (activeThreadKey && conversationMap[activeThreadKey]) {
-        renderActiveThread(activeThreadKey);
-      }
     }
 
-    async function selectConversation(key) {
+    function selectConversation(key) {
       activeThreadKey = key;
       const thread = conversationMap[key];
       if (!thread) return;
 
-      const unreadIds = thread.messages.filter(m => m.receiver_id === currentUser.id && !m.is_read).map(m => m.id);
+      const unreadIds = thread.messages
+        .filter(m => m.receiver_id === currentUser.id && !m.is_read)
+        .map(m => m.id);
+
+      // Instant UI update; mark read in DB silently in the background
       if (unreadIds.length > 0) {
-        await supabaseClient.from('messages').update({ is_read: true }).in('id', unreadIds);
+        thread.messages.forEach(m => {
+          if (m.receiver_id === currentUser.id) m.is_read = true;
+        });
+        updateUnreadBadgeLocally(-thread.unread);
         thread.unread = 0;
-        refreshUnreadCount();
+
+        supabaseClient.from('messages').update({ is_read: true }).in('id', unreadIds);
       }
+
+      renderThreadsSidebar();
       renderActiveThread(key);
-      loadInbox();
+    }
+
+    function buildMessageBubbleHtml(m, thread) {
+      const isMine = m.sender_id === currentUser.id;
+      const myMaskedName = maskUsername(currentUser?.email || 'You');
+      const bubbleSender = isMine
+        ? myMaskedName
+        : maskUsername(m.sender?.display_name || m.sender?.email || thread.other_name);
+      const timeStr = new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      return `
+        <div data-msg-id="${m.id}" class="flex flex-col ${isMine ? 'items-end' : 'items-start'}">
+          <span class="text-[10px] font-semibold text-zinc-400 mb-0.5 px-1">${escapeHtml(bubbleSender)}</span>
+          <div class="max-w-[78%] rounded-2xl px-3.5 py-2 text-xs ${isMine ? 'bg-[#1348FB] text-white' : 'bg-white border border-zinc-200 text-zinc-900'}">
+            <div class="whitespace-pre-line leading-relaxed">${escapeHtml(m.body)}</div>
+            <div class="text-[10px] mt-1 ${isMine ? 'text-white/70 text-right' : 'text-zinc-400'}">${timeStr}</div>
+          </div>
+        </div>
+      `;
     }
 
     function renderActiveThread(key) {
       const thread = conversationMap[key];
       if (!thread) return;
-
-      const myMaskedName = maskUsername(currentUser?.email || 'You');
 
       document.getElementById('chatHeader').innerHTML = `
         <span class="text-[#1348FB] font-bold">${escapeHtml(thread.listing_title)}</span>
@@ -997,25 +1084,17 @@
       `;
 
       const container = document.getElementById('chatMessagesContainer');
-      container.innerHTML = thread.messages.map(m => {
-        const isMine = m.sender_id === currentUser.id;
-        const bubbleSender = isMine
-          ? myMaskedName
-          : maskUsername(m.sender?.display_name || m.sender?.email || thread.other_name);
-        const timeStr = new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        return `
-          <div class="flex flex-col ${isMine ? 'items-end' : 'items-start'}">
-            <span class="text-[10px] font-semibold text-zinc-400 mb-0.5 px-1">${escapeHtml(bubbleSender)}</span>
-            <div class="max-w-[78%] rounded-2xl px-3.5 py-2 text-xs ${isMine ? 'bg-[#1348FB] text-white' : 'bg-white border border-zinc-200 text-zinc-900'}">
-              <div class="whitespace-pre-line leading-relaxed">${escapeHtml(m.body)}</div>
-              <div class="text-[10px] mt-1 ${isMine ? 'text-white/70 text-right' : 'text-zinc-400'}">${timeStr}</div>
-            </div>
-          </div>
-        `;
-      }).join('');
-
+      container.innerHTML = thread.messages.map(m => buildMessageBubbleHtml(m, thread)).join('');
       container.scrollTop = container.scrollHeight;
       document.getElementById('chatReplyForm').classList.remove('hidden');
+    }
+
+    function appendSingleMessageBubble(msg, thread) {
+      const container = document.getElementById('chatMessagesContainer');
+      if (!container) return;
+      if (container.querySelector(`[data-msg-id="${msg.id}"]`)) return;
+      container.insertAdjacentHTML('beforeend', buildMessageBubbleHtml(msg, thread));
+      container.scrollTop = container.scrollHeight;
     }
 
     async function sendInboxReply(e) {
@@ -1027,12 +1106,58 @@
       if (!body) return;
 
       input.value = '';
-      await supabaseClient.from('messages').insert([{
+      input.focus();
+
+      // 1. Optimistic local render (0ms appear rate)
+      const tempId = 'temp_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+      const optimisticMsg = {
+        id: tempId,
         listing_id: thread.listing_id,
         sender_id: currentUser.id,
         receiver_id: thread.other_id,
-        body
-      }]);
+        body,
+        is_read: false,
+        created_at: new Date().toISOString(),
+        _optimistic: true
+      };
+
+      thread.messages.push(optimisticMsg);
+      appendSingleMessageBubble(optimisticMsg, thread);
+      renderThreadsSidebar();
+
+      // 2. Persist to Supabase in the background and reconcile ID
+      const { data, error } = await supabaseClient
+        .from('messages')
+        .insert([{
+          listing_id: thread.listing_id,
+          sender_id: currentUser.id,
+          receiver_id: thread.other_id,
+          body
+        }])
+        .select('id, created_at')
+        .single();
+
+      if (error) {
+        thread.messages = thread.messages.filter(m => m.id !== tempId);
+        renderActiveThread(activeThreadKey);
+        renderThreadsSidebar();
+        input.value = body;
+        alert(`Message failed to send: ${error.message}`);
+        return;
+      }
+
+      if (data) {
+        const duplicateFromRealtime = thread.messages.find(m => m.id === data.id && m !== optimisticMsg);
+        if (duplicateFromRealtime) {
+          thread.messages = thread.messages.filter(m => m.id !== tempId);
+        } else {
+          optimisticMsg.id = data.id;
+          optimisticMsg.created_at = data.created_at;
+          optimisticMsg._optimistic = false;
+          const domNode = document.querySelector(`[data-msg-id="${tempId}"]`);
+          if (domNode) domNode.setAttribute('data-msg-id', data.id);
+        }
+      }
     }
 
     // ============================================================================
