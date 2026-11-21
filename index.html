@@ -95,7 +95,7 @@
     <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center gap-3 sm:gap-4">
         <!-- LOGO (#F0A06A) WITH LV-STYLE 4-LEAF CLOVER STAR & UNSPACED LETTERS -->
-        <button onclick="showHome()" class="text-xl sm:text-2xl font-bold text-[#F0A06A] flex items-center gap-2 hover:opacity-90 transition-opacity">
+        <button type="button" onclick="showHome()" class="text-xl sm:text-2xl font-bold text-[#F0A06A] flex items-center gap-2 hover:opacity-90 transition-opacity">
           <svg class="w-7 h-7 sm:w-8 sm:h-8 shrink-0 text-[#F0A06A]" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <path
               d="M18 1.5 C21.2 8.2, 23 11.8, 22.8 13.2 C24.2 13, 27.8 14.8, 34.5 18 C27.8 21.2, 24.2 23, 22.8 22.8 C23 24.2, 21.2 27.8, 18 34.5 C14.8 27.8, 13 24.2, 13.2 22.8 C11.8 23, 8.2 21.2, 1.5 18 C8.2 14.8, 11.8 13, 13.2 13.2 C13 11.8, 14.8 8.2, 18 1.5 Z"
@@ -122,41 +122,41 @@
 
       <div class="flex items-center flex-wrap gap-2 text-sm">
         <!-- + POST LISTING BUTTON IN #1BF40B -->
-        <button onclick="openPostModal()" class="bg-[#1BF40B] hover:brightness-95 transition-all text-zinc-950 font-bold px-3.5 sm:px-4 py-2 rounded-lg text-xs tracking-wide shadow-sm">
+        <button type="button" onclick="openPostModal()" class="bg-[#1BF40B] hover:brightness-95 transition-all text-zinc-950 font-bold px-3.5 sm:px-4 py-2 rounded-lg text-xs tracking-wide shadow-sm">
           + Post Listing
         </button>
 
         <!-- SAVED / FAVORITES FILTER BUTTON -->
-        <button id="savedListingsNavBtn" onclick="toggleSavedListings()" class="bg-transparent border-[1.5px] border-zinc-300 hover:border-[#F0A06A] px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-800 inline-flex items-center gap-1.5 transition">
+        <button type="button" id="savedListingsNavBtn" onclick="toggleSavedListings()" class="bg-transparent border-[1.5px] border-zinc-300 hover:border-[#F0A06A] px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-800 inline-flex items-center gap-1.5 transition">
           <span class="text-[#F0A06A] text-sm leading-none">♥</span>
           <span>Saved</span>
           <span id="savedCountBadge" class="hidden bg-[#F0A06A]/20 text-[#F0A06A] text-[10px] font-bold px-1.5 py-0.2 rounded-full">0</span>
         </button>
 
         <!-- MY LISTINGS FILTER BUTTON (VISIBLE WHEN LOGGED IN) -->
-        <button id="myListingsNavBtn" onclick="toggleMyListings()" class="hidden bg-transparent border-[1.5px] border-zinc-300 hover:border-[#1348FB] px-3.5 py-1.5 rounded-lg text-xs font-semibold text-zinc-800 items-center gap-1.5 transition">
+        <button type="button" id="myListingsNavBtn" onclick="toggleMyListings()" class="hidden bg-transparent border-[1.5px] border-zinc-300 hover:border-[#1348FB] px-3.5 py-1.5 rounded-lg text-xs font-semibold text-zinc-800 items-center gap-1.5 transition">
           <span>📋 My Listings</span>
         </button>
 
         <!-- INBOX BUTTON (VISIBLE WHEN LOGGED IN, WITH LIVE REALTIME DOT) -->
-        <button id="inboxNavBtn" onclick="openInboxModal()" class="hidden relative bg-transparent border-[1.5px] border-zinc-300 hover:border-[#1348FB] px-3.5 py-1.5 rounded-lg text-xs font-semibold text-zinc-800 items-center gap-1.5">
+        <button type="button" id="inboxNavBtn" onclick="openInboxModal()" class="hidden relative bg-transparent border-[1.5px] border-zinc-300 hover:border-[#1348FB] px-3.5 py-1.5 rounded-lg text-xs font-semibold text-zinc-800 items-center gap-1.5">
           <span id="realtimeDot" class="w-2 h-2 rounded-full bg-zinc-300" title="Realtime status"></span>
           <span>💬 Inbox</span>
           <span id="unreadBadge" class="hidden bg-[#1348FB] text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">0</span>
         </button>
 
         <!-- PRIVATE ADMIN MODERATION BUTTON (ONLY VISIBLE TO ADMINS) -->
-        <button id="adminNavBtn" onclick="openAdminModal()" class="hidden bg-transparent border-[1.5px] border-red-600 text-red-600 hover:bg-red-50 px-3.5 py-1.5 rounded-lg text-xs font-bold items-center gap-1.5 transition">
+        <button type="button" id="adminNavBtn" onclick="openAdminModal()" class="hidden bg-transparent border-[1.5px] border-red-600 text-red-600 hover:bg-red-50 px-3.5 py-1.5 rounded-lg text-xs font-bold items-center gap-1.5 transition">
           <span>🛡️ Admin</span>
           <span id="adminFlagCountBadge" class="hidden bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">0</span>
         </button>
 
         <!-- HOLLOW LINED AUTH BUTTONS -->
         <div id="authArea" class="flex items-center gap-2">
-          <button onclick="openAuthModal()" class="bg-transparent border-[1.5px] border-[#1348FB] text-[#1348FB] hover:bg-[#1348FB]/5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition">
+          <button type="button" onclick="openAuthModal()" class="bg-transparent border-[1.5px] border-[#1348FB] text-[#1348FB] hover:bg-[#1348FB]/5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition">
             Sign In
           </button>
-          <button onclick="openAuthModal()" class="hidden sm:inline-flex bg-transparent border-[1.5px] border-[#F0A06A] text-[#F0A06A] hover:bg-[#F0A06A]/10 px-3.5 py-1.5 rounded-lg text-xs font-bold transition">
+          <button type="button" onclick="openAuthModal()" class="hidden sm:inline-flex bg-transparent border-[1.5px] border-[#F0A06A] text-[#F0A06A] hover:bg-[#F0A06A]/10 px-3.5 py-1.5 rounded-lg text-xs font-bold transition">
             Create Account
           </button>
         </div>
@@ -166,7 +166,7 @@
 
   <!-- CONNECTION BANNER -->
   <div id="setupBanner" class="hidden bg-amber-50 border-b border-amber-200 px-4 py-2.5 text-amber-900 text-xs text-center">
-    ⚠️ <strong>Supabase Keys Not Configured Yet:</strong> Paste your <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> at the bottom of <code>index.html</code> to connect your database.
+    ⚠️ <strong>Supabase Keys Not Configured Yet:</strong> Paste your <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> near the bottom of <code>index.html</code> to connect your database.
   </div>
 
   <!-- LIVE TOAST NOTIFICATION FOR INCOMING MESSAGES -->
@@ -297,7 +297,7 @@
         <input id="hasPicFilter" type="checkbox" onchange="loadListings()" class="rounded border-zinc-300" />
         Has Photo
       </label>
-      <button onclick="loadListings()" class="bg-[#1348FB] hover:opacity-90 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider">
+      <button type="button" onclick="loadListings()" class="bg-[#1348FB] hover:opacity-90 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider">
         Search
       </button>
     </section>
@@ -308,7 +308,7 @@
         <span class="font-bold text-[#1348FB]">📋 Viewing Your Listings</span>
         <span class="text-zinc-600">— Click any post to edit, mark as sold, or delete.</span>
       </div>
-      <button onclick="showHome()" class="font-bold text-[#1348FB] hover:underline">← Back to All Public Listings</button>
+      <button type="button" onclick="showHome()" class="font-bold text-[#1348FB] hover:underline">← Back to All Public Listings</button>
     </div>
 
     <!-- SAVED LISTINGS ACTIVE BANNER -->
@@ -317,7 +317,7 @@
         <span class="font-bold text-zinc-900">♥ Viewing Your Saved Listings</span>
         <span class="text-zinc-600">— Click the heart on any listing to remove it.</span>
       </div>
-      <button onclick="showHome()" class="font-bold text-[#1348FB] hover:underline">← Back to All Public Listings</button>
+      <button type="button" onclick="showHome()" class="font-bold text-[#1348FB] hover:underline">← Back to All Public Listings</button>
     </div>
 
     <!-- DYNAMIC SUBCATEGORY PILLS (Regular Inter) -->
@@ -331,8 +331,8 @@
           <span id="listingCount" class="text-[11px] sm:text-xs bg-[#1348FB]/10 text-[#1348FB] px-2 py-0.5 rounded-full font-bold shrink-0">Loading...</span>
         </div>
         <div class="flex items-center gap-1 bg-zinc-200/70 p-0.5 rounded-lg text-[11px] sm:text-xs shrink-0">
-          <button id="btnViewList" onclick="setViewMode('list')" class="px-2.5 py-1 rounded-md bg-white font-semibold shadow-sm">List</button>
-          <button id="btnViewGrid" onclick="setViewMode('grid')" class="px-2.5 py-1 rounded-md text-zinc-600 font-medium">Gallery</button>
+          <button type="button" id="btnViewList" onclick="setViewMode('list')" class="px-2.5 py-1 rounded-md bg-white font-semibold shadow-sm">List</button>
+          <button type="button" id="btnViewGrid" onclick="setViewMode('grid')" class="px-2.5 py-1 rounded-md text-zinc-600 font-medium">Gallery</button>
         </div>
       </div>
 
@@ -380,7 +380,7 @@
           <span class="bg-[#F0A06A]/15 text-[#F0A06A] text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded">Feedback</span>
           <h3 class="font-bold text-lg text-zinc-900">Share Feedback on <span class="text-[#F0A06A]">simplylists</span></h3>
         </div>
-        <button onclick="closeFeedbackModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
+        <button type="button" onclick="closeFeedbackModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
       </div>
 
       <form onsubmit="submitFeedback(event)" class="space-y-4 text-sm">
@@ -451,7 +451,7 @@
           <span class="bg-[#1348FB]/10 text-[#1348FB] text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded">Support</span>
           <h3 class="font-bold text-lg text-zinc-900">Contact <span class="text-[#F0A06A]">simplylists</span></h3>
         </div>
-        <button onclick="closeContactModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
+        <button type="button" onclick="closeContactModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
       </div>
 
       <form onsubmit="submitContactForm(event)" class="space-y-3.5 text-sm">
@@ -502,11 +502,11 @@
           <span id="infoModalBadge" class="bg-[#1348FB]/10 text-[#1348FB] text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded">Policy</span>
           <h3 id="infoModalTitle" class="font-bold text-lg text-zinc-900"></h3>
         </div>
-        <button onclick="closeInfoModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
+        <button type="button" onclick="closeInfoModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
       </div>
       <div id="infoModalBody" class="text-xs sm:text-sm text-zinc-600 space-y-3 leading-relaxed"></div>
       <div class="mt-6 pt-3 border-t border-zinc-100 flex justify-end">
-        <button onclick="closeInfoModal()" class="bg-transparent border-[1.5px] border-[#1348FB] text-[#1348FB] hover:bg-[#1348FB] hover:text-white font-bold px-4 py-1.5 rounded-lg text-xs transition">
+        <button type="button" onclick="closeInfoModal()" class="bg-transparent border-[1.5px] border-[#1348FB] text-[#1348FB] hover:bg-[#1348FB] hover:text-white font-bold px-4 py-1.5 rounded-lg text-xs transition">
           Close
         </button>
       </div>
@@ -529,15 +529,15 @@
         </div>
         <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
           <!-- REPORT / FLAG LISTING BUTTON -->
-          <button id="detailReportBtn" onclick="reportCurrentListing()" class="px-2 sm:px-2.5 h-8 rounded-full border border-zinc-200 hover:border-red-500 text-zinc-500 hover:text-red-600 flex items-center justify-center text-xs font-semibold gap-1 transition" title="Report spam or abusive post">
+          <button type="button" id="detailReportBtn" onclick="reportCurrentListing()" class="px-2 sm:px-2.5 h-8 rounded-full border border-zinc-200 hover:border-red-500 text-zinc-500 hover:text-red-600 flex items-center justify-center text-xs font-semibold gap-1 transition" title="Report spam or abusive post">
             <span>🚩</span>
             <span class="hidden sm:inline">Report</span>
           </button>
           <!-- FAVORITE / SAVE HEART BUTTON -->
-          <button id="detailFavoriteBtn" onclick="toggleFavorite(selectedListing?.id, event)" class="w-8 h-8 rounded-full border border-zinc-200 hover:border-[#F0A06A] flex items-center justify-center text-lg transition" title="Save listing">
+          <button type="button" id="detailFavoriteBtn" onclick="toggleFavorite(selectedListing?.id, event)" class="w-8 h-8 rounded-full border border-zinc-200 hover:border-[#F0A06A] flex items-center justify-center text-lg transition" title="Save listing">
             ♡
           </button>
-          <button onclick="closeDetailModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
+          <button type="button" onclick="closeDetailModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
         </div>
       </div>
 
@@ -569,6 +569,7 @@
           <div class="flex items-center justify-between gap-2">
             <span id="dmFeedback" class="text-xs font-medium text-emerald-700 hidden"></span>
             <button
+              type="button"
               id="sendDmBtn"
               onclick="sendListingMessage()"
               class="ml-auto bg-[#1BF40B] hover:brightness-95 text-zinc-950 font-bold px-4 py-2 rounded-lg text-xs shadow-sm disabled:opacity-50"
@@ -588,6 +589,7 @@
           </div>
           <div class="flex flex-wrap items-center gap-2">
             <button
+              type="button"
               id="toggleEditBtn"
               onclick="toggleEditForm()"
               class="bg-white border border-zinc-300 hover:border-[#1348FB] text-zinc-800 font-semibold px-3 py-1.5 rounded-lg text-xs"
@@ -595,6 +597,7 @@
               ✏️ Edit Details
             </button>
             <button
+              type="button"
               id="toggleSoldBtn"
               onclick="toggleListingSoldStatus()"
               class="bg-amber-500 hover:bg-amber-600 text-white font-bold px-3 py-1.5 rounded-lg text-xs"
@@ -602,6 +605,7 @@
               Mark as Sold
             </button>
             <button
+              type="button"
               onclick="deleteOwnListing()"
               class="bg-red-600 hover:bg-red-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs"
             >
@@ -652,7 +656,7 @@
     </div>
   </div>
 
-  <!-- IN-WEBSITE INBOX & REALTIME CHAT MODAL -->
+  <!-- IN-WEBSITE INBOX & REALTIME CHAT MODAL (WITH xxxxxx USERNAME MASKING) -->
   <div id="inboxModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl border border-zinc-200 max-w-4xl w-full h-[80vh] flex flex-col overflow-hidden shadow-2xl">
       <div class="px-6 py-4 border-b border-zinc-200 flex items-center justify-between bg-zinc-50">
@@ -662,7 +666,7 @@
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Live Realtime
           </span>
         </div>
-        <button onclick="closeInboxModal()" class="w-8 h-8 rounded-full bg-zinc-200/70 hover:bg-zinc-300 flex items-center justify-center text-zinc-700 font-bold">&times;</button>
+        <button type="button" onclick="closeInboxModal()" class="w-8 h-8 rounded-full bg-zinc-200/70 hover:bg-zinc-300 flex items-center justify-center text-zinc-700 font-bold">&times;</button>
       </div>
 
       <div class="flex-1 grid grid-cols-1 md:grid-cols-3 min-h-0">
@@ -701,7 +705,7 @@
     <div class="bg-white rounded-2xl border border-zinc-200 max-w-lg w-full max-h-[92vh] overflow-y-auto p-6 shadow-2xl">
       <div class="flex justify-between items-center border-b border-zinc-100 pb-3 mb-4">
         <h3 class="font-bold text-xl text-zinc-900">Post to <span class="text-[#F0A06A]">simplylists</span></h3>
-        <button onclick="closePostModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
+        <button type="button" onclick="closePostModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
       </div>
       <form onsubmit="submitListing(event)" class="space-y-3.5 text-sm">
         <div>
@@ -802,7 +806,7 @@
     <div class="bg-white rounded-2xl border border-zinc-200 max-w-sm w-full p-6 shadow-2xl">
       <div class="flex justify-between items-center border-b border-zinc-100 pb-3 mb-4">
         <h3 class="font-bold text-lg">Sign In to <span class="text-[#F0A06A]">simplylists</span></h3>
-        <button onclick="closeAuthModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
+        <button type="button" onclick="closeAuthModal()" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
       </div>
       <div class="space-y-3 text-sm">
         <div>
@@ -814,14 +818,14 @@
             <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-600">Password</label>
             <button type="button" onclick="handleForgotPassword()" class="text-[11px] font-semibold text-[#1348FB] hover:underline">Forgot password?</button>
           </div>
-          <input id="authPassword" type="password" required minlength="6" class="w-full border border-zinc-300 rounded-lg px-3.5 py-2" placeholder="••••••••" />
+          <input id="authPassword" type="password" required minlength="6" onkeydown="if(event.key === 'Enter') handleSignIn()" class="w-full border border-zinc-300 rounded-lg px-3.5 py-2" placeholder="••••••••" />
         </div>
         <div id="authMsg" class="text-xs text-[#1348FB] bg-[#1348FB]/10 p-2.5 rounded-lg hidden"></div>
         <div class="flex gap-2.5 pt-2">
-          <button onclick="handleSignIn()" class="flex-1 bg-transparent border-[1.5px] border-[#1348FB] text-[#1348FB] hover:bg-[#1348FB]/5 font-bold py-2 rounded-lg text-xs transition">
+          <button type="button" onclick="handleSignIn()" class="flex-1 bg-transparent border-[1.5px] border-[#1348FB] text-[#1348FB] hover:bg-[#1348FB]/5 font-bold py-2 rounded-lg text-xs transition">
             Sign In
           </button>
-          <button onclick="handleSignUp()" class="flex-1 bg-transparent border-[1.5px] border-[#F0A06A] text-[#F0A06A] hover:bg-[#F0A06A]/10 font-bold py-2 rounded-lg text-xs transition">
+          <button type="button" onclick="handleSignUp()" class="flex-1 bg-transparent border-[1.5px] border-[#F0A06A] text-[#F0A06A] hover:bg-[#F0A06A]/10 font-bold py-2 rounded-lg text-xs transition">
             Create Account
           </button>
         </div>
@@ -834,7 +838,7 @@
     <div class="bg-white rounded-2xl border border-zinc-200 max-w-sm w-full p-6 shadow-2xl">
       <div class="flex justify-between items-center border-b border-zinc-100 pb-3 mb-4">
         <h3 class="font-bold text-lg text-zinc-900">Set New Password</h3>
-        <button onclick="document.getElementById('resetPasswordModal').classList.add('hidden')" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
+        <button type="button" onclick="document.getElementById('resetPasswordModal').classList.add('hidden')" class="w-8 h-8 rounded-full bg-zinc-100 hover:bg-zinc-200 flex items-center justify-center text-zinc-600 font-bold">&times;</button>
       </div>
       <form onsubmit="handlePasswordUpdate(event)" class="space-y-3 text-sm">
         <div>
@@ -849,7 +853,7 @@
     </div>
   </div>
 
-  <!-- PRIVATE ADMIN MODERATION MODAL (6 TABS INCL. CONTACT INQUIRIES) -->
+  <!-- PRIVATE ADMIN MODERATION MODAL (6 TABS + KEYWORD SEARCH + GROUPED USER MESSAGES) -->
   <div id="adminModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl border border-zinc-200 max-w-5xl w-full max-h-[88vh] flex flex-col overflow-hidden shadow-2xl">
       <div class="px-6 py-4 border-b border-zinc-200 flex flex-wrap items-center justify-between gap-3 bg-zinc-900 text-white">
@@ -861,29 +865,50 @@
           </div>
         </div>
         <div class="flex flex-wrap items-center gap-2">
-          <button onclick="setAdminFilter('flagged')" id="adminTabFlagged" class="px-3 py-1 rounded-lg text-xs font-bold bg-red-600 text-white">
+          <button type="button" onclick="setAdminFilter('flagged')" id="adminTabFlagged" class="px-3 py-1 rounded-lg text-xs font-bold bg-red-600 text-white">
             Flagged / Reported
           </button>
-          <button onclick="setAdminFilter('all')" id="adminTabAll" class="px-3 py-1 rounded-lg text-xs font-semibold bg-zinc-800 text-zinc-300 hover:text-white">
+          <button type="button" onclick="setAdminFilter('all')" id="adminTabAll" class="px-3 py-1 rounded-lg text-xs font-semibold bg-zinc-800 text-zinc-300 hover:text-white">
             All Recent Posts
           </button>
-          <button onclick="setAdminFilter('banned')" id="adminTabBanned" class="px-3 py-1 rounded-lg text-xs font-semibold bg-zinc-800 text-zinc-300 hover:text-white">
+          <button type="button" onclick="setAdminFilter('banned')" id="adminTabBanned" class="px-3 py-1 rounded-lg text-xs font-semibold bg-zinc-800 text-zinc-300 hover:text-white">
             Banned Users
           </button>
-          <button onclick="setAdminFilter('feedback')" id="adminTabFeedback" class="px-3 py-1 rounded-lg text-xs font-semibold bg-zinc-800 text-zinc-300 hover:text-white">
+          <button type="button" onclick="setAdminFilter('feedback')" id="adminTabFeedback" class="px-3 py-1 rounded-lg text-xs font-semibold bg-zinc-800 text-zinc-300 hover:text-white">
             ★ User Feedback
           </button>
-          <button onclick="setAdminFilter('messages')" id="adminTabMessages" class="px-3 py-1 rounded-lg text-xs font-semibold bg-zinc-800 text-zinc-300 hover:text-white">
+          <button type="button" onclick="setAdminFilter('messages')" id="adminTabMessages" class="px-3 py-1 rounded-lg text-xs font-semibold bg-zinc-800 text-zinc-300 hover:text-white">
             💬 User Messages
           </button>
-          <button onclick="setAdminFilter('contact')" id="adminTabContact" class="px-3 py-1 rounded-lg text-xs font-semibold bg-zinc-800 text-zinc-300 hover:text-white">
+          <button type="button" onclick="setAdminFilter('contact')" id="adminTabContact" class="px-3 py-1 rounded-lg text-xs font-semibold bg-zinc-800 text-zinc-300 hover:text-white">
             ✉️ Contact
           </button>
-          <button onclick="closeAdminModal()" class="ml-2 w-8 h-8 rounded-full bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center text-zinc-300 font-bold">&times;</button>
+          <button type="button" onclick="closeAdminModal()" class="ml-2 w-8 h-8 rounded-full bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center text-zinc-300 font-bold">&times;</button>
         </div>
       </div>
 
-      <div id="adminQueueContainer" class="flex-1 overflow-y-auto divide-y divide-zinc-200 p-4 bg-[#F8F7F4]">
+      <!-- ADMIN KEYWORD SEARCH BAR -->
+      <div class="px-5 py-3 bg-white border-b border-zinc-200 flex flex-wrap items-center gap-2.5">
+        <div class="relative flex-1 min-w-[220px]">
+          <input
+            id="adminSearchInput"
+            type="text"
+            oninput="handleAdminSearch(this.value)"
+            placeholder="Search keywords, emails, listing titles, or message text..."
+            class="w-full bg-zinc-50 border border-zinc-200 rounded-lg pl-3.5 pr-9 py-2 text-xs sm:text-sm focus:outline-none focus:bg-white focus:border-[#1348FB]"
+          />
+          <button
+            id="adminSearchClearBtn"
+            type="button"
+            onclick="clearAdminSearch()"
+            class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-700 font-bold text-sm"
+            title="Clear search"
+          >&times;</button>
+        </div>
+        <span id="adminResultCounter" class="text-[11px] font-semibold text-zinc-500 bg-zinc-100 px-2.5 py-1 rounded-full"></span>
+      </div>
+
+      <div id="adminQueueContainer" class="flex-1 overflow-y-auto p-4 bg-[#F8F7F4]">
         <div class="p-8 text-center text-xs text-zinc-400">Loading moderation queue...</div>
       </div>
     </div>
@@ -891,10 +916,10 @@
 
   <script>
     // ============================================================================
-    // PASTE YOUR SUPABASE CREDENTIALS RIGHT HERE:
+    // PASTE YOUR SUPABASE CREDENTIALS BETWEEN THE SINGLE QUOTES RIGHT HERE:
     // ============================================================================
-    const SUPABASE_URL = 'https://xqpinjcstaqdbtczgykp.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_Vq3EYb717vMAHomU5U0k3A_ibTfyNAb';
+    const SUPABASE_URL = 'PASTE_YOUR_SUPABASE_URL_HERE'.trim();
+    const SUPABASE_ANON_KEY = 'PASTE_YOUR_SUPABASE_ANON_KEY_HERE'.trim();
 
     let supabaseClient = null;
     let currentUser = null;
@@ -907,9 +932,11 @@
     let onlySavedListings = false;
     let favoriteIds = new Set(JSON.parse(localStorage.getItem('simplylists_favs') || '[]'));
 
-    // Admin Moderation State
+    // Admin Moderation & Search State
     let isAdminUser = false;
     let adminFilterMode = 'flagged';
+    let adminSearchQuery = '';
+    let adminCachedRows = [];
 
     // Featured Listing Weekly Carousel State (Top 3 Listings, 1 Cover Photo Each)
     let featuredListings = [];
@@ -1012,7 +1039,7 @@
       }
     };
 
-    const isConfigured = SUPABASE_URL.startsWith('http') && !SUPABASE_URL.includes('PASTE_YOUR');
+    const isConfigured = SUPABASE_URL.startsWith('http') && !SUPABASE_URL.includes('PASTE_YOUR') && SUPABASE_ANON_KEY.length > 20;
 
     // Automatically read ?category= or ?subcategory= from Google Search Sitelinks or shared URLs
     const urlParams = new URLSearchParams(window.location.search);
@@ -1032,16 +1059,22 @@
     handlePostCategoryChange();
     updateSavedNavBadge();
 
-    if (isConfigured) {
-      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      initAuth();
-      loadListings();
-      loadWeeklyFeaturedListing();
+    if (isConfigured && window.supabase && typeof window.supabase.createClient === 'function') {
+      try {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        initAuth();
+        loadListings();
+        loadWeeklyFeaturedListing();
+      } catch (err) {
+        document.getElementById('setupBanner').classList.remove('hidden');
+        document.getElementById('listingsContainer').innerHTML = `<div class="p-8 text-center text-red-600 text-xs">Supabase initialization error: ${escapeHtml(err.message)}</div>`;
+      }
     } else {
       document.getElementById('setupBanner').classList.remove('hidden');
+      document.getElementById('listingCount').textContent = '0';
       document.getElementById('listingsContainer').innerHTML = `
         <div class="p-10 text-center text-zinc-500 text-sm">
-          Paste your <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> at the bottom of <code>index.html</code> to load live listings.
+          Paste your <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> near the bottom of <code>index.html</code> to load live listings.
         </div>`;
     }
 
@@ -1060,6 +1093,18 @@
         url.searchParams.delete('subcategory');
       }
       window.history.replaceState({}, '', url.toString());
+    }
+
+    // ============================================================================
+    // USERNAME MASKING HELPER (TURNS LAST 6 LETTERS INTO 'xxxxxx')
+    // ============================================================================
+    function maskUsername(rawName) {
+      if (!rawName) return 'xxxxxx';
+      const base = String(rawName).includes('@')
+        ? String(rawName).split('@')[0].trim()
+        : String(rawName).trim();
+      if (base.length <= 6) return 'xxxxxx';
+      return base.slice(0, base.length - 6) + 'xxxxxx';
     }
 
     // ============================================================================
@@ -1234,7 +1279,7 @@
               Featured Listing • Most Clicked This Week
             </span>
             <p class="text-xs text-zinc-400 max-w-md">Post a listing with a photo—the top clicked listings of the week fill this spotlight banner automatically!</p>
-            <button onclick="openPostModal()" class="mt-3.5 bg-[#1BF40B] text-zinc-950 font-bold px-4 py-2 rounded-lg text-xs shadow">
+            <button type="button" onclick="openPostModal()" class="mt-3.5 bg-[#1BF40B] text-zinc-950 font-bold px-4 py-2 rounded-lg text-xs shadow">
               + Post with Photo
             </button>
           </div>
@@ -1578,7 +1623,7 @@
 
         authArea.innerHTML = `
           <span class="text-xs text-zinc-500 mr-1 hidden lg:inline">${escapeHtml(currentUser.email)}</span>
-          <button onclick="handleSignOut()" class="bg-transparent border-[1.5px] border-zinc-400 text-zinc-700 hover:border-zinc-900 hover:text-zinc-900 px-3 py-1.5 rounded-lg text-xs font-semibold transition">
+          <button type="button" onclick="handleSignOut()" class="bg-transparent border-[1.5px] border-zinc-400 text-zinc-700 hover:border-zinc-900 hover:text-zinc-900 px-3 py-1.5 rounded-lg text-xs font-semibold transition">
             Sign Out
           </button>
         `;
@@ -1589,10 +1634,10 @@
         myListingsBtn.classList.remove('inline-flex');
 
         authArea.innerHTML = `
-          <button onclick="openAuthModal()" class="bg-transparent border-[1.5px] border-[#1348FB] text-[#1348FB] hover:bg-[#1348FB]/5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition">
+          <button type="button" onclick="openAuthModal()" class="bg-transparent border-[1.5px] border-[#1348FB] text-[#1348FB] hover:bg-[#1348FB]/5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition">
             Sign In
           </button>
-          <button onclick="openAuthModal()" class="hidden sm:inline-flex bg-transparent border-[1.5px] border-[#F0A06A] text-[#F0A06A] hover:bg-[#F0A06A]/10 px-3.5 py-1.5 rounded-lg text-xs font-bold transition">
+          <button type="button" onclick="openAuthModal()" class="hidden sm:inline-flex bg-transparent border-[1.5px] border-[#F0A06A] text-[#F0A06A] hover:bg-[#F0A06A]/10 px-3.5 py-1.5 rounded-lg text-xs font-bold transition">
             Create Account
           </button>
         `;
@@ -1600,9 +1645,13 @@
     }
 
     async function handleForgotPassword() {
-      const email = document.getElementById('authEmail').value.trim();
       const msgEl = document.getElementById('authMsg');
       msgEl.classList.remove('hidden');
+      if (!supabaseClient) {
+        msgEl.textContent = 'Supabase keys are not configured in index.html yet.';
+        return;
+      }
+      const email = document.getElementById('authEmail').value.trim();
       if (!email) {
         msgEl.textContent = 'Enter your email address above first, then click Forgot password.';
         return;
@@ -1646,7 +1695,7 @@
     }
 
     // ============================================================================
-    // PRIVATE ADMIN MODERATION CENTER (6 TABS) & COMMUNITY REPORTING
+    // PRIVATE ADMIN MODERATION CENTER (6 TABS + SEARCH + GROUPED MESSAGES)
     // ============================================================================
     async function checkAdminStatus() {
       const adminBtn = document.getElementById('adminNavBtn');
@@ -1771,33 +1820,233 @@
       loadAdminQueue();
     }
 
+    function handleAdminSearch(value) {
+      adminSearchQuery = (value || '').trim().toLowerCase();
+      const clearBtn = document.getElementById('adminSearchClearBtn');
+      if (clearBtn) {
+        clearBtn.classList.toggle('hidden', adminSearchQuery === '');
+      }
+      renderAdminQueue();
+    }
+
+    function clearAdminSearch() {
+      const input = document.getElementById('adminSearchInput');
+      if (input) input.value = '';
+      handleAdminSearch('');
+    }
+
     async function loadAdminQueue() {
       if (!supabaseClient || !isAdminUser) return;
       const container = document.getElementById('adminQueueContainer');
+      const counterEl = document.getElementById('adminResultCounter');
       container.innerHTML = `<div class="p-8 text-center text-xs text-zinc-400">Loading...</div>`;
+      if (counterEl) counterEl.textContent = 'Loading...';
 
-      // Tab 6: Contact Form Inquiries
+      let result;
+
       if (adminFilterMode === 'contact') {
-        const { data: contactRows, error } = await supabaseClient
+        result = await supabaseClient
           .from('contact_messages')
           .select('*')
           .order('created_at', { ascending: false })
-          .limit(100);
+          .limit(200);
+      } else if (adminFilterMode === 'messages') {
+        result = await supabaseClient
+          .from('messages')
+          .select('*, listings(id, title, category_id), sender:profiles!messages_sender_id_fkey(id, email, display_name, is_banned), receiver:profiles!messages_receiver_id_fkey(id, email, display_name, is_banned)')
+          .order('created_at', { ascending: false })
+          .limit(250);
+      } else if (adminFilterMode === 'feedback') {
+        result = await supabaseClient
+          .from('feedback')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(200);
+      } else if (adminFilterMode === 'banned') {
+        result = await supabaseClient
+          .from('profiles')
+          .select('*')
+          .eq('is_banned', true)
+          .order('updated_at', { ascending: false });
+      } else {
+        let query = supabaseClient
+          .from('listings')
+          .select('*, seller:profiles!listings_seller_id_fkey(id, email, display_name, is_banned)')
+          .order('flags_count', { ascending: false })
+          .order('created_at', { ascending: false })
+          .limit(150);
 
-        if (error) {
-          container.innerHTML = `<div class="p-4 text-xs text-red-600">${escapeHtml(error.message)}</div>`;
-          return;
+        if (adminFilterMode === 'flagged') {
+          query = query.or('status.eq.flagged,flags_count.gt.0');
         }
-        if (!contactRows || contactRows.length === 0) {
-          container.innerHTML = `<div class="p-12 text-center text-xs text-zinc-400">No contact inquiries submitted yet.</div>`;
-          return;
-        }
+        result = await query;
+      }
 
-        container.innerHTML = contactRows.map(c => {
+      if (result.error) {
+        container.innerHTML = `<div class="p-4 text-xs text-red-600">${escapeHtml(result.error.message)}</div>`;
+        if (counterEl) counterEl.textContent = 'Error';
+        return;
+      }
+
+      adminCachedRows = result.data || [];
+      renderAdminQueue();
+    }
+
+    function renderAdminQueue() {
+      const container = document.getElementById('adminQueueContainer');
+      const counterEl = document.getElementById('adminResultCounter');
+      const q = adminSearchQuery;
+
+      const filtered = adminCachedRows.filter(row => {
+        if (!q) return true;
+        if (adminFilterMode === 'contact') {
+          return `${row.email || ''} ${row.message || ''}`.toLowerCase().includes(q);
+        }
+        if (adminFilterMode === 'messages') {
+          return `${row.listings?.title || ''} ${row.sender?.email || ''} ${row.receiver?.email || ''} ${row.body || ''}`.toLowerCase().includes(q);
+        }
+        if (adminFilterMode === 'feedback') {
+          return `${row.email || ''} ${row.category || ''} ${row.message || ''}`.toLowerCase().includes(q);
+        }
+        if (adminFilterMode === 'banned') {
+          return `${row.email || ''} ${row.display_name || ''} ${row.id || ''}`.toLowerCase().includes(q);
+        }
+        return `${row.title || ''} ${row.description || ''} ${row.category_id || ''} ${row.subcategory_id || ''} ${row.neighborhood || ''} ${row.seller?.email || ''}`.toLowerCase().includes(q);
+      });
+
+      if (counterEl) {
+        counterEl.textContent = q
+          ? `${filtered.length} match${filtered.length === 1 ? '' : 'es'} of ${adminCachedRows.length}`
+          : `${filtered.length} item${filtered.length === 1 ? '' : 's'}`;
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = q
+          ? `<div class="p-12 text-center text-xs text-zinc-400">No results matching <strong>"${escapeHtml(q)}"</strong> in this tab.</div>`
+          : `<div class="p-12 text-center text-xs text-zinc-400">Queue is clean — no items to display here.</div>`;
+        return;
+      }
+
+      // TAB 5: CLEAN GROUPED CONVERSATION THREADS FOR USER MESSAGES
+      if (adminFilterMode === 'messages') {
+        const threadGroups = {};
+
+        filtered.forEach(m => {
+          const pairIds = [m.sender_id, m.receiver_id].sort();
+          const threadKey = `${m.listing_id || 'none'}_${pairIds[0]}_${pairIds[1]}`;
+
+          if (!threadGroups[threadKey]) {
+            threadGroups[threadKey] = {
+              listingTitle: m.listings?.title || 'Deleted / Unknown Listing',
+              listingCategory: m.listings?.category_id || '',
+              participants: {},
+              messages: [],
+              latestAt: m.created_at
+            };
+          }
+
+          if (m.sender_id) {
+            threadGroups[threadKey].participants[m.sender_id] = {
+              id: m.sender_id,
+              email: m.sender?.email || 'Unknown user',
+              isBanned: Boolean(m.sender?.is_banned)
+            };
+          }
+          if (m.receiver_id) {
+            threadGroups[threadKey].participants[m.receiver_id] = {
+              id: m.receiver_id,
+              email: m.receiver?.email || 'Unknown user',
+              isBanned: Boolean(m.receiver?.is_banned)
+            };
+          }
+
+          threadGroups[threadKey].messages.push(m);
+          if (m.created_at > threadGroups[threadKey].latestAt) {
+            threadGroups[threadKey].latestAt = m.created_at;
+          }
+        });
+
+        const sortedThreads = Object.values(threadGroups).sort((a, b) =>
+          b.latestAt.localeCompare(a.latestAt)
+        );
+
+        container.innerHTML = sortedThreads.map(thread => {
+          const chronoMsgs = [...thread.messages].sort((a, b) => a.created_at.localeCompare(b.created_at));
+          const participantList = Object.values(thread.participants);
+          const unreadCount = chronoMsgs.filter(m => !m.is_read).length;
+
+          return `
+            <div class="bg-white rounded-xl border border-zinc-200 mb-4 overflow-hidden shadow-2xs">
+              <!-- Thread Header -->
+              <div class="px-4 py-3 bg-zinc-50 border-b border-zinc-200 flex flex-wrap items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <div class="flex items-center flex-wrap gap-2">
+                    <span class="bg-[#1348FB]/10 text-[#1348FB] border border-[#1348FB]/25 text-[10px] font-bold uppercase px-2 py-0.5 rounded">
+                      ${escapeHtml(thread.listingCategory || 'Listing')}
+                    </span>
+                    <h4 class="font-bold text-xs sm:text-sm text-zinc-900 truncate">${escapeHtml(thread.listingTitle)}</h4>
+                    <span class="text-[11px] text-zinc-400">• ${chronoMsgs.length} msg${chronoMsgs.length === 1 ? '' : 's'}</span>
+                    ${unreadCount > 0 ? `<span class="text-[10px] font-bold bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded">${unreadCount} unread</span>` : ''}
+                  </div>
+                  <div class="flex items-center flex-wrap gap-2 mt-1.5 text-[11px] text-zinc-600">
+                    ${participantList.map(p => `
+                      <span class="inline-flex items-center gap-1.5 bg-white border border-zinc-200 rounded-md px-2 py-0.5">
+                        <span class="font-medium text-zinc-800">${escapeHtml(p.email)}</span>
+                        ${p.isBanned ? '<span class="text-red-600 font-bold">(BANNED)</span>' : ''}
+                        <button
+                          type="button"
+                          onclick="adminToggleBanUser('${p.id}', ${!p.isBanned})"
+                          class="ml-1 text-[10px] font-bold ${p.isBanned ? 'text-emerald-600 hover:underline' : 'text-red-600 hover:underline'}"
+                        >${p.isBanned ? 'Unban' : 'Ban'}</button>
+                      </span>
+                    `).join('<span class="text-zinc-400">↔</span>')}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Clean Chronological Message Rows -->
+              <div class="divide-y divide-zinc-100">
+                ${chronoMsgs.map(m => {
+                  const senderEmail = m.sender?.email || 'Unknown';
+                  const receiverEmail = m.receiver?.email || 'Unknown';
+                  const timeStr = new Date(m.created_at).toLocaleString('en-US', {
+                    month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                  });
+                  return `
+                    <div class="px-4 py-2.5 hover:bg-zinc-50/80 flex items-start justify-between gap-3 text-xs">
+                      <div class="min-w-0 flex-1 space-y-1">
+                        <div class="flex items-center flex-wrap gap-1.5 text-[11px]">
+                          <span class="font-bold text-zinc-900">${escapeHtml(senderEmail)}</span>
+                          <span class="text-zinc-400">→</span>
+                          <span class="text-zinc-600">${escapeHtml(receiverEmail)}</span>
+                          <span class="text-zinc-300">•</span>
+                          <span class="text-zinc-400">${timeStr}</span>
+                          <span class="inline-block w-1.5 h-1.5 rounded-full ${m.is_read ? 'bg-emerald-400' : 'bg-amber-400'}" title="${m.is_read ? 'Read' : 'Unread'}"></span>
+                        </div>
+                        <p class="text-zinc-800 text-xs sm:text-sm whitespace-pre-line leading-relaxed break-words">${escapeHtml(m.body)}</p>
+                      </div>
+                      <button
+                        type="button"
+                        onclick="adminDeleteMessage('${m.id}')"
+                        class="text-zinc-400 hover:text-red-600 hover:bg-red-50 px-2 py-1 rounded-md text-xs shrink-0 transition"
+                        title="Delete message"
+                      >🗑</button>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          `;
+        }).join('');
+        return;
+      }
+
+      // TAB 6: CONTACT INQUIRIES
+      if (adminFilterMode === 'contact') {
+        container.innerHTML = filtered.map(c => {
           const dateTimeStr = new Date(c.created_at).toLocaleString('en-US', {
             month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit'
           });
-
           return `
             <div class="bg-white rounded-xl border border-zinc-200 p-4 mb-2.5 flex flex-wrap items-start justify-between gap-4">
               <div class="space-y-1.5 max-w-2xl">
@@ -1820,6 +2069,7 @@
                   ↩ Reply
                 </a>
                 <button
+                  type="button"
                   onclick="adminDeleteContact('${c.id}')"
                   class="bg-zinc-100 hover:bg-red-50 text-zinc-500 hover:text-red-600 border border-zinc-200 hover:border-red-200 font-semibold px-3 py-1.5 rounded-lg text-xs transition"
                   title="Dismiss inquiry"
@@ -1833,107 +2083,22 @@
         return;
       }
 
-      // Tab 5: User-to-User Messages Log
-      if (adminFilterMode === 'messages') {
-        const { data: msgRows, error } = await supabaseClient
-          .from('messages')
-          .select('*, listings(id, title, category_id), sender:profiles!messages_sender_id_fkey(id, email, display_name, is_banned), receiver:profiles!messages_receiver_id_fkey(id, email, display_name, is_banned)')
-          .order('created_at', { ascending: false })
-          .limit(100);
-
-        if (error) {
-          container.innerHTML = `<div class="p-4 text-xs text-red-600">${escapeHtml(error.message)}</div>`;
-          return;
-        }
-        if (!msgRows || msgRows.length === 0) {
-          container.innerHTML = `<div class="p-12 text-center text-xs text-zinc-400">No user messages sent on the platform yet.</div>`;
-          return;
-        }
-
-        container.innerHTML = msgRows.map(m => {
-          const senderEmail = m.sender?.email || 'Unknown sender';
-          const receiverEmail = m.receiver?.email || 'Unknown receiver';
-          const senderBanned = Boolean(m.sender?.is_banned);
-          const listingTitle = m.listings?.title || 'Deleted / Unknown Listing';
-          const dateTimeStr = new Date(m.created_at).toLocaleString('en-US', {
-            month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-          });
-
-          return `
-            <div class="bg-white rounded-xl border border-zinc-200 p-4 mb-2.5 flex flex-wrap items-start justify-between gap-4">
-              <div class="space-y-1.5 max-w-2xl">
-                <div class="flex items-center flex-wrap gap-2 text-xs">
-                  <span class="bg-[#1348FB]/10 text-[#1348FB] border border-[#1348FB]/25 text-[10px] font-bold uppercase px-2 py-0.5 rounded">
-                    Re: ${escapeHtml(listingTitle)}
-                  </span>
-                  <span class="text-zinc-400">• ${dateTimeStr}</span>
-                  <span class="${m.is_read ? 'text-emerald-600' : 'text-amber-600'} text-[11px] font-semibold">
-                    (${m.is_read ? 'Read' : 'Unread'})
-                  </span>
-                </div>
-                <div class="text-xs text-zinc-600">
-                  <strong>From:</strong> <span class="text-zinc-900 font-medium">${escapeHtml(senderEmail)}</span>
-                  ${senderBanned ? '<span class="text-red-600 font-bold ml-1">(BANNED)</span>' : ''}
-                  <span class="mx-1.5 text-zinc-400">→</span>
-                  <strong>To:</strong> <span class="text-zinc-900 font-medium">${escapeHtml(receiverEmail)}</span>
-                </div>
-                <div class="bg-[#F8F7F4] border border-zinc-200/80 rounded-lg px-3.5 py-2 text-xs sm:text-sm text-zinc-900 whitespace-pre-line leading-relaxed">
-                  ${escapeHtml(m.body)}
-                </div>
-              </div>
-
-              <div class="flex flex-wrap items-center gap-2 shrink-0">
-                <button
-                  onclick="adminDeleteMessage('${m.id}')"
-                  class="bg-zinc-100 hover:bg-red-50 text-zinc-600 hover:text-red-600 border border-zinc-200 hover:border-red-200 font-semibold px-3 py-1.5 rounded-lg text-xs transition"
-                  title="Delete this message"
-                >
-                  🗑 Delete Msg
-                </button>
-                <button
-                  onclick="adminToggleBanUser('${m.sender_id}', ${!senderBanned})"
-                  class="${senderBanned ? 'bg-amber-500 text-zinc-950' : 'bg-red-600 hover:bg-red-700 text-white'} font-bold px-3 py-1.5 rounded-lg text-xs"
-                >
-                  ${senderBanned ? 'Unban Sender' : '🚫 Ban Sender'}
-                </button>
-              </div>
-            </div>
-          `;
-        }).join('');
-        return;
-      }
-
-      // Tab 4: User Feedback & Star Ratings
+      // TAB 4: USER FEEDBACK & STAR RATINGS
       if (adminFilterMode === 'feedback') {
-        const { data: feedbackRows, error } = await supabaseClient
-          .from('feedback')
-          .select('*')
-          .order('created_at', { ascending: false })
-          .limit(100);
-
-        if (error) {
-          container.innerHTML = `<div class="p-4 text-xs text-red-600">${escapeHtml(error.message)}</div>`;
-          return;
-        }
-        if (!feedbackRows || feedbackRows.length === 0) {
-          container.innerHTML = `<div class="p-12 text-center text-xs text-zinc-400">No user feedback submitted yet.</div>`;
-          return;
-        }
-
         const avgRating = (
-          feedbackRows.reduce((sum, r) => sum + (Number(r.rating) || 5), 0) / feedbackRows.length
+          filtered.reduce((sum, r) => sum + (Number(r.rating) || 5), 0) / filtered.length
         ).toFixed(1);
 
         const summaryBar = `
           <div class="bg-white rounded-xl border border-zinc-200 p-4 mb-3 flex flex-wrap items-center justify-between gap-2">
             <div class="flex items-center gap-3">
               <span class="text-2xl font-bold text-[#F0A06A]">★ ${avgRating}</span>
-              <span class="text-xs text-zinc-500">Average rating across <strong>${feedbackRows.length}</strong> submission(s)</span>
+              <span class="text-xs text-zinc-500">Average rating across <strong>${filtered.length}</strong> shown submission(s)</span>
             </div>
           </div>
         `;
 
-        const cardsHtml = feedbackRows.map(fb => {
+        const cardsHtml = filtered.map(fb => {
           const starsCount = Math.max(1, Math.min(5, Number(fb.rating) || 5));
           const starsStr = '★'.repeat(starsCount) + '☆'.repeat(5 - starsCount);
           const dateStr = new Date(fb.created_at).toLocaleDateString('en-US', {
@@ -1957,6 +2122,7 @@
                 <p class="text-xs sm:text-sm text-zinc-800 whitespace-pre-line leading-relaxed">${escapeHtml(fb.message)}</p>
               </div>
               <button
+                type="button"
                 onclick="adminDeleteFeedback('${fb.id}')"
                 class="bg-zinc-100 hover:bg-red-50 text-zinc-500 hover:text-red-600 border border-zinc-200 hover:border-red-200 font-semibold px-3 py-1.5 rounded-lg text-xs shrink-0 transition"
                 title="Dismiss feedback"
@@ -1971,24 +2137,9 @@
         return;
       }
 
-      // Tab 3: Banned Users List
+      // TAB 3: BANNED USERS LIST
       if (adminFilterMode === 'banned') {
-        const { data: bannedUsers, error } = await supabaseClient
-          .from('profiles')
-          .select('*')
-          .eq('is_banned', true)
-          .order('updated_at', { ascending: false });
-
-        if (error) {
-          container.innerHTML = `<div class="p-4 text-xs text-red-600">${escapeHtml(error.message)}</div>`;
-          return;
-        }
-        if (!bannedUsers || bannedUsers.length === 0) {
-          container.innerHTML = `<div class="p-10 text-center text-xs text-zinc-400">No banned users currently.</div>`;
-          return;
-        }
-
-        container.innerHTML = bannedUsers.map(u => `
+        container.innerHTML = filtered.map(u => `
           <div class="bg-white rounded-xl border border-zinc-200 p-4 mb-2.5 flex flex-wrap items-center justify-between gap-3">
             <div>
               <span class="bg-red-100 text-red-700 text-[10px] font-bold uppercase px-2 py-0.5 rounded mr-2">BANNED</span>
@@ -1996,6 +2147,7 @@
               <div class="text-xs text-zinc-400 mt-0.5">User ID: ${u.id}</div>
             </div>
             <button
+              type="button"
               onclick="adminToggleBanUser('${u.id}', false)"
               class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-1.5 rounded-lg text-xs"
             >
@@ -2006,30 +2158,8 @@
         return;
       }
 
-      // Tab 1 & 2: Flagged Posts or All Recent Posts
-      let query = supabaseClient
-        .from('listings')
-        .select('*, seller:profiles!listings_seller_id_fkey(id, email, display_name, is_banned)')
-        .order('flags_count', { ascending: false })
-        .order('created_at', { ascending: false })
-        .limit(50);
-
-      if (adminFilterMode === 'flagged') {
-        query = query.or('status.eq.flagged,flags_count.gt.0');
-      }
-
-      const { data: rows, error } = await query;
-      if (error) {
-        container.innerHTML = `<div class="p-4 text-xs text-red-600">${escapeHtml(error.message)}</div>`;
-        return;
-      }
-
-      if (!rows || rows.length === 0) {
-        container.innerHTML = `<div class="p-12 text-center text-xs text-zinc-400">🎉 Queue is clean! No flagged or reported listings to review.</div>`;
-        return;
-      }
-
-      container.innerHTML = rows.map(item => {
+      // TAB 1 & 2: FLAGGED POSTS OR ALL RECENT POSTS
+      container.innerHTML = filtered.map(item => {
         const sellerEmail = item.seller?.email || 'Unknown seller';
         const isBanned = Boolean(item.seller?.is_banned);
         const isQuarantined = item.status === 'flagged';
@@ -2056,6 +2186,7 @@
 
               <div class="flex flex-wrap items-center gap-2 shrink-0">
                 <button
+                  type="button"
                   onclick="adminApprovePost('${item.id}')"
                   class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs"
                   title="Clear flags and restore to public feed"
@@ -2063,6 +2194,7 @@
                   ✓ Approve &amp; Clear Flags
                 </button>
                 <button
+                  type="button"
                   onclick="adminDeletePost('${item.id}')"
                   class="bg-zinc-900 hover:bg-zinc-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs"
                   title="Permanently delete this listing"
@@ -2070,6 +2202,7 @@
                   🗑 Delete Post
                 </button>
                 <button
+                  type="button"
                   onclick="adminToggleBanUser('${item.seller_id}', ${!isBanned})"
                   class="${isBanned ? 'bg-amber-500 text-zinc-950' : 'bg-red-600 hover:bg-red-700 text-white'} font-bold px-3 py-1.5 rounded-lg text-xs"
                 >
@@ -2106,7 +2239,7 @@
     }
 
     async function adminToggleBanUser(userId, banState) {
-      const actionLabel = banState ? 'ban this seller and hide all of their active listings' : 'unban this seller';
+      const actionLabel = banState ? 'ban this user and hide all of their active listings' : 'unban this user';
       if (!confirm(`Are you sure you want to ${actionLabel}?`)) return;
 
       const { error } = await supabaseClient.rpc('admin_set_user_ban', {
@@ -2315,9 +2448,9 @@
       bar.classList.remove('hidden');
       bar.className = 'flex flex-wrap gap-1.5 mb-5';
       bar.innerHTML = [
-        `<button onclick="selectSubcategory('all')" class="px-3 py-1 rounded-full text-xs font-bold border ${activeSubcategory === 'all' ? 'bg-[#1348FB] text-white border-[#1348FB]' : 'bg-white text-[#1348FB] border-[#1348FB]/30 hover:border-[#1348FB]'}">All ${CATEGORY_META[cat].label}</button>`,
+        `<button type="button" onclick="selectSubcategory('all')" class="px-3 py-1 rounded-full text-xs font-bold border ${activeSubcategory === 'all' ? 'bg-[#1348FB] text-white border-[#1348FB]' : 'bg-white text-[#1348FB] border-[#1348FB]/30 hover:border-[#1348FB]'}">All ${CATEGORY_META[cat].label}</button>`,
         ...subs.map(s => `
-          <button onclick="selectSubcategory('${s.id}')" class="subcat-regular px-3 py-1 rounded-full text-xs border ${activeSubcategory === s.id ? 'bg-[#1348FB] text-white border-[#1348FB]' : 'bg-white text-zinc-800 border-zinc-200 hover:border-[#1348FB]'}">${s.label}</button>
+          <button type="button" onclick="selectSubcategory('${s.id}')" class="subcat-regular px-3 py-1 rounded-full text-xs border ${activeSubcategory === s.id ? 'bg-[#1348FB] text-white border-[#1348FB]' : 'bg-white text-zinc-800 border-zinc-200 hover:border-[#1348FB]'}">${s.label}</button>
         `)
       ].join('');
     }
@@ -2451,6 +2584,7 @@
           return `
             <div onclick="openDetailModal('${item.id}')" class="relative border border-zinc-200 rounded-xl overflow-hidden hover:border-[#1348FB] transition cursor-pointer bg-white flex flex-col">
               <button
+                type="button"
                 onclick="toggleFavorite('${item.id}', event)"
                 class="absolute top-2.5 right-2.5 z-10 w-8 h-8 rounded-full bg-white/90 hover:bg-white shadow flex items-center justify-center text-base transition ${isFav ? 'text-[#F0A06A]' : 'text-zinc-400 hover:text-[#F0A06A]'}"
                 title="${isFav ? 'Remove from Saved' : 'Save listing'}"
@@ -2498,6 +2632,7 @@
           <div onclick="openDetailModal('${item.id}')" class="px-4 sm:px-5 py-3.5 hover:bg-zinc-50 cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4 text-sm">
             <div class="flex items-start sm:items-center gap-2.5 min-w-0 flex-1">
               <button
+                type="button"
                 onclick="toggleFavorite('${item.id}', event)"
                 class="text-base leading-none mt-0.5 sm:mt-0 shrink-0 transition ${isFav ? 'text-[#F0A06A]' : 'text-zinc-300 hover:text-[#F0A06A]'}"
                 title="${isFav ? 'Remove from Saved' : 'Save listing'}"
@@ -2736,7 +2871,7 @@
     }
 
     // ============================================================================
-    // IN-WEBSITE MESSAGING & INBOX SYSTEM
+    // IN-WEBSITE MESSAGING & INBOX SYSTEM (WITH xxxxxx USERNAME MASKING)
     // ============================================================================
     async function sendListingMessage() {
       if (!currentUser) {
@@ -2828,7 +2963,8 @@
       inboxMessages.forEach(m => {
         const otherId = m.sender_id === currentUser.id ? m.receiver_id : m.sender_id;
         const otherProfile = m.sender_id === currentUser.id ? m.receiver : m.sender;
-        const otherName = otherProfile?.display_name || otherProfile?.email || 'User';
+        const rawOtherName = otherProfile?.display_name || otherProfile?.email || 'User';
+        const maskedOtherName = maskUsername(rawOtherName);
         const listingTitle = m.listings?.title || 'Listing';
         const key = `${m.listing_id}_${otherId}`;
 
@@ -2838,7 +2974,7 @@
             listing_id: m.listing_id,
             listing_title: listingTitle,
             other_id: otherId,
-            other_name: otherName,
+            other_name: maskedOtherName,
             messages: [],
             unread: 0
           };
@@ -2906,18 +3042,24 @@
       const thread = conversationMap[key];
       if (!thread) return;
 
+      const myMaskedName = maskUsername(currentUser?.email || 'You');
+
       document.getElementById('chatHeader').innerHTML = `
         <span class="text-[#1348FB] font-bold">${escapeHtml(thread.listing_title)}</span>
         <span class="text-zinc-400 mx-1.5">•</span>
-        <span class="text-zinc-600">Chatting with ${escapeHtml(thread.other_name)}</span>
+        <span class="text-zinc-600">Chatting with <strong>${escapeHtml(thread.other_name)}</strong></span>
       `;
 
       const container = document.getElementById('chatMessagesContainer');
       container.innerHTML = thread.messages.map(m => {
         const isMine = m.sender_id === currentUser.id;
+        const bubbleSender = isMine
+          ? myMaskedName
+          : maskUsername(m.sender?.display_name || m.sender?.email || thread.other_name);
         const timeStr = new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         return `
-          <div class="flex ${isMine ? 'justify-end' : 'justify-start'}">
+          <div class="flex flex-col ${isMine ? 'items-end' : 'items-start'}">
+            <span class="text-[10px] font-semibold text-zinc-400 mb-0.5 px-1">${escapeHtml(bubbleSender)}</span>
             <div class="max-w-[78%] rounded-2xl px-3.5 py-2 text-xs ${isMine ? 'bg-[#1348FB] text-white' : 'bg-white border border-zinc-200 text-zinc-900'}">
               <div class="whitespace-pre-line leading-relaxed">${escapeHtml(m.body)}</div>
               <div class="text-[10px] mt-1 ${isMine ? 'text-white/70 text-right' : 'text-zinc-400'}">${timeStr}</div>
@@ -2981,6 +3123,10 @@
     }
 
     function openPostModal() {
+      if (!supabaseClient) {
+        openAuthModal('Supabase keys are not configured in index.html yet.');
+        return;
+      }
       if (!currentUser) {
         openAuthModal('Please sign in or create an account to post on simplylists.');
         return;
@@ -3156,9 +3302,14 @@
     function closeAuthModal() { document.getElementById('authModal').classList.add('hidden'); }
 
     async function handleSignUp() {
+      const msgEl = document.getElementById('authMsg');
+      if (!supabaseClient) {
+        msgEl.textContent = 'Supabase keys are not configured in index.html yet.';
+        msgEl.classList.remove('hidden');
+        return;
+      }
       const email = document.getElementById('authEmail').value.trim();
       const password = document.getElementById('authPassword').value;
-      const msgEl = document.getElementById('authMsg');
       const { error } = await supabaseClient.auth.signUp({ email, password });
       msgEl.classList.remove('hidden');
       if (error) {
@@ -3169,9 +3320,14 @@
     }
 
     async function handleSignIn() {
+      const msgEl = document.getElementById('authMsg');
+      if (!supabaseClient) {
+        msgEl.textContent = 'Supabase keys are not configured in index.html yet.';
+        msgEl.classList.remove('hidden');
+        return;
+      }
       const email = document.getElementById('authEmail').value.trim();
       const password = document.getElementById('authPassword').value;
-      const msgEl = document.getElementById('authMsg');
       const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
       if (error) {
         msgEl.textContent = error.message;
@@ -3182,7 +3338,7 @@
     }
 
     async function handleSignOut() {
-      await supabaseClient.auth.signOut();
+      if (supabaseClient) await supabaseClient.auth.signOut();
     }
 
     function filterByCategory(cat) {
