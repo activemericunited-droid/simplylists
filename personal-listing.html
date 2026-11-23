@@ -120,7 +120,7 @@
       <!-- Description -->
       <div id="detailDesc" class="text-sm sm:text-base text-zinc-700 whitespace-pre-line leading-relaxed mb-8 break-words"></div>
 
-      <!-- DIRECT MESSAGE BOX (NO SALES QUICK-REPLY PILLS) -->
+      <!-- DIRECT MESSAGE BOX (NON-NEGOTIABLE LIVE CHAT; NO SALES QUICK-REPLY PILLS) -->
       <div id="directMessageSection" class="bg-zinc-50 border border-zinc-200 rounded-xl p-4 sm:p-5 mb-5">
         <div class="flex items-center justify-between mb-2.5">
           <h2 class="text-xs font-bold uppercase tracking-wider text-[#1348FB]">💬 Send Direct Message to Poster</h2>
@@ -185,16 +185,47 @@
         </form>
       </div>
 
-      <!-- ANONYMIZED RELAY + POSTED DATE -->
-      <div class="bg-zinc-50 border border-zinc-200 rounded-xl p-3.5 text-xs space-y-1.5">
-        <div class="break-all">
-          <span class="font-semibold text-zinc-700">Anonymized Reply Relay:</span>
-          <code id="detailRelay" class="ml-1.5 bg-white px-2.5 py-1 rounded border border-zinc-200 select-all font-mono"></code>
+      <!-- POLISHED ANONYMOUS EMAIL RELAY CARD (SHOWN WHEN POSTER ENABLED EMAIL RELAY) -->
+      <div id="emailRelayCard" class="bg-zinc-50 border border-zinc-200 rounded-xl p-4 sm:p-5 mb-4">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+          <div class="flex items-center flex-wrap gap-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-[#1348FB]">✉️ Reply via Anonymous Email</span>
+            <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">🔒 Real Email Hidden</span>
+          </div>
+          <button
+            type="button"
+            id="copyRelayBtn"
+            onclick="copyRelayAddress()"
+            class="bg-white hover:bg-zinc-100 border border-zinc-300 text-zinc-800 font-semibold px-2.5 py-1 rounded-lg text-[11px] transition"
+          >
+            📋 Copy Address
+          </button>
         </div>
-        <div class="flex flex-wrap items-center justify-between gap-2 text-zinc-500 pt-1 border-t border-zinc-200/70">
-          <span id="detailDate"></span>
-          <span id="detailExpirationFooter" class="font-medium text-zinc-600"></span>
+
+        <div class="bg-white border border-zinc-200 rounded-lg px-3 py-2 flex items-center justify-between gap-2 mb-3">
+          <code id="detailRelay" class="text-xs font-mono text-zinc-800 break-all select-all"></code>
         </div>
+
+        <div class="flex flex-wrap items-center gap-2 text-xs">
+          <a id="relayMailtoLink" href="#" class="bg-[#1348FB] hover:opacity-95 text-white font-bold px-3.5 py-1.5 rounded-lg transition">
+            Open Mail App
+          </a>
+          <a id="relayGmailLink" href="#" target="_blank" rel="noopener" class="bg-white hover:border-[#1348FB] border border-zinc-300 text-zinc-800 font-semibold px-3 py-1.5 rounded-lg transition">
+            Gmail
+          </a>
+          <a id="relayYahooLink" href="#" target="_blank" rel="noopener" class="bg-white hover:border-[#1348FB] border border-zinc-300 text-zinc-800 font-semibold px-3 py-1.5 rounded-lg transition">
+            Yahoo
+          </a>
+          <a id="relayOutlookLink" href="#" target="_blank" rel="noopener" class="bg-white hover:border-[#1348FB] border border-zinc-300 text-zinc-800 font-semibold px-3 py-1.5 rounded-lg transition">
+            Outlook
+          </a>
+        </div>
+      </div>
+
+      <!-- POSTED DATE & EXPIRATION FOOTER -->
+      <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-zinc-500 pt-2 border-t border-zinc-200/70">
+        <span id="detailDate"></span>
+        <span id="detailExpirationFooter" class="font-medium text-zinc-600"></span>
       </div>
     </article>
 
@@ -333,7 +364,7 @@
     </div>
   </div>
 
-  <!-- IN-WEBSITE INBOX & FAST REALTIME CHAT MODAL (3-LETTER xxx USERNAME MASKING) -->
+  <!-- IN-WEBSITE INBOX & FAST REALTIME CHAT MODAL (9-LETTER xxxxxxxxx MASKING + OP BLOCK/DELETE) -->
   <div id="inboxModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl border border-zinc-200 max-w-4xl w-full h-[80vh] flex flex-col overflow-hidden shadow-2xl">
       <div class="px-6 py-4 border-b border-zinc-200 flex items-center justify-between bg-zinc-50">
@@ -494,9 +525,10 @@
     let feedbackRating = 5;
     let feedbackTopic = 'feature-idea';
 
-    // Realtime Inbox State
+    // Realtime Inbox & OP Block List State
     let inboxMessages = [];
     let conversationMap = {};
+    let blockedUserIds = new Set();
     let activeThreadKey = null;
     let realtimeChannel = null;
     let toastTimeout = null;
@@ -514,15 +546,15 @@
     }
 
     // ============================================================================
-    // USERNAME MASKING HELPER (TURNS LAST 3 LETTERS INTO 'xxx')
+    // LIVE WEBSITE CHAT USERNAME MASKING (LAST 9 LETTERS -> 'xxxxxxxxx')
     // ============================================================================
     function maskUsername(rawName) {
-      if (!rawName) return 'xxx';
+      if (!rawName) return 'xxxxxxxxx';
       const base = String(rawName).includes('@')
         ? String(rawName).split('@')[0].trim()
         : String(rawName).trim();
-      if (base.length <= 3) return 'xxx';
-      return base.slice(0, base.length - 3) + 'xxx';
+      if (base.length <= 9) return 'xxxxxxxxx';
+      return base.slice(0, base.length - 9) + 'xxxxxxxxx';
     }
 
     const isConfigured = SUPABASE_URL.startsWith('http') && !SUPABASE_URL.includes('PASTE_YOUR') && SUPABASE_ANON_KEY.length > 20;
@@ -545,6 +577,50 @@
     } else {
       document.getElementById('setupBanner').classList.remove('hidden');
       document.getElementById('loadingState').innerHTML = 'Paste your <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> near the bottom of <code>personal-listing.html</code>.';
+    }
+
+    // ============================================================================
+    // POLISHED ANONYMOUS EMAIL RELAY CARD & NON-NEGOTIABLE CHAT UI
+    // ============================================================================
+    function configureListingContactUI(item) {
+      const pref = item.contact_preference || 'both';
+      const relayAddr = item.relay_email || 'reply@simplylists.org';
+      const isOwner = Boolean(currentUser && currentUser.id === item.seller_id);
+
+      const dmSection = document.getElementById('directMessageSection');
+      const relayCard = document.getElementById('emailRelayCard');
+
+      // In-site live chat is non-negotiable for all visitors
+      if (isOwner) {
+        dmSection?.classList.add('hidden');
+      } else {
+        dmSection?.classList.remove('hidden');
+      }
+
+      // Show polished email relay card unless poster selected In-Site Chat Only
+      if (pref === 'chat_only') {
+        relayCard?.classList.add('hidden');
+      } else {
+        relayCard?.classList.remove('hidden');
+        const subject = encodeURIComponent(`Re: ${item.title}`);
+        const body = encodeURIComponent(`Hi, I saw your listing "${item.title}" on simplylists:\n\n`);
+
+        document.getElementById('detailRelay').textContent = relayAddr;
+        document.getElementById('relayMailtoLink').href = `mailto:${relayAddr}?subject=${subject}&body=${body}`;
+        document.getElementById('relayGmailLink').href = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(relayAddr)}&su=${subject}&body=${body}`;
+        document.getElementById('relayYahooLink').href = `https://compose.mail.yahoo.com/?to=${encodeURIComponent(relayAddr)}&subject=${subject}&body=${body}`;
+        document.getElementById('relayOutlookLink').href = `https://outlook.live.com/mail/0/deeplink/compose?to=${encodeURIComponent(relayAddr)}&subject=${subject}&body=${body}`;
+      }
+    }
+
+    function copyRelayAddress() {
+      const addr = document.getElementById('detailRelay')?.textContent?.trim();
+      if (!addr) return;
+      navigator.clipboard?.writeText(addr);
+      const btn = document.getElementById('copyRelayBtn');
+      if (!btn) return;
+      btn.textContent = '✓ Copied!';
+      setTimeout(() => { btn.textContent = '📋 Copy Address'; }, 2000);
     }
 
     // ============================================================================
@@ -693,6 +769,7 @@
           setupRealtimeMessages();
         } else {
           teardownRealtimeMessages();
+          blockedUserIds = new Set();
         }
       });
     }
@@ -722,8 +799,20 @@
     }
 
     // ============================================================================
-    // FAST REALTIME INBOX & OPTIMISTIC CHAT (3-LETTER xxx MASKING)
+    // FAST REALTIME INBOX & OPTIMISTIC CHAT (9-LETTER xxxxxxxxx + OP BLOCK/DELETE)
     // ============================================================================
+    async function loadBlockedSenders() {
+      if (!supabaseClient || !currentUser) {
+        blockedUserIds = new Set();
+        return;
+      }
+      const { data } = await supabaseClient
+        .from('blocked_senders')
+        .select('blocked_user_id')
+        .eq('blocker_id', currentUser.id);
+      blockedUserIds = new Set((data || []).map(r => r.blocked_user_id));
+    }
+
     function setupRealtimeMessages() {
       if (!supabaseClient || !currentUser) return;
       teardownRealtimeMessages();
@@ -748,7 +837,6 @@
             const existingThread = conversationMap[incomingKey];
             const inboxOpen = !document.getElementById('inboxModal').classList.contains('hidden');
 
-            // 1. Reconcile optimistic sent message or skip duplicate
             if (existingThread) {
               const alreadyExists = existingThread.messages.some(m => m.id === newMsg.id);
               if (alreadyExists) return;
@@ -765,7 +853,6 @@
                 }
               }
 
-              // 2. Append incoming message directly into local state (0 extra DB queries)
               existingThread.messages.push(newMsg);
 
               if (inboxOpen && activeThreadKey === incomingKey) {
@@ -785,7 +872,6 @@
               return;
             }
 
-            // 3. Brand-new conversation not yet in memory
             if (newMsg.receiver_id === currentUser.id && !inboxOpen) {
               showLiveToast(newMsg.body);
               updateUnreadBadgeLocally(1);
@@ -873,18 +959,21 @@
       if (!supabaseClient || !currentUser) return;
       const threadsList = document.getElementById('threadsList');
 
-      const { data: msgs, error } = await supabaseClient
-        .from('messages')
-        .select('*, listings(title), sender:profiles!messages_sender_id_fkey(email, display_name), receiver:profiles!messages_receiver_id_fkey(email, display_name)')
-        .or(`sender_id.eq.${currentUser.id},receiver_id.eq.${currentUser.id}`)
-        .order('created_at', { ascending: true });
+      const [msgsRes] = await Promise.all([
+        supabaseClient
+          .from('messages')
+          .select('*, listings(title, seller_id), sender:profiles!messages_sender_id_fkey(email, display_name), receiver:profiles!messages_receiver_id_fkey(email, display_name)')
+          .or(`sender_id.eq.${currentUser.id},receiver_id.eq.${currentUser.id}`)
+          .order('created_at', { ascending: true }),
+        loadBlockedSenders()
+      ]);
 
-      if (error) {
-        threadsList.innerHTML = `<div class="p-4 text-xs text-red-600">${escapeHtml(error.message)}</div>`;
+      if (msgsRes.error) {
+        threadsList.innerHTML = `<div class="p-4 text-xs text-red-600">${escapeHtml(msgsRes.error.message)}</div>`;
         return;
       }
 
-      inboxMessages = msgs || [];
+      inboxMessages = msgsRes.data || [];
       conversationMap = {};
 
       inboxMessages.forEach(m => {
@@ -893,6 +982,7 @@
         const rawOtherName = otherProfile?.display_name || otherProfile?.email || 'User';
         const maskedOtherName = maskUsername(rawOtherName);
         const listingTitle = m.listings?.title || 'Listing';
+        const listingSellerId = m.listings?.seller_id || null;
         const key = `${m.listing_id}_${otherId}`;
 
         if (!conversationMap[key]) {
@@ -900,6 +990,8 @@
             key,
             listing_id: m.listing_id,
             listing_title: listingTitle,
+            listing_seller_id: listingSellerId,
+            isOriginalPoster: Boolean(listingSellerId && listingSellerId === currentUser.id),
             other_id: otherId,
             other_name: maskedOtherName,
             messages: [],
@@ -935,13 +1027,17 @@
       threadsList.innerHTML = threads.map(t => {
         const lastMsg = t.messages[t.messages.length - 1];
         const isActive = activeThreadKey === t.key;
+        const isBlocked = t.isOriginalPoster && blockedUserIds.has(t.other_id);
         return `
           <div onclick="selectConversation('${t.key}')" class="p-3.5 cursor-pointer hover:bg-white transition ${isActive ? 'bg-white border-l-4 border-l-[#1348FB]' : ''}">
             <div class="flex items-center justify-between gap-2">
               <span class="font-bold text-xs text-zinc-900 truncate">${escapeHtml(t.listing_title)}</span>
               ${t.unread > 0 ? `<span class="bg-[#1348FB] text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">${t.unread}</span>` : ''}
             </div>
-            <div class="text-[11px] text-[#1348FB] font-medium mt-0.5">with ${escapeHtml(t.other_name)}</div>
+            <div class="flex items-center gap-1.5 text-[11px] text-[#1348FB] font-medium mt-0.5">
+              <span class="truncate">with ${escapeHtml(t.other_name)}</span>
+              ${isBlocked ? '<span class="bg-red-100 text-red-700 text-[9px] font-bold px-1.5 py-0.2 rounded uppercase shrink-0">Blocked</span>' : ''}
+            </div>
             <p class="text-xs text-zinc-500 truncate mt-1">${escapeHtml(lastMsg?.body || '')}</p>
           </div>
         `;
@@ -957,7 +1053,6 @@
         .filter(m => m.receiver_id === currentUser.id && !m.is_read)
         .map(m => m.id);
 
-      // Instant UI update; mark read in DB silently in the background
       if (unreadIds.length > 0) {
         thread.messages.forEach(m => {
           if (m.receiver_id === currentUser.id) m.is_read = true;
@@ -977,7 +1072,9 @@
       const myMaskedName = maskUsername(currentUser?.email || 'You');
       const bubbleSender = isMine
         ? myMaskedName
-        : maskUsername(m.sender?.display_name || m.sender?.email || thread.other_name);
+        : (m.sender?.display_name || m.sender?.email
+            ? maskUsername(m.sender.display_name || m.sender.email)
+            : thread.other_name);
       const timeStr = new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
       return `
@@ -995,10 +1092,40 @@
       const thread = conversationMap[key];
       if (!thread) return;
 
+      const isBlocked = blockedUserIds.has(thread.other_id);
+
+      // LIVE-CHAT-ONLY OP CONTROLS: STRICTLY VISIBLE TO THE ORIGINAL POSTER
+      const opControlsHtml = thread.isOriginalPoster ? `
+        <div class="flex items-center gap-1.5 shrink-0">
+          <button
+            type="button"
+            onclick="handleOpToggleBlock('${thread.key}')"
+            class="${isBlocked
+              ? 'bg-amber-100 text-amber-900 border border-amber-300 hover:bg-amber-200'
+              : 'bg-white text-red-600 border border-red-200 hover:bg-red-50'} px-2.5 py-1 rounded-lg text-[11px] font-bold transition"
+          >
+            ${isBlocked ? '✓ Unblock Sender' : '🚫 Block Sender'}
+          </button>
+          <button
+            type="button"
+            onclick="handleOpDeleteConversation('${thread.key}')"
+            class="bg-white text-zinc-600 hover:text-red-600 border border-zinc-200 hover:border-red-200 hover:bg-red-50 px-2.5 py-1 rounded-lg text-[11px] font-semibold transition"
+          >
+            🗑 Delete Chat
+          </button>
+        </div>
+      ` : '';
+
       document.getElementById('chatHeader').innerHTML = `
-        <span class="text-[#1348FB] font-bold">${escapeHtml(thread.listing_title)}</span>
-        <span class="text-zinc-400 mx-1.5">•</span>
-        <span class="text-zinc-600">Chatting with <strong>${escapeHtml(thread.other_name)}</strong></span>
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="min-w-0 truncate">
+            <span class="text-[#1348FB] font-bold">${escapeHtml(thread.listing_title)}</span>
+            <span class="text-zinc-400 mx-1.5">•</span>
+            <span class="text-zinc-600">Chatting with <strong>${escapeHtml(thread.other_name)}</strong></span>
+            ${isBlocked && thread.isOriginalPoster ? '<span class="ml-1.5 bg-red-100 text-red-700 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase">Blocked</span>' : ''}
+          </div>
+          ${opControlsHtml}
+        </div>
       `;
 
       const container = document.getElementById('chatMessagesContainer');
@@ -1013,6 +1140,62 @@
       if (container.querySelector(`[data-msg-id="${msg.id}"]`)) return;
       container.insertAdjacentHTML('beforeend', buildMessageBubbleHtml(msg, thread));
       container.scrollTop = container.scrollHeight;
+    }
+
+    async function handleOpToggleBlock(key) {
+      const thread = conversationMap[key];
+      if (!thread || !thread.isOriginalPoster) return;
+
+      const isCurrentlyBlocked = blockedUserIds.has(thread.other_id);
+      const confirmMsg = isCurrentlyBlocked
+        ? `Unblock ${thread.other_name}? They will be able to send you live chat messages again.`
+        : `Block ${thread.other_name}? They will no longer be able to send you live chat messages on simplylists.`;
+      if (!confirm(confirmMsg)) return;
+
+      const rpcName = isCurrentlyBlocked ? 'op_unblock_sender' : 'op_block_sender';
+      const { error } = await supabaseClient.rpc(rpcName, {
+        target_listing_id: thread.listing_id,
+        target_sender_id: thread.other_id
+      });
+
+      if (error) {
+        alert(`Action failed: ${error.message}`);
+        return;
+      }
+
+      if (isCurrentlyBlocked) blockedUserIds.delete(thread.other_id);
+      else blockedUserIds.add(thread.other_id);
+
+      renderThreadsSidebar();
+      renderActiveThread(key);
+    }
+
+    async function handleOpDeleteConversation(key) {
+      const thread = conversationMap[key];
+      if (!thread || !thread.isOriginalPoster) return;
+
+      if (!confirm(`Permanently delete this live chat conversation with ${thread.other_name}? This cannot be undone.`)) {
+        return;
+      }
+
+      const { error } = await supabaseClient.rpc('op_delete_conversation', {
+        target_listing_id: thread.listing_id,
+        other_user_id: thread.other_id
+      });
+
+      if (error) {
+        alert(`Could not delete conversation: ${error.message}`);
+        return;
+      }
+
+      delete conversationMap[key];
+      activeThreadKey = null;
+      renderThreadsSidebar();
+
+      document.getElementById('chatHeader').textContent = 'Select a conversation on the left to view messages';
+      document.getElementById('chatMessagesContainer').innerHTML = `<div class="text-center text-xs text-zinc-400 mt-12">Conversation deleted.</div>`;
+      document.getElementById('chatReplyForm').classList.add('hidden');
+      refreshUnreadCount();
     }
 
     async function sendInboxReply(e) {
@@ -1137,7 +1320,6 @@
       const expInfo = formatExpirationInfo(item.expires_at, item.created_at);
       document.getElementById('detailDate').textContent = formatPostedDateAndAgo(item.created_at);
       document.getElementById('detailExpirationFooter').textContent = expInfo.full;
-      document.getElementById('detailRelay').textContent = item.relay_email || 'reply@simplylists.org';
       document.getElementById('detailDesc').textContent = item.description;
 
       const imgWrap = document.getElementById('detailImageWrapper');
@@ -1159,11 +1341,10 @@
 
     function updateOwnerOrBuyerUI() {
       if (!currentListing) return;
-      const dmSection = document.getElementById('directMessageSection');
-      const ownerSection = document.getElementById('ownerManageSection');
+      configureListingContactUI(currentListing);
 
+      const ownerSection = document.getElementById('ownerManageSection');
       if (currentUser && currentUser.id === currentListing.seller_id) {
-        dmSection.classList.add('hidden');
         ownerSection.classList.remove('hidden');
         const soldBtn = document.getElementById('toggleSoldBtn');
         if (currentListing.status === 'sold') {
@@ -1174,7 +1355,6 @@
           soldBtn.className = 'bg-amber-500 hover:bg-amber-600 text-white font-bold px-3 py-1.5 rounded-lg text-xs';
         }
       } else {
-        dmSection.classList.remove('hidden');
         ownerSection.classList.add('hidden');
       }
     }
