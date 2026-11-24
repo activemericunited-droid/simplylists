@@ -185,7 +185,7 @@
         </form>
       </div>
 
-      <!-- POLISHED ANONYMOUS EMAIL RELAY CARD (SHOWN WHEN POSTER ENABLED EMAIL RELAY) -->
+      <!-- POLISHED ANONYMOUS EMAIL RELAY CARD (CUSTOM DISPLAY NAME + MAIL APP / GMAIL / OUTLOOK) -->
       <div id="emailRelayCard" class="bg-zinc-50 border border-zinc-200 rounded-xl p-4 sm:p-5 mb-4">
         <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
           <div class="flex items-center flex-wrap gap-2">
@@ -206,15 +206,28 @@
           <code id="detailRelay" class="text-xs font-mono text-zinc-800 break-all select-all"></code>
         </div>
 
+        <!-- OPTIONAL DISPLAY NAME INPUT -->
+        <div class="mb-3">
+          <label for="relayDisplayName" class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-600 mb-1">
+            Name to show on your email (optional)
+          </label>
+          <input
+            id="relayDisplayName"
+            type="text"
+            maxlength="40"
+            oninput="updateRelayClientLinks()"
+            placeholder="e.g., Alex or Local Friend (leave blank to stay masked)"
+            class="w-full bg-white border border-zinc-300 rounded-lg px-3 py-1.5 text-xs sm:text-sm focus:outline-none focus:border-[#1348FB]"
+          />
+        </div>
+
+        <!-- QUICK-LAUNCH EMAIL CLIENT BUTTONS (YAHOO REMOVED) -->
         <div class="flex flex-wrap items-center gap-2 text-xs">
           <a id="relayMailtoLink" href="#" class="bg-[#1348FB] hover:opacity-95 text-white font-bold px-3.5 py-1.5 rounded-lg transition">
             Open Mail App
           </a>
           <a id="relayGmailLink" href="#" target="_blank" rel="noopener" class="bg-white hover:border-[#1348FB] border border-zinc-300 text-zinc-800 font-semibold px-3 py-1.5 rounded-lg transition">
             Gmail
-          </a>
-          <a id="relayYahooLink" href="#" target="_blank" rel="noopener" class="bg-white hover:border-[#1348FB] border border-zinc-300 text-zinc-800 font-semibold px-3 py-1.5 rounded-lg transition">
-            Yahoo
           </a>
           <a id="relayOutlookLink" href="#" target="_blank" rel="noopener" class="bg-white hover:border-[#1348FB] border border-zinc-300 text-zinc-800 font-semibold px-3 py-1.5 rounded-lg transition">
             Outlook
@@ -521,6 +534,9 @@
     let currentListing = null;
     let favoriteIds = new Set(JSON.parse(localStorage.getItem('simplylists_favs') || '[]'));
 
+    // Email relay state for live display-name link updates
+    let activeRelayContext = { relayAddr: '', title: '' };
+
     // Feedback form state
     let feedbackRating = 5;
     let feedbackTopic = 'feature-idea';
@@ -580,7 +596,7 @@
     }
 
     // ============================================================================
-    // POLISHED ANONYMOUS EMAIL RELAY CARD & NON-NEGOTIABLE CHAT UI
+    // POLISHED ANONYMOUS EMAIL RELAY CARD & CUSTOM DISPLAY NAME LINKS
     // ============================================================================
     function configureListingContactUI(item) {
       const pref = item.contact_preference || 'both';
@@ -602,15 +618,29 @@
         relayCard?.classList.add('hidden');
       } else {
         relayCard?.classList.remove('hidden');
-        const subject = encodeURIComponent(`Re: ${item.title}`);
-        const body = encodeURIComponent(`Hi, I saw your listing "${item.title}" on simplylists:\n\n`);
-
+        const isNewListing = activeRelayContext.relayAddr !== relayAddr;
+        activeRelayContext = { relayAddr, title: item.title || 'Listing' };
         document.getElementById('detailRelay').textContent = relayAddr;
-        document.getElementById('relayMailtoLink').href = `mailto:${relayAddr}?subject=${subject}&body=${body}`;
-        document.getElementById('relayGmailLink').href = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(relayAddr)}&su=${subject}&body=${body}`;
-        document.getElementById('relayYahooLink').href = `https://compose.mail.yahoo.com/?to=${encodeURIComponent(relayAddr)}&subject=${subject}&body=${body}`;
-        document.getElementById('relayOutlookLink').href = `https://outlook.live.com/mail/0/deeplink/compose?to=${encodeURIComponent(relayAddr)}&subject=${subject}&body=${body}`;
+
+        const nameInput = document.getElementById('relayDisplayName');
+        if (nameInput && isNewListing) nameInput.value = '';
+
+        updateRelayClientLinks();
       }
+    }
+
+    function updateRelayClientLinks() {
+      const { relayAddr, title } = activeRelayContext;
+      if (!relayAddr) return;
+
+      const chosenName = (document.getElementById('relayDisplayName')?.value || '').trim();
+      const subject = encodeURIComponent(`Re: ${title}`);
+      const bodyPrefix = chosenName ? `Name: ${chosenName}\n\n` : '';
+      const body = encodeURIComponent(`${bodyPrefix}Hi, I saw your listing "${title}" on simplylists:\n\n`);
+
+      document.getElementById('relayMailtoLink').href = `mailto:${relayAddr}?subject=${subject}&body=${body}`;
+      document.getElementById('relayGmailLink').href = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(relayAddr)}&su=${subject}&body=${body}`;
+      document.getElementById('relayOutlookLink').href = `https://outlook.live.com/mail/0/deeplink/compose?to=${encodeURIComponent(relayAddr)}&subject=${subject}&body=${body}`;
     }
 
     function copyRelayAddress() {
