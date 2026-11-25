@@ -185,7 +185,7 @@
         </form>
       </div>
 
-      <!-- POLISHED ANONYMOUS EMAIL RELAY CARD (CUSTOM DISPLAY NAME + MAIL APP / GMAIL / OUTLOOK) -->
+      <!-- POLISHED ANONYMOUS EMAIL RELAY CARD (NICKNAME + MAIL APP / GMAIL / OUTLOOK) -->
       <div id="emailRelayCard" class="bg-zinc-50 border border-zinc-200 rounded-xl p-4 sm:p-5 mb-4">
         <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
           <div class="flex items-center flex-wrap gap-2">
@@ -206,22 +206,21 @@
           <code id="detailRelay" class="text-xs font-mono text-zinc-800 break-all select-all"></code>
         </div>
 
-        <!-- OPTIONAL DISPLAY NAME INPUT -->
+        <!-- OPTIONAL NICKNAME INPUT -->
         <div class="mb-3">
           <label for="relayDisplayName" class="block text-[11px] font-semibold uppercase tracking-wider text-zinc-600 mb-1">
-            Name to show on your email (optional)
+            Nickname
           </label>
           <input
             id="relayDisplayName"
             type="text"
             maxlength="40"
             oninput="updateRelayClientLinks()"
-            placeholder="e.g., Alex or Local Friend (leave blank to stay masked)"
             class="w-full bg-white border border-zinc-300 rounded-lg px-3 py-1.5 text-xs sm:text-sm focus:outline-none focus:border-[#1348FB]"
           />
         </div>
 
-        <!-- QUICK-LAUNCH EMAIL CLIENT BUTTONS (YAHOO REMOVED) -->
+        <!-- QUICK-LAUNCH EMAIL CLIENT BUTTONS -->
         <div class="flex flex-wrap items-center gap-2 text-xs">
           <a id="relayMailtoLink" href="#" class="bg-[#1348FB] hover:opacity-95 text-white font-bold px-3.5 py-1.5 rounded-lg transition">
             Open Mail App
@@ -534,7 +533,7 @@
     let currentListing = null;
     let favoriteIds = new Set(JSON.parse(localStorage.getItem('simplylists_favs') || '[]'));
 
-    // Email relay state for live display-name link updates
+    // Email relay state for live Nickname link updates
     let activeRelayContext = { relayAddr: '', title: '' };
 
     // Feedback form state
@@ -596,7 +595,7 @@
     }
 
     // ============================================================================
-    // POLISHED ANONYMOUS EMAIL RELAY CARD & CUSTOM DISPLAY NAME LINKS
+    // POLISHED ANONYMOUS EMAIL RELAY CARD & NICKNAME LINKS
     // ============================================================================
     function configureListingContactUI(item) {
       const pref = item.contact_preference || 'both';
@@ -1575,7 +1574,7 @@
       return { short: `Expires ${dateStr}`, full: `Expires ${dateStr} (${daysLeft} day${daysLeft === 1 ? '' : 's'} remaining)` };
     }
 
-    // AUTH HELPERS
+    // AUTH HELPERS (WITH CALIFORNIA / NEARBY LOCAL SIGN-UP VERIFICATION)
     function openAuthModal(msg) {
       const msgEl = document.getElementById('authMsg');
       if (msg) { msgEl.textContent = msg; msgEl.classList.remove('hidden'); }
@@ -1620,15 +1619,39 @@
 
     async function handleSignUp() {
       const msgEl = document.getElementById('authMsg');
+      msgEl.classList.remove('hidden');
+
       if (!supabaseClient) {
         msgEl.textContent = 'Supabase keys are not configured in personal-listing.html yet.';
-        msgEl.classList.remove('hidden');
         return;
       }
+
       const email = document.getElementById('authEmail').value.trim();
       const password = document.getElementById('authPassword').value;
+      if (!email || password.length < 6) {
+        msgEl.textContent = 'Please enter a valid email and a password of at least 6 characters.';
+        return;
+      }
+
+      msgEl.textContent = 'Verifying your location...';
+
+      try {
+        const geoRes = await fetch('/api/check-location');
+        if (!geoRes.ok) {
+          msgEl.textContent = 'Could not verify your location. Please try again.';
+          return;
+        }
+        const geo = await geoRes.json();
+        if (!geo.allowed) {
+          msgEl.textContent = 'Sign-ups are currently limited to locals in or near California.';
+          return;
+        }
+      } catch {
+        msgEl.textContent = 'Could not verify your location. Please try again.';
+        return;
+      }
+
       const { error } = await supabaseClient.auth.signUp({ email, password });
-      msgEl.classList.remove('hidden');
       msgEl.textContent = error ? error.message : 'Check your email inbox to confirm your simplylists account!';
     }
 
