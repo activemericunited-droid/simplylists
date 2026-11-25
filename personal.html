@@ -378,7 +378,7 @@
     </div>
   </div>
 
-  <!-- POST PERSONAL LISTING MODAL (WITH NON-NEGOTIABLE LIVE CHAT + OPTIONAL ANONYMOUS EMAIL RELAY) -->
+  <!-- POST PERSONAL LISTING MODAL (NON-NEGOTIABLE LIVE CHAT + OPTIONAL ANONYMOUS EMAIL RELAY) -->
   <div id="postModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl border border-zinc-200 max-w-lg w-full max-h-[92vh] overflow-y-auto p-6 shadow-2xl">
       <div class="flex justify-between items-center border-b border-zinc-100 pb-3 mb-4">
@@ -1640,7 +1640,7 @@
     }
 
     // ============================================================================
-    // AUTH HELPERS
+    // AUTH HELPERS (WITH CALIFORNIA / NEARBY LOCAL SIGN-UP VERIFICATION)
     // ============================================================================
     function openAuthModal(msg) {
       const msgEl = document.getElementById('authMsg');
@@ -1686,15 +1686,39 @@
 
     async function handleSignUp() {
       const msgEl = document.getElementById('authMsg');
+      msgEl.classList.remove('hidden');
+
       if (!supabaseClient) {
         msgEl.textContent = 'Supabase keys are not configured in personal.html yet.';
-        msgEl.classList.remove('hidden');
         return;
       }
+
       const email = document.getElementById('authEmail').value.trim();
       const password = document.getElementById('authPassword').value;
+      if (!email || password.length < 6) {
+        msgEl.textContent = 'Please enter a valid email and a password of at least 6 characters.';
+        return;
+      }
+
+      msgEl.textContent = 'Verifying your location...';
+
+      try {
+        const geoRes = await fetch('/api/check-location');
+        if (!geoRes.ok) {
+          msgEl.textContent = 'Could not verify your location. Please try again.';
+          return;
+        }
+        const geo = await geoRes.json();
+        if (!geo.allowed) {
+          msgEl.textContent = 'Sign-ups are currently limited to locals in or near California.';
+          return;
+        }
+      } catch {
+        msgEl.textContent = 'Could not verify your location. Please try again.';
+        return;
+      }
+
       const { error } = await supabaseClient.auth.signUp({ email, password });
-      msgEl.classList.remove('hidden');
       msgEl.textContent = error ? error.message : 'Check your email inbox to confirm your simplylists account!';
     }
 
